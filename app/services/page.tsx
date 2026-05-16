@@ -72,7 +72,7 @@ const WHY = [
 const FAQ = [
   {
     q: "How long does a cleaning take?",
-    a: "Most residential gas grills take 60–90 minutes. Smokers and larger flat tops may take up to 2 hours. We'll give you a time estimate when you book.",
+    a: "Most jobs take 2–6 hours, depending on grill size, complexity, and how long it's been since the last deep clean. We'll give you a time estimate when you book.",
   },
   {
     q: "Do I need to do anything to prepare?",

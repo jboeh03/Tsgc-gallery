@@ -52,7 +52,7 @@ const STEPS = [
   {
     n: "3",
     title: "We Do the Work",
-    body: "Full break-down, degrease, clean, inspect. Takes 60–90 minutes depending on grill size.",
+    body: "Full break-down, degrease, clean, inspect. Takes 2–6 hours depending on grill size and condition.",
   },
   {
     n: "4",

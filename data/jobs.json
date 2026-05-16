@@ -1,6 +1,20 @@
 {
   "jobs": [
     {
+      "id": "tsg-011",
+      "neighborhood": "Cincinnati, OH",
+      "date": "2026-04-21",
+      "grillType": "built-in",
+      "grillModel": "DCS 5-burner built-in",
+      "serviceHours": 4.5,
+      "beforeImage": "/gallery/tsg-011-before.jpeg",
+      "afterImage": "/gallery/tsg-011-after.jpeg",
+      "beforeAlt": "Before: DCS 5-burner built-in with blackened soot on the hood and heavy carbon buildup across the grates",
+      "afterAlt": "After: same DCS 5-burner built-in with a clean stainless hood and polished cookbox",
+      "featured": true,
+      "notes": "Hood interior was nearly impossible to see through. Four hours of teardown and degreasing brought it back to factory."
+    },
+    {
       "id": "tsg-010",
       "neighborhood": "Anderson Township, OH",
       "date": "2026-05-16",

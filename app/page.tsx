@@ -143,6 +143,62 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Headline Before / After */}
+      <section className="bg-bone">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
+              See the Difference
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
+              Same grill. Four hours apart.
+            </h2>
+            <p className="mt-4 text-ink/75">
+              This is the standard. Every job, every customer.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <figure className="relative overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+              <span className="absolute top-4 left-4 z-10 inline-block rounded-md bg-burgundy text-bone text-xs font-semibold uppercase tracking-widest px-3 py-1.5 shadow">
+                Before
+              </span>
+              <Image
+                src="/gallery/tsg-011-before.jpeg"
+                alt="Before: DCS built-in grill with blackened soot on the hood interior, heavy carbon buildup on the grates, and grease across the cookbox"
+                width={1600}
+                height={1200}
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="block w-full h-auto"
+              />
+            </figure>
+            <figure className="relative overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+              <span className="absolute top-4 left-4 z-10 inline-block rounded-md bg-navy text-bone text-xs font-semibold uppercase tracking-widest px-3 py-1.5 shadow">
+                After
+              </span>
+              <Image
+                src="/gallery/tsg-011-after.jpeg"
+                alt="After: same DCS built-in grill with clean stainless hood, polished cookbox, and fully restored grates"
+                width={1600}
+                height={1200}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="block w-full h-auto"
+              />
+            </figure>
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/gallery"
+              className="inline-block rounded-md border-2 border-navy text-navy px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-navy hover:text-bone"
+            >
+              See More Before &amp; After &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Services overview */}
       <section className="bg-bone">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">

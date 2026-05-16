@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-navy: #0F1E3D;
+  --color-burgundy: #7A1C2E;
+  --color-bone: #FAF7F2;
+  --color-ink: #1B2230;
+}
+
+html,
+body {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-burgundy);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- Lid Lift hero ---------- */
+
+.lidlift-stage {
+  perspective: 1400px;
+  perspective-origin: 50% 30%;
+}
+
+.lidlift-lid {
+  transform-origin: 50% 0%;
+  transform: rotateX(0deg);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.lidlift-lid[data-open="true"] {
+  transform: rotateX(-108deg);
+}
+
+.lidlift-photo {
+  opacity: 0;
+  transition: opacity 450ms ease-in-out;
+}
+
+.lidlift-photo[data-visible="true"] {
+  opacity: 1;
+}
+
+.lidlift-steam {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(0) scale(0.9);
+  filter: blur(14px);
+}
+
+.lidlift-steam[data-active="true"] {
+  animation: steam-puff 1100ms ease-out forwards;
+}
+
+@keyframes steam-puff {
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.85); }
+  30%  { opacity: 0.55; transform: translateY(-20px) scale(1.0); }
+  70%  { opacity: 0.4;  transform: translateY(-60px) scale(1.15); }
+  100% { opacity: 0;    transform: translateY(-110px) scale(1.35); }
+}
+
+/* ---------- Burner knobs ---------- */
+
+.knob-dial {
+  transform: rotate(-45deg);
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.knob[data-active="true"] .knob-dial {
+  transform: rotate(0deg);
+}
+
+.knob-notch {
+  background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(0,0,0,0.05));
+  transition: background 250ms ease;
+}
+
+.knob[data-active="true"] .knob-notch {
+  background: var(--color-burgundy);
+  box-shadow: 0 0 14px rgba(155, 39, 61, 0.85);
+}
+
+/* ---------- Scrub card ---------- */
+
+.scrub-canvas {
+  touch-action: none;
+}
+
+.scrub-fadeout {
+  transition: opacity 500ms ease-out;
+}
+
+.scrub-pulse {
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.9; }
+  50%      { transform: scale(1.06); opacity: 1; }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .lidlift-lid,
+  .knob-dial,
+  .scrub-fadeout,
+  .scrub-pulse {
+    transition: none !important;
+    animation: none !important;
+  }
+  .lidlift-lid[data-open="true"] {
+    transform: rotateX(0deg);
+  }
+}

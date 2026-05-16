@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 
@@ -255,6 +256,13 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-bone rounded-xl p-10 border border-border text-center min-h-[360px] flex flex-col justify-center items-center">
+            <Image
+              src="/logos/logo-2-color.png"
+              alt={SITE.name}
+              width={200}
+              height={200}
+              className="h-40 w-40 mb-2"
+            />
             <p className="font-display text-2xl text-navy">{SITE.name}</p>
             <p className="mt-4 text-ink/70 max-w-xs text-sm leading-relaxed">
               Serving Cincinnati, Northern Kentucky, and Dayton since{" "}

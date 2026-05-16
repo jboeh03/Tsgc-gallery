@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -25,11 +26,22 @@ export default function Nav() {
       <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between gap-4">
         <Link
           href="/"
-          className="font-display text-xl tracking-wide shrink-0"
+          className="flex items-center gap-3 shrink-0"
           onClick={() => setOpen(false)}
+          aria-label={SITE.name}
         >
-          <span className="text-bone">{SITE.shortName}</span>{" "}
-          <span className="text-burgundy-400">Grill Cleaning</span>
+          <Image
+            src="/logos/logo-white.png"
+            alt=""
+            width={48}
+            height={48}
+            priority
+            className="h-10 w-10 md:h-12 md:w-12"
+          />
+          <span className="font-display text-lg md:text-xl tracking-wide hidden sm:inline">
+            <span className="text-bone">{SITE.shortName}</span>{" "}
+            <span className="text-burgundy-400">Grill Cleaning</span>
+          </span>
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">

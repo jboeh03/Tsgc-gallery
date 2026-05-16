@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 
@@ -22,6 +23,13 @@ export default function Footer() {
     <footer className="bg-navy text-bone/85 mt-16">
       <div className="mx-auto max-w-6xl px-5 py-14 grid gap-10 md:grid-cols-4 text-sm">
         <div>
+          <Image
+            src="/logos/logo-white.png"
+            alt={SITE.name}
+            width={72}
+            height={72}
+            className="h-16 w-16 mb-3"
+          />
           <p className="font-display text-xl text-bone tracking-wide">
             {SITE.name}
           </p>

@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --color-navy: #0F1E3D;
-  --color-burgundy: #7A1C2E;
-  --color-bone: #FAF7F2;
-  --color-ink: #1B2230;
+  --color-navy: #1A3055;
+  --color-burgundy: #8B1F2F;
+  --color-bone: #F7F3EE;
+  --color-ink: #3D3D3A;
 }
 
 html,

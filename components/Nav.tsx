@@ -1,19 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SITE } from "@/lib/site";
 
 const LINKS = [
+  { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/quote", label: "Contact" },
 ];
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
   return (
     <header className="sticky top-0 z-40 bg-navy text-bone shadow-md">
@@ -27,28 +32,38 @@ export default function Nav() {
           <span className="text-burgundy-400">Grill Cleaning</span>
         </Link>
 
-        {/* Desktop nav */}
         <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-6 text-sm uppercase tracking-widest">
             {LINKS.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-burgundy-400">
+                <Link
+                  href={l.href}
+                  className={`hover:text-burgundy-400 ${
+                    isActive(l.href) ? "text-burgundy-400" : ""
+                  }`}
+                >
                   {l.label}
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/quote"
-                className="rounded-md bg-burgundy px-4 py-2 hover:bg-burgundy-400"
-              >
-                Get a Quote
-              </Link>
-            </li>
           </ul>
         </nav>
 
-        {/* Mobile toggle */}
+        <div className="hidden md:flex items-center gap-3 shrink-0">
+          <a
+            href={SITE.phoneHref}
+            className="text-sm font-semibold hover:text-burgundy-400"
+          >
+            ☎ {SITE.phone}
+          </a>
+          <Link
+            href="/quote"
+            className="rounded-md bg-burgundy px-4 py-2 text-sm uppercase tracking-widest hover:bg-burgundy-400"
+          >
+            Get a Quote
+          </Link>
+        </div>
+
         <button
           type="button"
           aria-expanded={open}
@@ -83,7 +98,6 @@ export default function Nav() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <nav
         id="mobile-nav"
         aria-label="Primary mobile"
@@ -95,12 +109,23 @@ export default function Nav() {
               <Link
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="block py-3 hover:text-burgundy-400"
+                className={`block py-3 hover:text-burgundy-400 ${
+                  isActive(l.href) ? "text-burgundy-400" : ""
+                }`}
               >
                 {l.label}
               </Link>
             </li>
           ))}
+          <li className="mt-2">
+            <a
+              href={SITE.phoneHref}
+              onClick={() => setOpen(false)}
+              className="block py-3 hover:text-burgundy-400"
+            >
+              ☎ {SITE.phone}
+            </a>
+          </li>
           <li className="mt-2 mb-3">
             <Link
               href="/quote"

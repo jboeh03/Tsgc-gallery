@@ -1,48 +1,83 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 
-const SERVICES = [
+const SERVICE_TILES = [
   {
-    slug: "gas",
-    title: "Gas grills",
-    blurb:
-      "Weber, Napoleon, Spirit, Genesis — full teardown, degrease, polish.",
+    icon: "🔥",
+    title: "Deep Degreasing",
+    body: "Years of grease buildup cause flare-ups and uneven heat. We break down and degrease every internal surface — completely.",
+    bullets: [
+      "Cook box interior",
+      "Heat plates & flavorizer bars",
+      "Lid interior & drip pans",
+      "Control knobs",
+    ],
   },
   {
-    slug: "charcoal",
-    title: "Charcoal & kamado",
-    blurb:
-      "Big Green Egg, Kamado Joe, Weber kettles — ash-out, ceramic refresh, gasket check.",
+    icon: "✨",
+    title: "Cleaning & Sanitation",
+    body: "Restaurant-grade results in your backyard. We scrub, rinse, and sanitize every surface until your grill passes a health inspection.",
+    bullets: [
+      "Grill grates & racks",
+      "Full cook box",
+      "Exterior surfaces",
+      "Burner covers",
+    ],
   },
   {
-    slug: "pellet",
-    title: "Pellet smokers",
-    blurb:
-      "Traeger, Pit Boss, Yoder — firepot clear, drip-tray service, fresh foil.",
-  },
-  {
-    slug: "built-in",
-    title: "Built-in islands",
-    blurb:
-      "Lynx, DCS, Hestan, Alfresco — pulled, serviced in place, sealed back up.",
+    icon: "🔍",
+    title: "Safety Inspection",
+    body: "Every job includes a full inspection. We catch issues before they become problems — with zero upsell pressure.",
+    bullets: [
+      "Burners & igniters",
+      "Gas tubes & regulators",
+      "Thermometers",
+      "Rotisserie racks",
+    ],
   },
 ];
 
 const STEPS = [
   {
     n: "1",
-    title: "Book a free quote",
-    body: "Send a few photos and your grill model. We'll come back with a flat price within 24 hours.",
+    title: "Get a Free Quote",
+    body: "Fill out our short form or give us a call. We'll follow up within 24 hours with a quote.",
   },
   {
     n: "2",
-    title: "We come to you",
-    body: "Driveway, patio, dockside — we bring the gear. Most cleanings take 2–4 hours start to finish.",
+    title: "Schedule Your Clean",
+    body: "Pick a time that works for you. We come to your home — no hauling required.",
   },
   {
     n: "3",
-    title: "Fire it up that night",
-    body: "We leave the grill ready to cook. Photos and a service report land in your inbox.",
+    title: "We Do the Work",
+    body: "Full break-down, degrease, clean, inspect. Takes 60–90 minutes depending on grill size.",
+  },
+  {
+    n: "4",
+    title: "Fire It Up",
+    body: "Your grill is ready to cook. Cleaner, safer, better-tasting food from day one.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Tri-State Grill Cleaning did an excellent job! Courteous, professional, communicative, and very thorough. The pricing was very fair. I'm almost afraid to use my grill now because it's so clean!",
+    author: "Paddack B.",
+    location: "Cincinnati, OH",
+  },
+  {
+    quote:
+      "Quick and easy estimate and squeezed us in a few days after. We invested in our grill so having it cleaned properly is a small price to pay for the longevity we will get. Highly recommend.",
+    author: "Alex C.",
+    location: "Cincinnati, OH",
+  },
+  {
+    quote:
+      "Tristate did an awesome job bringing it back to looking like it would pass a Health Department inspection with flying colors! Exactly what I needed for my old Weber.",
+    author: "John F.",
+    location: "Cincinnati, OH",
   },
 ];
 
@@ -53,223 +88,281 @@ export default function Home() {
       <section className="relative bg-navy text-bone overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0 opacity-40"
           style={{
             background:
-              "radial-gradient(900px 500px at 20% 0%, rgba(155,39,61,0.45), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(39,64,115,0.7), transparent 60%)",
+              "radial-gradient(900px 500px at 20% 0%, rgba(139,31,47,0.45), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(44,74,110,0.7), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-6xl px-5 py-20 md:py-28 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <p className="uppercase tracking-widest text-burgundy-400 text-xs font-semibold">
-              Veteran-founded · Cincinnati · NKY · Dayton
-            </p>
-            <h1 className="mt-4 font-display text-4xl md:text-6xl leading-tight">
-              Your grill, restored to <span className="text-burgundy-400">day-one condition.</span>
-            </h1>
-            <p className="mt-6 text-lg text-bone/85 max-w-xl">
-              Deep cleanings, top to bottom, on your property. We pull it apart,
-              degrease every surface, and put it back together better than the
-              installer left it.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/quote"
-                className="rounded-md bg-burgundy text-bone px-6 py-3 font-semibold hover:bg-burgundy-400 shadow"
-              >
-                Get a Free Quote
-              </Link>
-              <Link
-                href="/gallery"
-                className="rounded-md border border-bone/40 text-bone px-6 py-3 font-semibold hover:bg-bone/10"
-              >
-                See Before / After
-              </Link>
-            </div>
-            <p className="mt-6 text-sm text-bone/60">
-              Fast quotes &middot; flat-rate pricing &middot; fully insured
-            </p>
-          </div>
-
-          {/* Stat card */}
-          <div className="bg-bone text-ink rounded-xl shadow-xl p-6 md:p-8 grid grid-cols-3 gap-4 text-center">
-            <Stat number="200+" label="Grills serviced" />
-            <Stat number="3" label="States covered" />
-            <Stat number="4.9★" label="Average rating" />
-            <div className="col-span-3 border-t pt-4 mt-1">
-              <p className="text-sm text-ink/70">
-                &ldquo;Looks better than when I bought it. Will book again next
-                spring.&rdquo;
-              </p>
-              <p className="mt-2 text-xs uppercase tracking-widest text-navy">
-                — Recent customer, Indian Hill
-              </p>
-            </div>
+        <div className="relative mx-auto max-w-5xl px-5 py-20 md:py-28 text-center">
+          <p className="uppercase tracking-[0.25em] text-bone/55 text-xs">
+            Veteran-Founded &nbsp;·&nbsp; Locally Operated
+          </p>
+          <h1 className="mt-5 font-display text-5xl md:text-7xl leading-tight">
+            We Come to You.
+            <br />
+            <span className="text-burgundy-400">
+              Your Grill, Cleaned Right.
+            </span>
+          </h1>
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-bone/85">
+            Professional residential grill cleaning serving Greater Cincinnati,
+            Northern Kentucky, and Dayton. We break it down, degrease
+            everything, and leave it cooking like new — at your home.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3 justify-center items-center">
+            <Link
+              href="/quote"
+              className="rounded-md bg-burgundy text-bone px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-burgundy-400 shadow"
+            >
+              Get a Free Quote &rarr;
+            </Link>
+            <a
+              href={SITE.phoneHref}
+              className="text-bone/90 hover:text-burgundy-400 font-semibold"
+            >
+              Or call: {SITE.phone}
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Services teaser */}
-      <section className="mx-auto max-w-6xl px-5 py-16 md:py-20">
-        <div className="text-center max-w-2xl mx-auto">
-          <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
-            What we clean
-          </p>
-          <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
-            Every grill, every brand.
-          </h2>
-          <p className="mt-4 text-ink/75">
-            If it has a grate, we&apos;ll bring it back. Most jobs run 2 to 4
-            hours, with the heaviest builds finishing same-day.
-          </p>
+      {/* Trust bar */}
+      <div className="bg-navy-700 text-bone/90 text-xs md:text-sm">
+        <div className="mx-auto max-w-6xl px-5 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 uppercase tracking-widest">
+          <span>★ 5-Star Rated</span>
+          <span className="text-bone/30">|</span>
+          <span>Veteran-Founded</span>
+          <span className="text-bone/30">|</span>
+          <span>Est. {SITE.foundedYear}</span>
+          <span className="text-bone/30">|</span>
+          <span>Cincinnati · NKY · Dayton</span>
+          <span className="text-bone/30 hidden md:inline">|</span>
+          <span className="hidden md:inline">At-Home Service</span>
         </div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {SERVICES.map((s) => (
+      </div>
+
+      {/* Services overview */}
+      <section className="bg-bone">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
+              What We Do
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
+              Professional Cleaning for Every Grill
+            </h2>
+            <p className="mt-4 text-ink/75">
+              From 2-burner gas grills to full smokers and flat tops — we
+              handle the dirty work so you can get back to cooking.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {SERVICE_TILES.map((s) => (
+              <article
+                key={s.title}
+                className="rounded-xl border border-border bg-white p-7 shadow-sm hover:shadow-md transition"
+              >
+                <div className="text-3xl">{s.icon}</div>
+                <h3 className="mt-4 font-display text-xl text-navy">
+                  {s.title}
+                </h3>
+                <p className="mt-2 text-sm text-ink/80">{s.body}</p>
+                <ul className="mt-4 space-y-1.5 text-sm text-ink/75">
+                  {s.bullets.map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span aria-hidden className="text-burgundy">·</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
             <Link
-              key={s.slug}
-              href={`/services#${s.slug}`}
-              className="block rounded-xl border border-navy/10 bg-white p-6 hover:border-burgundy/50 hover:shadow-md transition"
+              href="/services"
+              className="inline-block rounded-md border-2 border-navy text-navy px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-navy hover:text-bone"
             >
-              <p className="font-display text-xl text-navy">{s.title}</p>
-              <p className="mt-2 text-sm text-ink/75">{s.blurb}</p>
-              <p className="mt-4 text-xs uppercase tracking-widest text-burgundy">
-                See details &rarr;
-              </p>
+              See All Services
             </Link>
-          ))}
+          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-white border-y border-navy/10">
+      <section className="bg-navy text-bone">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
           <div className="text-center max-w-2xl mx-auto">
-            <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
-              How it works
+            <p className="uppercase tracking-widest text-bone/50 text-xs font-semibold">
+              The Process
             </p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
-              Three steps. No surprises.
+            <h2 className="mt-3 font-display text-3xl md:text-4xl">
+              Simple. Professional. Done Right.
             </h2>
+            <p className="mt-4 text-bone/80">
+              No hauling. No dropoff. We come to you.
+            </p>
           </div>
-          <ol className="mt-10 grid gap-6 md:grid-cols-3">
+          <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
-              <li
-                key={s.n}
-                className="rounded-xl bg-bone p-6 border border-navy/10"
-              >
-                <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-burgundy text-bone font-display text-lg">
+              <li key={s.n} className="text-center">
+                <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-burgundy text-bone font-display text-xl">
                   {s.n}
                 </span>
-                <p className="mt-4 font-display text-xl text-navy">
-                  {s.title}
-                </p>
-                <p className="mt-2 text-sm text-ink/75">{s.body}</p>
+                <h3 className="mt-4 font-display text-lg">{s.title}</h3>
+                <p className="mt-2 text-sm text-bone/75">{s.body}</p>
               </li>
             ))}
           </ol>
+          <div className="mt-10 text-center">
+            <Link
+              href="/quote"
+              className="inline-block rounded-md bg-burgundy text-bone px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-burgundy-400 shadow"
+            >
+              Get a Free Quote &rarr;
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Why us */}
-      <section className="mx-auto max-w-6xl px-5 py-16 md:py-20 grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
-            Why Tri-State
-          </p>
-          <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
-            Trained eyes. Honest work.
-          </h2>
-          <p className="mt-4 text-ink/80">
-            Tri-State Grill Cleaning was founded by a US military veteran who
-            got tired of seeing $2,000 grills written off as &ldquo;done&rdquo;
-            because nobody local would take them apart. We do.
-          </p>
-          <ul className="mt-6 space-y-3 text-ink/80">
-            <Bullet>Flat pricing — quoted up front, no day-of upcharges.</Bullet>
-            <Bullet>Fully insured. Your patio, deck, and stone are protected.</Bullet>
-            <Bullet>Food-safe degreasers. Safe on stainless, ceramic, and cast.</Bullet>
-            <Bullet>Service report + photos after every job.</Bullet>
-          </ul>
-          <div className="mt-8">
-            <Link
-              href="/about"
-              className="text-burgundy font-semibold hover:underline"
-            >
-              Read our story &rarr;
-            </Link>
+      <section className="bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20 grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
+              Why Tri-State
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
+              Built on Service. Yours and Ours.
+            </h2>
+            <div className="mt-8 space-y-6">
+              <ValueRow
+                icon="★"
+                title="Veteran-Founded"
+                body="Built on a veteran's standards from day one — discipline, precision, and accountability on every job. No shortcuts. No cut corners."
+              />
+              <ValueRow
+                icon="🏠"
+                title="At Your Home"
+                body="We come to you. No hauling, no dropoff, no waiting. We set up, clean on-site, and leave your grill ready to use immediately."
+              />
+              <ValueRow
+                icon="📍"
+                title="Your Neighbors"
+                body="We live and work in this community. Every job carries our name. We stand behind our work with our reputation on the line — not a franchise's."
+              />
+            </div>
           </div>
-        </div>
-        <div className="bg-navy text-bone rounded-xl p-8 shadow-lg">
-          <p className="font-display text-2xl">Serving the Tri-State.</p>
-          <ul className="mt-4 grid grid-cols-2 gap-3 text-sm">
-            {SITE.serviceArea.map((a) => (
-              <li
-                key={a}
-                className="rounded-md border border-bone/20 px-3 py-2"
-              >
-                {a}
-              </li>
-            ))}
-            <li className="rounded-md border border-bone/20 px-3 py-2">
-              Indian Hill
-            </li>
-            <li className="rounded-md border border-bone/20 px-3 py-2">
-              Hyde Park
-            </li>
-            <li className="rounded-md border border-bone/20 px-3 py-2">
-              Mason
-            </li>
-            <li className="rounded-md border border-bone/20 px-3 py-2">
-              Ft. Mitchell
-            </li>
-          </ul>
-          <p className="mt-5 text-sm text-bone/70">
-            Don&apos;t see your town? Most addresses within 45 minutes of
-            Cincinnati qualify. Ask when you book.
-          </p>
+          <div className="bg-bone rounded-xl p-10 border border-border text-center min-h-[360px] flex flex-col justify-center items-center">
+            <p className="font-display text-2xl text-navy">{SITE.name}</p>
+            <p className="mt-4 text-ink/70 max-w-xs text-sm leading-relaxed">
+              Serving Cincinnati, Northern Kentucky, and Dayton since{" "}
+              {SITE.foundedYear}.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {SITE.serviceArea.map((a) => (
+                <span
+                  key={a}
+                  className="rounded-full bg-white border border-border px-4 py-1.5 text-xs uppercase tracking-widest text-navy"
+                >
+                  {a}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Testimonials */}
+      <section className="bg-bone">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">
+              Reviews
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl text-navy">
+              What Our Customers Say
+            </h2>
+            <p className="mt-4 text-ink/75">
+              Five-star rated by homeowners across Greater Cincinnati.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <figure
+                key={t.author}
+                className="rounded-xl bg-white border border-border p-7 shadow-sm"
+              >
+                <div className="text-burgundy">★★★★★</div>
+                <blockquote className="mt-3 text-ink/85 text-sm leading-relaxed">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
+                <figcaption className="mt-4 text-xs uppercase tracking-widest text-muted">
+                  — {t.author} &middot; {t.location}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <a
+              href={SITE.social.googleReview}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-md border-2 border-navy text-navy px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-navy hover:text-bone"
+            >
+              ★ Leave Us a Google Review &rarr;
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA band */}
       <section className="bg-burgundy text-bone">
         <div className="mx-auto max-w-4xl px-5 py-14 md:py-16 text-center">
           <h2 className="font-display text-3xl md:text-4xl">
-            Ready to see your grill on the gallery page?
+            Ready for a Clean Grill?
           </h2>
           <p className="mt-4 text-bone/90">
-            Free quotes in 24 hours. No pressure, no sales calls.
+            Fill out our short form and we&apos;ll follow up within 24 hours.
+            No commitment, no pressure.
           </p>
-          <Link
-            href="/quote"
-            className="inline-block mt-8 rounded-md bg-bone text-burgundy px-8 py-4 text-lg font-semibold hover:bg-white shadow"
-          >
-            Get a Free Quote
-          </Link>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/quote"
+              className="rounded-md bg-bone text-burgundy px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-white shadow"
+            >
+              Get a Free Quote &rarr;
+            </Link>
+            <a
+              href={SITE.phoneHref}
+              className="rounded-md border border-bone/40 px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-bone/10"
+            >
+              ☎ {SITE.phone}
+            </a>
+          </div>
         </div>
       </section>
     </>
   );
 }
 
-function Stat({ number, label }: { number: string; label: string }) {
+function ValueRow({
+  icon,
+  title,
+  body,
+}: {
+  icon: string;
+  title: string;
+  body: string;
+}) {
   return (
-    <div>
-      <p className="font-display text-3xl text-navy">{number}</p>
-      <p className="mt-1 text-xs uppercase tracking-widest text-ink/70">
-        {label}
-      </p>
+    <div className="flex gap-4">
+      <div className="text-2xl text-burgundy shrink-0">{icon}</div>
+      <div>
+        <h3 className="font-display text-lg text-navy">{title}</h3>
+        <p className="mt-1 text-sm text-ink/80">{body}</p>
+      </div>
     </div>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex gap-3">
-      <span
-        aria-hidden
-        className="mt-1 inline-block h-2 w-2 rounded-full bg-burgundy shrink-0"
-      />
-      <span>{children}</span>
-    </li>
   );
 }

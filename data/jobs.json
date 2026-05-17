@@ -1,6 +1,32 @@
 {
   "jobs": [
     {
+      "id": "tsg-013",
+      "neighborhood": "Cincinnati, OH",
+      "date": "2026-05-07",
+      "grillType": "built-in",
+      "grillModel": "5-burner built-in",
+      "serviceHours": 2.0,
+      "beforeImage": "/gallery/tsg-013-before.jpeg",
+      "afterImage": "/gallery/tsg-013-after.jpeg",
+      "beforeAlt": "Before: 5-burner built-in grill at a stone island with carbonized buildup on the grates and grease on the cookbox",
+      "afterAlt": "After: same 5-burner built-in grill with a clean polished cookbox and restored grates",
+      "featured": false
+    },
+    {
+      "id": "tsg-012",
+      "neighborhood": "Cincinnati, OH",
+      "date": "2026-04-16",
+      "grillType": "gas",
+      "grillModel": "5-burner gas grill",
+      "serviceHours": 3.0,
+      "beforeImage": "/gallery/tsg-012-before.jpeg",
+      "afterImage": "/gallery/tsg-012-after.jpeg",
+      "beforeAlt": "Before: 5-burner gas grill on a back patio with grease and soot across the cookbox and grates",
+      "afterAlt": "After: same 5-burner gas grill with a clean cookbox interior and fresh grates",
+      "featured": false
+    },
+    {
       "id": "tsg-011",
       "neighborhood": "Cincinnati, OH",
       "date": "2026-04-21",

@@ -188,12 +188,18 @@ export default function Home() {
             </figure>
           </div>
 
-          <div className="mt-10 text-center">
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
               href="/gallery"
               className="inline-block rounded-md border-2 border-navy text-navy px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-navy hover:text-bone"
             >
               See More Before &amp; After &rarr;
+            </Link>
+            <Link
+              href="/preview"
+              className="inline-block rounded-md bg-burgundy text-bone px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-burgundy-400 shadow"
+            >
+              📸 See Your Grill Clean &rarr;
             </Link>
           </div>
         </div>

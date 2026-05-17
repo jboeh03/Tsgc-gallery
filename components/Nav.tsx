@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/preview", label: "AI Preview" },
   { href: "/quote", label: "Contact" },
 ];
 

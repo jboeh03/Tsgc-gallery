@@ -1,6 +1,19 @@
 {
   "jobs": [
     {
+      "id": "tsg-014",
+      "neighborhood": "Cincinnati, OH",
+      "date": "2026-05-17",
+      "grillType": "gas",
+      "grillModel": "Weber 4-burner with Sear Station",
+      "serviceHours": 2.5,
+      "beforeImage": "/gallery/tsg-014-before.webp",
+      "afterImage": "/gallery/tsg-014-after.webp",
+      "beforeAlt": "Before: Weber 4-burner gas grill with Sear Station, prior to service",
+      "afterAlt": "After: same Weber 4-burner gas grill post-service",
+      "featured": false
+    },
+    {
       "id": "tsg-013",
       "neighborhood": "Cincinnati, OH",
       "date": "2026-05-07",

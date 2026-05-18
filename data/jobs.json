@@ -7,10 +7,14 @@
       "grillType": "gas",
       "grillModel": "Weber Genesis II 3-burner (GS4)",
       "serviceHours": 2.5,
-      "beforeImage": "/gallery/tsg-015-before.webp",
-      "afterImage": "/gallery/tsg-015-after.webp",
-      "beforeAlt": "Before: Weber Genesis II 3-burner gas grill mid-service in a West Chester backyard — grates removed, heat shields and burner area exposed with carbonized buildup",
-      "afterAlt": "After: same Weber Genesis II 3-burner with clean grates reinstalled, a polished cookbox interior, and a clear control panel",
+      "pairs": [
+        {
+          "before": "/gallery/tsg-015-before.webp",
+          "after": "/gallery/tsg-015-after.webp",
+          "beforeAlt": "Before: Weber Genesis II 3-burner gas grill mid-service in a West Chester backyard — grates removed, heat shields and burner area exposed with carbonized buildup",
+          "afterAlt": "After: same Weber Genesis II 3-burner with clean grates reinstalled, a polished cookbox interior, and a clear control panel"
+        }
+      ],
       "featured": false
     },
     {
@@ -20,10 +24,14 @@
       "grillType": "gas",
       "grillModel": "Weber 4-burner with Sear Station",
       "serviceHours": 2.5,
-      "beforeImage": "/gallery/tsg-014-before.webp",
-      "afterImage": "/gallery/tsg-014-after.webp",
-      "beforeAlt": "Before: Weber 4-burner gas grill with Sear Station, prior to service",
-      "afterAlt": "After: same Weber 4-burner gas grill post-service",
+      "pairs": [
+        {
+          "before": "/gallery/tsg-014-before.webp",
+          "after": "/gallery/tsg-014-after.webp",
+          "beforeAlt": "Before: Weber 4-burner gas grill with Sear Station, prior to service",
+          "afterAlt": "After: same Weber 4-burner gas grill post-service"
+        }
+      ],
       "featured": false
     },
     {
@@ -32,11 +40,15 @@
       "date": "2026-05-07",
       "grillType": "built-in",
       "grillModel": "5-burner built-in",
-      "serviceHours": 2.0,
-      "beforeImage": "/gallery/tsg-013-before.jpeg",
-      "afterImage": "/gallery/tsg-013-after.jpeg",
-      "beforeAlt": "Before: 5-burner built-in grill at a stone island with carbonized buildup on the grates and grease on the cookbox",
-      "afterAlt": "After: same 5-burner built-in grill with a clean polished cookbox and restored grates",
+      "serviceHours": 2,
+      "pairs": [
+        {
+          "before": "/gallery/tsg-013-before.jpeg",
+          "after": "/gallery/tsg-013-after.jpeg",
+          "beforeAlt": "Before: 5-burner built-in grill at a stone island with carbonized buildup on the grates and grease on the cookbox",
+          "afterAlt": "After: same 5-burner built-in grill with a clean polished cookbox and restored grates"
+        }
+      ],
       "featured": false
     },
     {
@@ -45,11 +57,15 @@
       "date": "2026-04-16",
       "grillType": "gas",
       "grillModel": "5-burner gas grill",
-      "serviceHours": 3.0,
-      "beforeImage": "/gallery/tsg-012-before.jpeg",
-      "afterImage": "/gallery/tsg-012-after.jpeg",
-      "beforeAlt": "Before: 5-burner gas grill on a back patio with grease and soot across the cookbox and grates",
-      "afterAlt": "After: same 5-burner gas grill with a clean cookbox interior and fresh grates",
+      "serviceHours": 3,
+      "pairs": [
+        {
+          "before": "/gallery/tsg-012-before.jpeg",
+          "after": "/gallery/tsg-012-after.jpeg",
+          "beforeAlt": "Before: 5-burner gas grill on a back patio with grease and soot across the cookbox and grates",
+          "afterAlt": "After: same 5-burner gas grill with a clean cookbox interior and fresh grates"
+        }
+      ],
       "featured": false
     },
     {
@@ -59,10 +75,14 @@
       "grillType": "built-in",
       "grillModel": "DCS 5-burner built-in",
       "serviceHours": 4.5,
-      "beforeImage": "/gallery/tsg-011-before.jpeg",
-      "afterImage": "/gallery/tsg-011-after.jpeg",
-      "beforeAlt": "Before: DCS 5-burner built-in with blackened soot on the hood and heavy carbon buildup across the grates",
-      "afterAlt": "After: same DCS 5-burner built-in with a clean stainless hood and polished cookbox",
+      "pairs": [
+        {
+          "before": "/gallery/tsg-011-before.jpeg",
+          "after": "/gallery/tsg-011-after.jpeg",
+          "beforeAlt": "Before: DCS 5-burner built-in with blackened soot on the hood and heavy carbon buildup across the grates",
+          "afterAlt": "After: same DCS 5-burner built-in with a clean stainless hood and polished cookbox"
+        }
+      ],
       "featured": true,
       "notes": "Hood interior was nearly impossible to see through. Four hours of teardown and degreasing brought it back to factory."
     },
@@ -72,11 +92,15 @@
       "date": "2026-05-16",
       "grillType": "built-in",
       "grillModel": "DCS 4-burner built-in",
-      "serviceHours": 4.0,
-      "beforeImage": "/gallery/tsg-010-before.jpeg",
-      "afterImage": "/gallery/tsg-010-after.jpeg",
-      "beforeAlt": "Before: DCS 4-burner built-in with grease buildup on the hood interior and soot on the back wall",
-      "afterAlt": "After: DCS 4-burner built-in with a polished stainless cookbox and clean control panel",
+      "serviceHours": 4,
+      "pairs": [
+        {
+          "before": "/gallery/tsg-010-before.jpeg",
+          "after": "/gallery/tsg-010-after.jpeg",
+          "beforeAlt": "Before: DCS 4-burner built-in with grease buildup on the hood interior and soot on the back wall",
+          "afterAlt": "After: DCS 4-burner built-in with a polished stainless cookbox and clean control panel"
+        }
+      ],
       "featured": false
     }
   ]

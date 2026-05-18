@@ -96,10 +96,16 @@ function parseJobsCsv(csv: string): Job[] {
       grillType: obj.grillType as GrillType,
       grillModel: obj.grillModel,
       serviceHours: Number(obj.serviceHours),
-      beforeImage: obj.beforeImage,
-      afterImage: obj.afterImage,
-      beforeAlt: obj.beforeAlt,
-      afterAlt: obj.afterAlt,
+      // Sheet rows always carry a single hero pair. Multi-pair jobs are
+      // edited in jobs.json today; revisit when the upload UI ships.
+      pairs: [
+        {
+          before: obj.beforeImage,
+          after: obj.afterImage,
+          beforeAlt: obj.beforeAlt,
+          afterAlt: obj.afterAlt,
+        },
+      ],
       featured: /^(true|yes|1)$/i.test(obj.featured ?? ""),
       notes: obj.notes || undefined,
       slug: obj.slug || undefined,

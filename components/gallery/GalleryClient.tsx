@@ -4,6 +4,7 @@ import { useState } from "react";
 import LidLiftHero from "./LidLiftHero";
 import BurnerKnobFilter, { type FilterValue } from "./BurnerKnobFilter";
 import GalleryGrid from "./GalleryGrid";
+import ScrubToggle from "./ScrubToggle";
 import type { Job } from "@/lib/types";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
@@ -15,12 +16,14 @@ type Props = {
 
 export default function GalleryClient({ jobs, featured }: Props) {
   const [filter, setFilter] = useState<FilterValue>("all");
+  const [scrubEnabled, setScrubEnabled] = useState(true);
 
   return (
     <>
       <LidLiftHero job={featured} />
       <BurnerKnobFilter value={filter} onChange={setFilter} />
-      <GalleryGrid jobs={jobs} filter={filter} />
+      <ScrubToggle enabled={scrubEnabled} onChange={setScrubEnabled} />
+      <GalleryGrid jobs={jobs} filter={filter} scrubEnabled={scrubEnabled} />
 
       <section className="mx-auto max-w-3xl px-5 pb-12 text-center">
         <p className="uppercase tracking-widest text-burgundy text-xs font-semibold">

@@ -1,15 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { Job } from "@/lib/types";
+import { jobSlug } from "@/lib/types";
 
 type Props = {
   job: Job;
+  /**
+   * When false ("heat off"), the card renders a static before/after split
+   * with no canvas interaction — works reliably on every device.
+   */
+  scrubEnabled?: boolean;
 };
 
 const REVEAL_THRESHOLD = 0.6;
 
-export default function ScrubCard({ job }: Props) {
+export default function ScrubCard({ job, scrubEnabled = true }: Props) {
+  const hero = job.pairs[0];
+  const extraCount = job.pairs.length - 1;
+  const slug = jobSlug(job);
+
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const beforeImgRef = useRef<HTMLImageElement | null>(null);
@@ -26,6 +37,9 @@ export default function ScrubCard({ job }: Props) {
   const [sliderMode, setSliderMode] = useState(0); // 0..100 for reduced motion fallback
   const labelId = useId();
 
+  // "Heat off" mode → render the static split layout, skip all canvas wiring.
+  const interactive = scrubEnabled && !reducedMotion;
+
   // Detect reduced motion preference
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -36,7 +50,7 @@ export default function ScrubCard({ job }: Props) {
   }, []);
 
   const initCanvas = useCallback(() => {
-    if (initialized.current || reducedMotion) return;
+    if (initialized.current || !interactive) return;
     const canvas = canvasRef.current;
     const wrap = wrapRef.current;
     if (!canvas || !wrap) return;
@@ -52,7 +66,6 @@ export default function ScrubCard({ job }: Props) {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
       ctx.scale(dpr, dpr);
-      // Cover-fit the before image onto the canvas.
       const cw = rect.width;
       const ch = rect.height;
       const ir = img.naturalWidth / img.naturalHeight;
@@ -73,12 +86,12 @@ export default function ScrubCard({ job }: Props) {
       beforeImgRef.current = img;
       initialized.current = true;
     };
-    img.src = job.beforeImage;
-  }, [job.beforeImage, reducedMotion]);
+    img.src = hero.before;
+  }, [hero.before, interactive]);
 
   // Initialize canvas when card scrolls into view.
   useEffect(() => {
-    if (reducedMotion) return;
+    if (!interactive) return;
     const wrap = wrapRef.current;
     if (!wrap) return;
     const io = new IntersectionObserver(
@@ -94,11 +107,11 @@ export default function ScrubCard({ job }: Props) {
     );
     io.observe(wrap);
     return () => io.disconnect();
-  }, [initCanvas, reducedMotion]);
+  }, [initCanvas, interactive]);
 
-  // Recompute canvas dimensions on resize (reset to before state to avoid stretch).
+  // Recompute canvas dimensions on resize.
   useEffect(() => {
-    if (reducedMotion) return;
+    if (!interactive) return;
     const handler = () => {
       if (!initialized.current) return;
       initialized.current = false;
@@ -109,7 +122,7 @@ export default function ScrubCard({ job }: Props) {
     };
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
-  }, [initCanvas, reducedMotion]);
+  }, [initCanvas, interactive]);
 
   const eraseAt = (x: number, y: number) => {
     const canvas = canvasRef.current;
@@ -121,7 +134,6 @@ export default function ScrubCard({ job }: Props) {
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     if (lastPoint.current) {
-      // Draw a thick line between the last point and current to make scrubs feel solid.
       ctx.lineWidth = radius * 2;
       ctx.lineCap = "round";
       ctx.beginPath();
@@ -141,7 +153,6 @@ export default function ScrubCard({ job }: Props) {
     if (!canvas) return 0;
     const ctx = canvas.getContext("2d");
     if (!ctx) return 0;
-    // Sample on a coarse grid for performance.
     const cols = 40;
     const rows = 24;
     const sw = Math.floor(canvas.width / cols);
@@ -170,7 +181,6 @@ export default function ScrubCard({ job }: Props) {
     if (revealed || fadingOut) return;
     const pct = sampleReveal();
     if (pct >= REVEAL_THRESHOLD) {
-      // Auto-finish the wipe.
       setFadingOut(true);
       window.setTimeout(() => {
         setRevealed(true);
@@ -187,7 +197,7 @@ export default function ScrubCard({ job }: Props) {
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
-    if (revealed || reducedMotion) return;
+    if (revealed || !interactive) return;
     (e.target as Element).setPointerCapture?.(e.pointerId);
     scrubbing.current = true;
     setArmed(false);
@@ -196,13 +206,11 @@ export default function ScrubCard({ job }: Props) {
       lastPoint.current = null;
       eraseAt(p.x, p.y);
     }
-    // Long-press fallback for accessibility (touch only).
     if (e.pointerType === "touch") {
       longPressTimer.current = window.setTimeout(() => {
         instantReveal();
       }, 400);
     }
-    // Double-tap fallback.
     const now = Date.now();
     if (now - lastTapTime.current < 300) {
       instantReveal();
@@ -211,7 +219,7 @@ export default function ScrubCard({ job }: Props) {
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!scrubbing.current || revealed || reducedMotion) return;
+    if (!scrubbing.current || revealed || !interactive) return;
     if (longPressTimer.current) {
       window.clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
@@ -248,8 +256,7 @@ export default function ScrubCard({ job }: Props) {
     setFadingOut(false);
     setArmed(true);
     setSliderMode(0);
-    if (reducedMotion) return;
-    // Repaint before image.
+    if (!interactive) return;
     requestAnimationFrame(() => initCanvas());
   };
 
@@ -258,6 +265,75 @@ export default function ScrubCard({ job }: Props) {
     { month: "short", year: "numeric" }
   );
 
+  // ────────────────────────────────────────────────────────────
+  // STATIC / "HEAT OFF" RENDER — no canvas, no scrub. A 50/50 split with
+  // labeled halves. Used when scrubEnabled=false OR reduced motion.
+  // ────────────────────────────────────────────────────────────
+  if (!interactive) {
+    return (
+      <figure
+        ref={wrapRef}
+        className="group relative rounded-xl overflow-hidden bg-navy shadow-md"
+        style={{ aspectRatio: "4 / 3" }}
+        aria-labelledby={labelId}
+      >
+        <Link
+          href={`/gallery/${slug}`}
+          className="absolute inset-0 z-30"
+          aria-label={`View full job: ${job.grillModel} in ${job.neighborhood}`}
+        />
+        <div className="absolute inset-0 grid grid-cols-2">
+          <div className="relative overflow-hidden">
+            <img
+              src={hero.before}
+              alt={hero.beforeAlt}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <span className="absolute top-2 left-2 z-10 inline-block rounded bg-black/65 text-bone text-[10px] font-bold uppercase tracking-widest px-2 py-1">
+              Before
+            </span>
+          </div>
+          <div className="relative overflow-hidden border-l-2 border-bone/40">
+            <img
+              src={hero.after}
+              alt={hero.afterAlt}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <span className="absolute top-2 right-2 z-10 inline-block rounded bg-burgundy text-bone text-[10px] font-bold uppercase tracking-widest px-2 py-1">
+              After
+            </span>
+          </div>
+        </div>
+
+        {extraCount > 0 ? (
+          <span className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-full bg-bone/95 text-navy px-3 py-1 text-[11px] font-bold uppercase tracking-widest shadow">
+            +{extraCount} more
+          </span>
+        ) : null}
+
+        <figcaption
+          id={labelId}
+          className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-navy/95 via-navy/80 to-transparent text-bone p-4 pt-12 pointer-events-none"
+        >
+          <p className="text-xs uppercase tracking-widest text-burgundy-400 font-semibold">
+            {job.neighborhood} · {formattedDate}
+          </p>
+          <p className="mt-1 font-semibold leading-tight">{job.grillModel}</p>
+          <p className="text-xs text-bone/80 mt-0.5">
+            Service time: {job.serviceHours} hrs
+          </p>
+        </figcaption>
+      </figure>
+    );
+  }
+
+  // ────────────────────────────────────────────────────────────
+  // INTERACTIVE SCRUB RENDER — preserves the original UX. The figcaption
+  // is a Link so clicking the metadata navigates to the detail page;
+  // the image area stays dedicated to the scrub interaction.
+  // ────────────────────────────────────────────────────────────
   return (
     <figure
       ref={wrapRef}
@@ -265,59 +341,34 @@ export default function ScrubCard({ job }: Props) {
       style={{ aspectRatio: "4 / 3" }}
       aria-labelledby={labelId}
     >
-      {/* AFTER image — bottom layer */}
       <img
-        src={job.afterImage}
-        alt={job.afterAlt}
+        src={hero.after}
+        alt={hero.afterAlt}
         loading="lazy"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* BEFORE image — shown directly when reduced motion (no scrub mechanic).
-         Becomes a horizontally-revealed slider via clipPath. */}
-      {reducedMotion ? (
-        <img
-          src={job.beforeImage}
-          alt={job.beforeAlt}
-          loading="lazy"
-          aria-hidden
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ clipPath: `inset(0 ${sliderMode}% 0 0)` }}
-        />
-      ) : (
-        <canvas
-          ref={canvasRef}
-          role="img"
-          aria-label={`Before and after of ${job.grillModel}. Scrub the image to reveal the cleaned grill.`}
-          className={`scrub-canvas scrub-fadeout absolute inset-0 w-full h-full ${
-            revealed ? "pointer-events-none opacity-0" : ""
-          }`}
-          style={{ opacity: fadingOut ? 0 : 1 }}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          onPointerLeave={onPointerUp}
-        />
-      )}
+      <canvas
+        ref={canvasRef}
+        role="img"
+        aria-label={`Before and after of ${job.grillModel}. Scrub the image to reveal the cleaned grill.`}
+        className={`scrub-canvas scrub-fadeout absolute inset-0 w-full h-full ${
+          revealed ? "pointer-events-none opacity-0" : ""
+        }`}
+        style={{ opacity: fadingOut ? 0 : 1 }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onPointerLeave={onPointerUp}
+      />
 
-      {/* "Scrub to clean" pulsing badge */}
-      {!reducedMotion && armed && !revealed ? (
+      {armed && !revealed ? (
         <div
           aria-hidden
           className="scrub-pulse absolute top-3 left-3 z-10 flex items-center gap-2 bg-burgundy text-bone px-3 py-1.5 rounded-full text-xs uppercase tracking-widest font-semibold shadow"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12a9 9 0 11-9-9" />
           </svg>
@@ -325,7 +376,12 @@ export default function ScrubCard({ job }: Props) {
         </div>
       ) : null}
 
-      {/* Reset button (after reveal) */}
+      {extraCount > 0 ? (
+        <span className="absolute top-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-bone/95 text-navy px-3 py-1 text-[11px] font-bold uppercase tracking-widest shadow">
+          +{extraCount} more
+        </span>
+      ) : null}
+
       {revealed ? (
         <button
           type="button"
@@ -336,7 +392,6 @@ export default function ScrubCard({ job }: Props) {
         </button>
       ) : null}
 
-      {/* Accessible reveal button (keyboard / SR users) */}
       {!revealed ? (
         <button
           type="button"
@@ -347,41 +402,24 @@ export default function ScrubCard({ job }: Props) {
         </button>
       ) : null}
 
-      {/* Reduced-motion slider control */}
-      {reducedMotion && !revealed ? (
-        <div className="absolute bottom-24 left-3 right-3 z-20 bg-bone/95 rounded-md px-3 py-2 shadow">
-          <label className="text-xs text-navy block mb-1">
-            Before / after
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={sliderMode}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              setSliderMode(v);
-              if (v >= 95) instantReveal();
-            }}
-            className="w-full"
-            aria-label="Slide to reveal cleaned grill"
-          />
-        </div>
-      ) : null}
-
-      {/* Caption / metadata overlay (always visible) */}
-      <figcaption
-        id={labelId}
-        className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-navy/95 via-navy/80 to-transparent text-bone p-4 pt-12"
+      <Link
+        href={`/gallery/${slug}`}
+        className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-navy/95 via-navy/80 to-transparent text-bone p-4 pt-12 block hover:from-navy"
+        aria-label={`View full job: ${job.grillModel} in ${job.neighborhood}`}
       >
-        <p className="text-xs uppercase tracking-widest text-burgundy-400 font-semibold">
-          {job.neighborhood} · {formattedDate}
-        </p>
-        <p className="mt-1 font-semibold leading-tight">{job.grillModel}</p>
-        <p className="text-xs text-bone/80 mt-0.5">
-          Service time: {job.serviceHours} hrs
-        </p>
-      </figcaption>
+        <figcaption id={labelId}>
+          <p className="text-xs uppercase tracking-widest text-burgundy-400 font-semibold">
+            {job.neighborhood} · {formattedDate}
+          </p>
+          <p className="mt-1 font-semibold leading-tight">{job.grillModel}</p>
+          <p className="text-xs text-bone/80 mt-0.5 flex items-center justify-between">
+            <span>Service time: {job.serviceHours} hrs</span>
+            <span className="underline underline-offset-2">
+              See job →
+            </span>
+          </p>
+        </figcaption>
+      </Link>
     </figure>
   );
 }

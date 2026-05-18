@@ -8,9 +8,10 @@ import type { FilterValue } from "./BurnerKnobFilter";
 type Props = {
   jobs: Job[];
   filter: FilterValue;
+  scrubEnabled?: boolean;
 };
 
-export default function GalleryGrid({ jobs, filter }: Props) {
+export default function GalleryGrid({ jobs, filter, scrubEnabled = true }: Props) {
   const filtered = useMemo(() => {
     if (filter === "all") return jobs;
     return jobs.filter((j) => j.grillType === filter);
@@ -31,7 +32,7 @@ export default function GalleryGrid({ jobs, filter }: Props) {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeIn_220ms_ease-out]"
         >
           {filtered.map((j) => (
-            <ScrubCard key={j.id} job={j} />
+            <ScrubCard key={j.id} job={j} scrubEnabled={scrubEnabled} />
           ))}
         </div>
       )}

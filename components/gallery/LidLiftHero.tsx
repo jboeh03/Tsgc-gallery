@@ -12,6 +12,7 @@ export default function LidLiftHero({ job }: Props) {
   const [steamKey, setSteamKey] = useState(0);
   const [isCoarse, setIsCoarse] = useState(false);
   const panelId = useId();
+  const hero = job.pairs[0];
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: coarse)");
@@ -86,8 +87,8 @@ export default function LidLiftHero({ job }: Props) {
                 >
                   {/* BEFORE photo (visible when lid is closed) */}
                   <img
-                    src={job.beforeImage}
-                    alt={job.beforeAlt}
+                    src={hero.before}
+                    alt={hero.beforeAlt}
                     loading="eager"
                     fetchPriority="high"
                     className="lidlift-photo absolute inset-0 w-full h-full object-cover"
@@ -95,8 +96,8 @@ export default function LidLiftHero({ job }: Props) {
                   />
                   {/* AFTER photo (visible when lid is open) */}
                   <img
-                    src={job.afterImage}
-                    alt={job.afterAlt}
+                    src={hero.after}
+                    alt={hero.afterAlt}
                     loading="eager"
                     fetchPriority="high"
                     className="lidlift-photo absolute inset-0 w-full h-full object-cover"
@@ -161,7 +162,7 @@ export default function LidLiftHero({ job }: Props) {
                   className="absolute inset-x-6 inset-y-7 rounded-md overflow-hidden border border-black/50"
                 >
                   <img
-                    src={job.beforeImage}
+                    src={hero.before}
                     alt=""
                     aria-hidden
                     className="w-full h-full object-cover"

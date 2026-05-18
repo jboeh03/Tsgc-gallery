@@ -100,6 +100,29 @@ export default function PreviewClient() {
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setDebug([]);
+
+    // Capture all form values SYNCHRONOUSLY before any await — React nulls
+    // e.currentTarget after the handler returns on iOS Safari
+    let payloadFields: {
+      email: string;
+      firstName: string;
+      zip: string;
+      consent: boolean;
+    };
+    try {
+      const formData = new FormData(e.currentTarget);
+      payloadFields = {
+        email: String(formData.get("email") ?? ""),
+        firstName: String(formData.get("firstName") ?? ""),
+        zip: String(formData.get("zip") ?? ""),
+        consent: formData.get("consent") === "on",
+      };
+    } catch (err) {
+      log(`form read FAIL: ${err instanceof Error ? err.message : err}`);
+      setError("Couldn't read the form. Reload the page and try again.");
+      return;
+    }
+
     if (!file) {
       setError("Pick a grill photo first.");
       return;
@@ -123,7 +146,6 @@ export default function PreviewClient() {
     }
 
     setStatus("submitting");
-    const formData = new FormData(e.currentTarget);
     log("fetch start");
 
     // Promise.race timeout — more reliable on iOS Safari than AbortController
@@ -148,10 +170,7 @@ export default function PreviewClient() {
           body: JSON.stringify({
             imageBase64,
             imageMimeType,
-            email: String(formData.get("email") ?? ""),
-            firstName: String(formData.get("firstName") ?? ""),
-            zip: String(formData.get("zip") ?? ""),
-            consent: formData.get("consent") === "on",
+            ...payloadFields,
           }),
         }),
         timeoutPromise,

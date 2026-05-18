@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
+import { isPreviewVisible } from "@/lib/preview-flag";
 
 const SERVICE_TILES = [
   {
@@ -83,6 +84,7 @@ const TESTIMONIALS = [
 ];
 
 export default function Home() {
+  const showPreview = isPreviewVisible();
   return (
     <>
       {/* Hero */}
@@ -195,12 +197,14 @@ export default function Home() {
             >
               See More Before &amp; After &rarr;
             </Link>
-            <Link
-              href="/preview"
-              className="inline-block rounded-md bg-burgundy text-bone px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-burgundy-400 shadow"
-            >
-              📸 See Your Grill Clean &rarr;
-            </Link>
+            {showPreview ? (
+              <Link
+                href="/preview"
+                className="inline-block rounded-md bg-burgundy text-bone px-6 py-3 font-semibold uppercase tracking-widest text-sm hover:bg-burgundy-400 shadow"
+              >
+                📸 See Your Grill Clean &rarr;
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>

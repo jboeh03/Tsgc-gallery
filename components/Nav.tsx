@@ -6,18 +6,23 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SITE } from "@/lib/site";
 
-const LINKS = [
+const BASE_LINKS = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/preview", label: "AI Preview" },
   { href: "/quote", label: "Contact" },
 ];
 
-export default function Nav() {
+const PREVIEW_LINK = { href: "/preview", label: "AI Preview" };
+
+export default function Nav({ showPreview = false }: { showPreview?: boolean }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  const LINKS = showPreview
+    ? [...BASE_LINKS.slice(0, 4), PREVIEW_LINK, BASE_LINKS[4]]
+    : BASE_LINKS;
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);

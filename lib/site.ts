@@ -16,6 +16,11 @@ export const SITE = {
   cityState: "Cincinnati, OH 45233",
   serviceArea: ["Cincinnati", "Northern Kentucky", "Dayton"],
   hoursSummary: "Mon–Sat · By appointment",
+  // Canonical public domain. All metadata / OG / sitemap URLs use this.
+  canonicalUrl: "https://tristategrillcleaning.com",
+  // Hosts where the AI preview tool is hidden (production-facing).
+  // Any other host (e.g. *.vercel.app) shows the tool for testing.
+  publicHosts: ["tristategrillcleaning.com", "www.tristategrillcleaning.com"],
   social: {
     facebook: "https://www.facebook.com/Tristategrillcleaning/",
     instagram: "https://www.instagram.com/cincygrillcleaning/",

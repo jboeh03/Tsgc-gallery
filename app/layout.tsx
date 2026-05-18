@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { SITE } from "@/lib/site";
+import { isPreviewVisible } from "@/lib/preview-flag";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,12 +19,16 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.canonicalUrl),
   title: `${SITE.name} — Cincinnati, NKY & Dayton`,
   description: SITE.tagline,
+  alternates: { canonical: "/" },
   openGraph: {
     title: `${SITE.name} — Cincinnati, NKY & Dayton`,
     description: SITE.tagline,
     type: "website",
+    url: SITE.canonicalUrl,
+    siteName: SITE.name,
   },
 };
 
@@ -32,7 +37,7 @@ const localBusinessSchema = {
   "@type": "LocalBusiness",
   name: SITE.name,
   description: SITE.tagline,
-  url: "https://tristategrillcleaning.com",
+  url: SITE.canonicalUrl,
   telephone: "+16578314276",
   email: SITE.email,
   address: {
@@ -69,7 +74,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col font-sans">
-        <Nav />
+        <Nav showPreview={isPreviewVisible()} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

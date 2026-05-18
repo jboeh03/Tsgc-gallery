@@ -17,6 +17,20 @@ const RAW_TAB      = '📥 Raw Leads';
 const NOTIFY_EMAIL = 'jeff@cincygrillcleaning.com';
 const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
 
+// Email-to-SMS gateway — sends a short text alert to Jeff's phone alongside
+// the lead email. Carriers use these gateway domains:
+//
+//   Verizon:      <10digits>@vtext.com
+//   AT&T:         <10digits>@txt.att.net
+//   T-Mobile:     <10digits>@tmomail.net
+//   US Cellular:  <10digits>@email.uscc.net
+//   Cricket:      <10digits>@mms.cricketwireless.net
+//   Metro by T-Mobile: <10digits>@mymetropcs.com
+//
+// Set to '' to disable. Note: some carriers have been deprecating these
+// gateways; if texts stop arriving consistently, swap to Twilio.
+const SMS_GATEWAY = '6578314276@vtext.com'; // ← Verizon. Swap suffix if Jeff is on another carrier.
+
 // CRM column positions (must match 📋 CRM + Jobs exactly)
 const CRM = {
   LEAD_ID:1, DATE:2, NAME:3, PHONE:4, EMAIL:5, ZIP:6,
@@ -123,6 +137,25 @@ Received:  ${timestamp}`;
     GmailApp.sendEmail(NOTIFY_EMAIL, subject, body);
     if (BACKUP_EMAIL !== NOTIFY_EMAIL) {
       GmailApp.sendEmail(BACKUP_EMAIL, subject, body);
+    }
+
+    // ── Text alert (email-to-SMS gateway) ─────────────────────
+    // Short one-line summary that fits in a single SMS (~160 chars).
+    // Most carrier gateways drop the subject and deliver the body.
+    if (SMS_GATEWAY) {
+      const firstService = services ? services.split(',')[0].trim() : '';
+      const smsParts = [
+        `New TSGC lead: ${name}`,
+        phone || '',
+        firstService,
+        promoLabel || '',
+      ].filter(Boolean);
+      const smsBody = smsParts.join(' · ');
+      try {
+        GmailApp.sendEmail(SMS_GATEWAY, 'New lead', smsBody);
+      } catch (smsErr) {
+        Logger.log('SMS gateway send failed: ' + smsErr.message);
+      }
     }
 
     // ── Auto-reply to customer ─────────────────────────────────

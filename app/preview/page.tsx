@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "Upload a photo of your grill and our AI inspector will give you a personalized condition report and a preview of what it could look like after a Tri-State Grill Cleaning deep clean.",
 };
 
-const BUILD_ID = `v5-${new Date().toISOString().slice(0, 16).replace("T", "-")}`;
+const BUILD_ID = `v6-${new Date().toISOString().slice(0, 16).replace("T", "-")}`;
 
 export default function PreviewPage() {
   return (

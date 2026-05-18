@@ -65,7 +65,13 @@ export default function PreviewClient() {
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<PreviewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [debug, setDebug] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const log = useCallback((msg: string) => {
+    const stamp = new Date().toISOString().slice(11, 19);
+    setDebug((prev) => [...prev, `[${stamp}] ${msg}`]);
+  }, []);
 
   const onFileSelected = useCallback((selected: File | null) => {
     if (!selected) return;
@@ -93,12 +99,14 @@ export default function PreviewClient() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setDebug([]);
     if (!file) {
       setError("Pick a grill photo first.");
       return;
     }
     setError(null);
     setStatus("compressing");
+    log(`compress start (${(file.size / 1024).toFixed(0)} KB input)`);
 
     let imageBase64: string;
     let imageMimeType: "image/jpeg";
@@ -106,53 +114,64 @@ export default function PreviewClient() {
       const compressed = await compressImage(file);
       imageBase64 = compressed.base64;
       imageMimeType = compressed.mimeType;
-    } catch {
+      log(`compress ok (${(imageBase64.length / 1024).toFixed(0)} KB base64)`);
+    } catch (err) {
       setStatus("error");
+      log(`compress FAIL: ${err instanceof Error ? err.message : err}`);
       setError("Couldn't read that photo. Try a different one.");
       return;
     }
 
     setStatus("submitting");
     const formData = new FormData(e.currentTarget);
+    log("fetch start");
 
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(
-      () => controller.abort(),
-      FETCH_TIMEOUT_MS
+    // Promise.race timeout — more reliable on iOS Safari than AbortController
+    // alone for hung connections
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      window.setTimeout(
+        () =>
+          reject(
+            new Error(
+              `Client timeout after ${FETCH_TIMEOUT_MS / 1000}s — server didn't respond`
+            )
+          ),
+        FETCH_TIMEOUT_MS
+      )
     );
 
     try {
-      const res = await fetch("/api/preview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          imageBase64,
-          imageMimeType,
-          email: String(formData.get("email") ?? ""),
-          firstName: String(formData.get("firstName") ?? ""),
-          zip: String(formData.get("zip") ?? ""),
-          consent: formData.get("consent") === "on",
+      const res = (await Promise.race([
+        fetch("/api/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageBase64,
+            imageMimeType,
+            email: String(formData.get("email") ?? ""),
+            firstName: String(formData.get("firstName") ?? ""),
+            zip: String(formData.get("zip") ?? ""),
+            consent: formData.get("consent") === "on",
+          }),
         }),
-      });
+        timeoutPromise,
+      ])) as Response;
+      log(`fetch returned status=${res.status}`);
+
       if (!res.ok) {
         const errBody = (await res.json().catch(() => ({}))) as { error?: string };
+        log(`error body: ${errBody.error ?? "(empty)"}`);
         throw new Error(errBody.error ?? `Server error (${res.status})`);
       }
       const data = (await res.json()) as PreviewResponse;
+      log(`parsed response, hasImage=${!!data.generatedImage}`);
       setResult(data);
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      if (err instanceof DOMException && err.name === "AbortError") {
-        setError(
-          "Analysis timed out after 75 seconds. The server is taking too long — try a smaller photo or try again."
-        );
-      } else {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      }
-    } finally {
-      window.clearTimeout(timeoutId);
+      const msg = err instanceof Error ? err.message : String(err);
+      log(`FAIL: ${msg}`);
+      setError(msg);
     }
   }
 
@@ -281,6 +300,17 @@ export default function PreviewClient() {
         <div className="rounded-md border border-red-300 bg-red-50 text-red-900 px-4 py-3 text-sm">
           {error}
         </div>
+      ) : null}
+
+      {debug.length > 0 ? (
+        <details className="rounded-md border border-border bg-bone px-3 py-2 text-xs">
+          <summary className="cursor-pointer font-mono text-muted">
+            debug log ({debug.length})
+          </summary>
+          <pre className="mt-2 whitespace-pre-wrap break-all font-mono text-[10px] leading-relaxed text-ink/80">
+            {debug.join("\n")}
+          </pre>
+        </details>
       ) : null}
 
       <button

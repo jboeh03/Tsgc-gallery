@@ -21,6 +21,25 @@ function badRequest(message: string) {
   return NextResponse.json({ error: message }, { status: 400 });
 }
 
+const CLAUDE_TIMEOUT_MS = 30_000;
+const GEMINI_TIMEOUT_MS = 40_000;
+
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  label: string
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${label} timeout after ${ms / 1000}s`)),
+        ms
+      )
+    ),
+  ]);
+}
+
 export async function POST(req: NextRequest) {
   let body: PreviewRequestBody;
   try {
@@ -75,10 +94,14 @@ export async function POST(req: NextRequest) {
   const claudeStart = Date.now();
   let assessment;
   try {
-    assessment = await analyzeGrillPhoto({
-      imageBase64: body.imageBase64,
-      imageMimeType: body.imageMimeType,
-    });
+    assessment = await withTimeout(
+      analyzeGrillPhoto({
+        imageBase64: body.imageBase64,
+        imageMimeType: body.imageMimeType,
+      }),
+      CLAUDE_TIMEOUT_MS,
+      "Claude"
+    );
     console.log(`[preview] claude ok in ${Date.now() - claudeStart}ms`);
   } catch (err) {
     console.error(
@@ -98,10 +121,14 @@ export async function POST(req: NextRequest) {
 
   const geminiStart = Date.now();
   const [image, leadId] = await Promise.all([
-    generateCleanedGrill({
-      imageBase64: body.imageBase64,
-      imageMimeType: body.imageMimeType,
-    })
+    withTimeout(
+      generateCleanedGrill({
+        imageBase64: body.imageBase64,
+        imageMimeType: body.imageMimeType,
+      }),
+      GEMINI_TIMEOUT_MS,
+      "Gemini"
+    )
       .then((result) => {
         console.log(
           `[preview] gemini ${result ? "ok" : "skipped/null"} in ${

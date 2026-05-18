@@ -6,7 +6,8 @@
  * gracefully degrades to assessment-only mode.
  */
 
-const GEMINI_MODEL = "gemini-2.5-flash-image-preview";
+// Override via env var if Google renames the model again
+const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash-image";
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const PROMPT = `Transform this dirty grill photo into a realistic "after professional deep cleaning" version of the SAME grill in the SAME location with the SAME lighting.
@@ -65,7 +66,9 @@ export async function generateCleanedGrill(args: {
 
   if (!res.ok) {
     const errText = await res.text().catch(() => "");
-    console.error("[gemini] generation failed", res.status, errText.slice(0, 500));
+    console.error(
+      `[gemini] generation failed model=${GEMINI_MODEL} status=${res.status} body=${errText.slice(0, 800)}`
+    );
     return null;
   }
 

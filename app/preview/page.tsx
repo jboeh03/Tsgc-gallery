@@ -3,11 +3,15 @@ import Link from "next/link";
 import PreviewClient from "@/components/preview/PreviewClient";
 import { SITE } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `See your grill clean (AI preview) | ${SITE.name}`,
   description:
     "Upload a photo of your grill and our AI inspector will give you a personalized condition report and a preview of what it could look like after a Tri-State Grill Cleaning deep clean.",
 };
+
+const BUILD_ID = `v3-${new Date().toISOString().slice(0, 16).replace("T", "-")}`;
 
 export default function PreviewPage() {
   return (
@@ -47,6 +51,10 @@ export default function PreviewPage() {
             <Step n="2" title="Inspect" body="AI grades the buildup and recommends a service tier." />
             <Step n="3" title="Decide" body="Like the preview? Get a real quote — no commitment." />
           </div>
+
+          <p className="mt-8 text-center text-[10px] text-muted/60 font-mono">
+            build {BUILD_ID}
+          </p>
         </div>
       </section>
     </>

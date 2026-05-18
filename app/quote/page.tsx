@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import QuoteForm from "@/components/QuoteForm";
 import { SITE } from "@/lib/site";
 
@@ -28,7 +29,9 @@ export default function QuotePage() {
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-5 py-12 md:py-16 grid gap-12 lg:grid-cols-[1.4fr_1fr] items-start">
           <div className="rounded-xl border border-border bg-white shadow-sm p-6 md:p-8">
-            <QuoteForm />
+            <Suspense fallback={null}>
+              <QuoteForm />
+            </Suspense>
           </div>
 
           <aside>

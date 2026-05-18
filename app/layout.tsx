@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Inter, Oswald } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import PromoBanner from "@/components/PromoBanner";
 import { SITE } from "@/lib/site";
 import { isPreviewVisible } from "@/lib/preview-flag";
+import { isCampaignActive } from "@/lib/campaign";
 import "./globals.css";
 
 const inter = Inter({
@@ -74,6 +76,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col font-sans">
+        <PromoBanner active={isCampaignActive()} />
         <Nav showPreview={isPreviewVisible()} />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -1,7 +1,9 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site";
+import { tierByCode } from "@/lib/campaign";
 
 const SERVICES = [
   "Gas BBQ Grill Cleaning",
@@ -34,6 +36,9 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 export default function QuoteForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const searchParams = useSearchParams();
+  const promoFromUrl = (searchParams?.get("promo") ?? "").toUpperCase();
+  const tier = tierByCode(promoFromUrl);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -233,12 +238,26 @@ export default function QuoteForm() {
         </Field>
       </div>
 
+      {tier ? (
+        <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-navy">
+          <strong className="block font-display tracking-wide uppercase text-burgundy text-xs">
+            {tier.label} · {tier.percent}% off applied
+          </strong>
+          <span className="mt-1 block leading-relaxed">
+            {tier.id === "neighbor"
+              ? "Please list your neighbor's name & address (or your second grill's details) in the notes below so we can coordinate."
+              : tier.blurb}
+          </span>
+        </div>
+      ) : null}
+
       <Field label="Promo Code" sub="Optional" htmlFor="promoCode">
         <input
           id="promoCode"
           name="promoCode"
           type="text"
-          placeholder="e.g. MOTHERSDAY2026"
+          defaultValue={tier ? tier.code : ""}
+          placeholder="e.g. MEMORIAL10"
           className={`${inputCls} uppercase`}
           style={{ textTransform: "uppercase" }}
         />

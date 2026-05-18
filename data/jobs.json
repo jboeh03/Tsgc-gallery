@@ -1,6 +1,19 @@
 {
   "jobs": [
     {
+      "id": "tsg-015",
+      "neighborhood": "West Chester, OH",
+      "date": "2026-05-18",
+      "grillType": "gas",
+      "grillModel": "Weber Genesis II 3-burner (GS4)",
+      "serviceHours": 2.5,
+      "beforeImage": "/gallery/tsg-015-before.webp",
+      "afterImage": "/gallery/tsg-015-after.webp",
+      "beforeAlt": "Before: Weber Genesis II 3-burner gas grill mid-service in a West Chester backyard — grates removed, heat shields and burner area exposed with carbonized buildup",
+      "afterAlt": "After: same Weber Genesis II 3-burner with clean grates reinstalled, a polished cookbox interior, and a clear control panel",
+      "featured": false
+    },
+    {
       "id": "tsg-014",
       "neighborhood": "Cincinnati, OH",
       "date": "2026-05-17",

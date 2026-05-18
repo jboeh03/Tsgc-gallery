@@ -59,28 +59,64 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const imageBytes = Math.round(body.imageBase64.length * 0.75);
+  console.log(
+    `[preview] start ip=${ip} email=${body.email} imageBytes=${imageBytes}`
+  );
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("[preview] ANTHROPIC_API_KEY not set in this environment");
+    return NextResponse.json(
+      { error: "Server is missing the Anthropic API key." },
+      { status: 500 }
+    );
+  }
+
+  const claudeStart = Date.now();
   let assessment;
   try {
     assessment = await analyzeGrillPhoto({
       imageBase64: body.imageBase64,
       imageMimeType: body.imageMimeType,
     });
+    console.log(`[preview] claude ok in ${Date.now() - claudeStart}ms`);
   } catch (err) {
-    console.error("[preview] Claude analysis failed", err);
+    console.error(
+      `[preview] claude failed after ${Date.now() - claudeStart}ms`,
+      err instanceof Error ? `${err.name}: ${err.message}` : err
+    );
     return NextResponse.json(
-      { error: "Couldn't analyze the photo. Please try again." },
+      {
+        error:
+          err instanceof Error
+            ? `Claude analysis failed: ${err.message}`
+            : "Couldn't analyze the photo. Please try again.",
+      },
       { status: 500 }
     );
   }
 
+  const geminiStart = Date.now();
   const [image, leadId] = await Promise.all([
     generateCleanedGrill({
       imageBase64: body.imageBase64,
       imageMimeType: body.imageMimeType,
-    }).catch((err) => {
-      console.error("[preview] Gemini generation failed", err);
-      return null;
-    }),
+    })
+      .then((result) => {
+        console.log(
+          `[preview] gemini ${result ? "ok" : "skipped/null"} in ${
+            Date.now() - geminiStart
+          }ms`
+        );
+        return result;
+      })
+      .catch((err) => {
+        console.error(
+          `[preview] gemini failed after ${Date.now() - geminiStart}ms`,
+          err instanceof Error ? `${err.name}: ${err.message}` : err
+        );
+        return null;
+      }),
     captureLead({
       email: body.email,
       firstName: body.firstName,
@@ -89,6 +125,8 @@ export async function POST(req: NextRequest) {
       ip,
     }),
   ]);
+
+  console.log(`[preview] done leadId=${leadId} hasImage=${!!image}`);
 
   const response: PreviewResponse = {
     assessment,

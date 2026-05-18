@@ -8,8 +8,9 @@ import type { PreviewResponse } from "@/lib/preview/types";
 
 type Status = "idle" | "compressing" | "submitting" | "success" | "error";
 
-const MAX_LONG_EDGE = 1600;
-const JPEG_QUALITY = 0.85;
+const MAX_LONG_EDGE = 1280;
+const JPEG_QUALITY = 0.82;
+const FETCH_TIMEOUT_MS = 75_000;
 
 async function compressImage(
   file: File
@@ -114,10 +115,17 @@ export default function PreviewClient() {
     setStatus("submitting");
     const formData = new FormData(e.currentTarget);
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(
+      () => controller.abort(),
+      FETCH_TIMEOUT_MS
+    );
+
     try {
       const res = await fetch("/api/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           imageBase64,
           imageMimeType,
@@ -129,14 +137,22 @@ export default function PreviewClient() {
       });
       if (!res.ok) {
         const errBody = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(errBody.error ?? "Something went wrong");
+        throw new Error(errBody.error ?? `Server error (${res.status})`);
       }
       const data = (await res.json()) as PreviewResponse;
       setResult(data);
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError(
+          "Analysis timed out after 75 seconds. The server is taking too long — try a smaller photo or try again."
+        );
+      } else {
+        setError(err instanceof Error ? err.message : "Something went wrong");
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
     }
   }
 

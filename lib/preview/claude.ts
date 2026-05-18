@@ -82,8 +82,12 @@ export async function analyzeGrillPhoto(args: {
                 "unknown",
               ],
             },
-            brandDetected: { type: ["string", "null"] },
-            burnerCount: { type: ["integer", "null"] },
+            brandDetected: {
+              anyOf: [{ type: "string" }, { type: "null" }],
+            },
+            burnerCount: {
+              anyOf: [{ type: "integer" }, { type: "null" }],
+            },
             conditionIssues: { type: "array", items: { type: "string" } },
             conditionSeverity: {
               type: "string",

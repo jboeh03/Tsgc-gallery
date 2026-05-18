@@ -22,7 +22,7 @@ export const SITE = {
   // Any other host (e.g. *.vercel.app) shows the tool for testing.
   publicHosts: ["tristategrillcleaning.com", "www.tristategrillcleaning.com"],
   social: {
-    facebook: "https://www.facebook.com/share/1ECnm2S6Ju/?mibextid=wwXIfr",
+    facebook: "https://www.facebook.com/share/1ECnm2S6Ju/",
     instagram: "https://www.instagram.com/cincygrillcleaning/",
     googleReview:
       "https://www.google.com/maps?cid=306553952702723641&action=write-review",

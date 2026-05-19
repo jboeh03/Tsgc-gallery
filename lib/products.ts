@@ -6,8 +6,23 @@
  * order from this file — items appear in the order they're listed within
  * their category, and categories appear in the order defined below.
  *
+ * Affiliate IDs (do not change without updating both programs):
+ *   - Amazon Associates tag:  tarchlabs-20  (use the AMAZON_TAG helper, or
+ *     pre-built amzn.to shortlinks that already carry the tag).
+ *   - Grill Parts Replacement: ?ref=zsgtagbs  (use GPR_BASE for the
+ *     storefront, or append &ref=zsgtagbs to any product URL).
+ *
  * Affiliate disclosure copy lives in app/products/page.tsx.
  */
+
+export const AMAZON_TAG = "tarchlabs-20";
+export const GPR_BASE = "https://grillpartsreplacement.com/?ref=zsgtagbs";
+
+/** Build an Amazon search URL pre-tagged with our Associates ID. */
+export function amazonSearch(query: string): string {
+  const q = encodeURIComponent(query);
+  return `https://www.amazon.com/s?k=${q}&tag=${AMAZON_TAG}`;
+}
 
 export type Product = {
   id: string;
@@ -81,6 +96,43 @@ export const PRODUCTS: Product[] = [
     url: "https://amzn.to/4uppPvs",
     affiliate: "Amazon",
     featured: true,
+  },
+  {
+    id: "weber-spirit-genesis-grates",
+    name: "Weber Spirit & Genesis Cooking Grates",
+    brand: "Weber",
+    category: "grates",
+    description:
+      "Cast-iron and stainless replacement grates for Weber Spirit II and Genesis II 2-, 3-, and 4-burner grills. Aftermarket pricing, factory fit.",
+    techNote:
+      "OEM Weber grates run $90+ a set. The aftermarket cast iron from GPR holds heat just as well for about half — what we recommend to most customers unless the grill is brand new.",
+    url: GPR_BASE,
+    affiliate: "Grill Parts Replacement",
+    featured: true,
+  },
+  {
+    id: "char-broil-grease-tray",
+    name: "Char-Broil Grease Tray / Cup",
+    brand: "Char-Broil",
+    category: "parts",
+    description:
+      "Replacement grease pan and cup for most Char-Broil 2-, 3-, and 4-burner gas grills. Sized to drop right into the existing rails.",
+    techNote:
+      "Hands down the #1 part we replace on Char-Broils — the stamped trays rust through in 3-4 seasons. If yours is flaking, swap it before it leaks onto the burner box.",
+    url: GPR_BASE,
+    affiliate: "Grill Parts Replacement",
+    featured: true,
+  },
+  {
+    id: "heavy-duty-degreaser",
+    name: "Heavy-Duty BBQ Degreaser",
+    category: "cleaning",
+    description:
+      "Pro-strength citrus or oven-cleaner degreaser for in-between service upkeep. Spray on cold metal, let it sit 10-15 minutes, wipe with a damp microfiber — no wire brush needed.",
+    techNote:
+      "Skip the consumer-grade \"grill sprays.\" Easy-Off Heavy Duty (yellow can) or ZEP Citrus are what we actually use. Wear nitrile gloves and keep it off rubber gaskets and aluminum trim.",
+    url: amazonSearch("zep heavy duty citrus degreaser"),
+    affiliate: "Amazon",
   },
 ];
 

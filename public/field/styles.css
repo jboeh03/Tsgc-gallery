@@ -1,0 +1,309 @@
+/* Tri-State Grill Cleaning — brand styles on top of Tailwind */
+
+:root {
+  --navy:       #1A3055;
+  --navy-light: #2C4A6E;
+  --navy-dark:  #122440;
+  --burgundy:   #8B1F2F;
+  --burgundy-light: #A83040;
+  --cream:      #F7F3EE;
+  --cream-dark: #EDE8E0;
+  --charcoal:   #3D3D3A;
+  --muted:      #6B6B67;
+  --brand-border: rgba(26, 48, 85, 0.12);
+  --brand-shadow-sm:  0 1px 3px rgba(26, 48, 85, 0.08);
+  --brand-shadow-md:  0 4px 16px rgba(26, 48, 85, 0.10);
+  --brand-shadow-lg:  0 8px 32px rgba(26, 48, 85, 0.14);
+}
+
+html, body { -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--charcoal);
+  background: var(--cream);
+  line-height: 1.65;
+}
+
+input, select, textarea, button { font: inherit; }
+input, select, textarea { font-size: 16px; } /* prevent iOS zoom */
+
+/* Headlines / display */
+h1, h2, h3, h4,
+.font-display {
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  font-weight: 600;
+}
+h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: 0.04em; }
+h2 { font-size: 1.25rem; font-weight: 700; }
+h3 { font-size: 1rem;    font-weight: 600; }
+
+/* ---------- Tab bar ---------- */
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  height: 62px;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.tab svg { width: 21px; height: 21px; }
+.tab[aria-current="page"] { color: #fff; }
+.tab[aria-current="page"] .tab-fab {
+  background: var(--burgundy);
+  color: #fff;
+  box-shadow: var(--brand-shadow-md);
+}
+
+.tab-center { position: relative; padding-top: 0; }
+.tab-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; height: 48px;
+  border-radius: 9999px;
+  background: var(--burgundy);
+  color: #fff;
+  margin-top: -18px;
+  margin-bottom: 2px;
+  box-shadow: var(--brand-shadow-md);
+}
+.tab-center .tab-fab svg { width: 22px; height: 22px; }
+
+/* ---------- Side menu ---------- */
+.menu-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+  font-weight: 500;
+}
+.menu-link:hover, .menu-link:active {
+  background: var(--navy-light);
+  color: #fff;
+  border-left: 3px solid var(--burgundy);
+  padding-left: 9px;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: #fff;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: var(--brand-shadow-sm);
+}
+.card-hover { transition: transform 120ms ease, box-shadow 120ms ease; }
+.card-hover:active {
+  transform: translateY(1px);
+  box-shadow: var(--brand-shadow-sm);
+}
+.card-hover:hover {
+  box-shadow: var(--brand-shadow-md);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 6px;
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 2px solid transparent;
+  transition: transform 80ms ease, background 120ms ease, color 120ms ease, border-color 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--burgundy);
+  color: #fff;
+  border-color: var(--burgundy);
+}
+.btn-primary:hover { background: var(--burgundy-light); border-color: var(--burgundy-light); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+.btn-secondary:hover { background: var(--navy); color: #fff; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border-color: transparent;
+  font-weight: 500;
+}
+.btn-ghost:hover { color: var(--navy); }
+
+.btn-danger {
+  background: #fff;
+  color: var(--burgundy);
+  border-color: var(--burgundy);
+}
+.btn-danger:hover { background: var(--burgundy); color: #fff; }
+
+.btn-sm { padding: 8px 14px; font-size: 11px; border-radius: 6px; letter-spacing: 0.1em; }
+.btn-block { width: 100%; }
+
+/* ---------- Inputs ---------- */
+.input, .select, .textarea {
+  display: block;
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--brand-border);
+  border-radius: 6px;
+  padding: 11px 14px;
+  color: var(--charcoal);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.input::placeholder, .textarea::placeholder { color: var(--muted); }
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(26, 48, 85, 0.10);
+}
+
+.label {
+  display: block;
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 2px 6px;
+}
+
+/* ---------- Pills / chips ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--cream);
+  color: var(--navy);
+  font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--brand-border);
+  line-height: 1.1;
+}
+.chip-burgundy, .chip-warn {
+  background: var(--burgundy);
+  color: #fff;
+  border-color: var(--burgundy);
+}
+.chip-navy, .chip-info {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+.chip-ok {
+  background: #EAF3DE;
+  color: #3B6D11;
+  border-color: rgba(59, 109, 17, 0.25);
+}
+
+/* Eyebrow labels — for "BEFORE" / "AFTER" overlays etc. */
+.eyebrow {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--burgundy);
+}
+
+/* ---------- Misc ---------- */
+.divider { height: 1px; background: var(--brand-border); margin: 12px 0; }
+
+.list > * + * { border-top: 1px solid var(--brand-border); }
+
+.empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+}
+.empty svg { margin: 0 auto 8px; opacity: 0.6; }
+
+.photo {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--brand-border);
+  object-fit: cover;
+  background: var(--cream-dark);
+  box-shadow: var(--brand-shadow-sm);
+}
+
+.sticky-estimate {
+  position: sticky;
+  bottom: calc(env(safe-area-inset-bottom) + 72px);
+  z-index: 20;
+}
+
+/* Override Tailwind ink-* classes still used in older view files until they get rewritten */
+.text-ink-100 { color: var(--charcoal); }
+.text-ink-200 { color: var(--charcoal); }
+.text-ink-300 { color: var(--muted); }
+.text-ink-400 { color: var(--muted); }
+.text-ink-500 { color: var(--muted); }
+.bg-ink-700 { background: var(--cream-dark); }
+.bg-ink-800 { background: #fff; }
+.bg-ink-900 { background: var(--cream); }
+.border-ink-700 { border-color: var(--brand-border); }
+.border-ink-600 { border-color: var(--brand-border); }
+.bg-ink-700\/40 { background: var(--cream-dark); }
+.bg-ink-900\/95 { background: #fff; }
+.bg-ink-800\/95 { background: var(--navy); }
+.text-brand-500 { color: var(--burgundy); }
+.text-brand-600 { color: var(--burgundy); }
+.text-ink-100, .text-ink-200, .text-ink-300, .text-ink-400 { font-family: inherit; }
+details[open] > summary { margin-bottom: 6px; }
+summary { list-style: none; }
+summary::-webkit-details-marker { display: none; }
+
+/* Desktop chrome */
+@media (min-width: 720px) {
+  body { background: var(--cream-dark); }
+  #app {
+    max-width: 540px;
+    margin: 0 auto;
+    background: var(--cream);
+    min-height: 100vh;
+    border-left: 1px solid var(--brand-border);
+    border-right: 1px solid var(--brand-border);
+    box-shadow: var(--brand-shadow-md);
+  }
+  #menu aside {
+    right: auto;
+    left: 50%;
+    transform: translateX(calc(540px / 2 - 100%));
+  }
+}

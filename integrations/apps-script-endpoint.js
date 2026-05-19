@@ -31,6 +31,11 @@ const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
 // gateways; if texts stop arriving consistently, swap to Twilio.
 const SMS_GATEWAY = '6578314276@vtext.com'; // ← Verizon. Swap suffix if Jeff is on another carrier.
 
+// Field-agent base URL. Used to build the "Add as job →" deep link in the
+// alert email — the field app reads name/phone/email/etc. from the URL
+// query and prefills its New Job form.
+const FIELD_APP_URL = 'https://tristategrillcleaning.com/field/';
+
 // CRM column positions (must match 📋 CRM + Jobs exactly)
 const CRM = {
   LEAD_ID:1, DATE:2, NAME:3, PHONE:4, EMAIL:5, ZIP:6,
@@ -120,7 +125,32 @@ function doPost(e) {
     const notesLine  = notes      ? `\nNotes:    ${notes}`      : '';
     const timeLine   = bestTime   ? `\nBest time: ${bestTime}`  : '';
     const subject    = `New Website Lead: ${name} — ${services.split(',')[0].trim()}`;
-    const body =
+
+    // Deep link into the field app's New Job form, pre-filled from this lead.
+    // The field-agent's #/jobs/new view reads these query params (see
+    // public/field/js/views/newJob.js → applyQueryPrefill).
+    const fieldNotesParts = [];
+    if (services)   fieldNotesParts.push(`Requested: ${services}`);
+    if (zip)        fieldNotesParts.push(`ZIP ${zip}`);
+    if (bestTime)   fieldNotesParts.push(`Best time: ${bestTime}`);
+    if (promoLabel) fieldNotesParts.push(promoLabel);
+    if (referredBy) fieldNotesParts.push(`Referred by ${referredBy}`);
+    if (notes)      fieldNotesParts.push(notes);
+    const deepLinkParams = {
+      source: 'Website lead',
+      name:   name,
+      phone:  phone,
+      email:  email,
+      model:  grillModel,
+      notes:  fieldNotesParts.join(' · '),
+    };
+    const qs = Object.keys(deepLinkParams)
+      .filter(function (k) { return deepLinkParams[k]; })
+      .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(deepLinkParams[k]); })
+      .join('&');
+    const addAsJobUrl = FIELD_APP_URL + '#/jobs/new?' + qs;
+
+    const plainBody =
 `New inquiry from tristategrillcleaning.com
 
 Name:     ${name}
@@ -131,12 +161,45 @@ Services: ${services}
 Grill:    ${grillModel || '(not provided)'}
 Source:   ${source}${referredBy ? '\nReferred: ' + referredBy : ''}${timeLine}${promoLine}${notesLine}
 
+➤ Add as job:  ${addAsJobUrl}
+
 CRM Sheet: https://docs.google.com/spreadsheets/d/${SHEET_ID}
 Received:  ${timestamp}`;
 
-    GmailApp.sendEmail(NOTIFY_EMAIL, subject, body);
+    // HTML body keeps the plaintext layout but turns the deep link into a
+    // big tappable button so iOS Mail / Gmail show it as a clear CTA.
+    const htmlEscape = function (s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    };
+    const htmlBody =
+'<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:#1A3055;max-width:560px">' +
+  '<p style="margin:0 0 12px"><strong>New inquiry from tristategrillcleaning.com</strong></p>' +
+  '<table cellpadding="3" style="border-collapse:collapse;font-size:14px">' +
+    '<tr><td style="color:#666">Name</td><td><strong>' + htmlEscape(name) + '</strong></td></tr>' +
+    '<tr><td style="color:#666">Phone</td><td>' + htmlEscape(phone) + '</td></tr>' +
+    '<tr><td style="color:#666">Email</td><td>' + htmlEscape(email) + '</td></tr>' +
+    '<tr><td style="color:#666">ZIP</td><td>' + htmlEscape(zip) + '</td></tr>' +
+    '<tr><td style="color:#666">Services</td><td>' + htmlEscape(services) + '</td></tr>' +
+    '<tr><td style="color:#666">Grill</td><td>' + htmlEscape(grillModel || '(not provided)') + '</td></tr>' +
+    (bestTime   ? '<tr><td style="color:#666">Best time</td><td>' + htmlEscape(bestTime) + '</td></tr>' : '') +
+    (referredBy ? '<tr><td style="color:#666">Referred</td><td>' + htmlEscape(referredBy) + '</td></tr>' : '') +
+    (promoLabel ? '<tr><td style="color:#666">Promo</td><td>' + htmlEscape(promoLabel) + '</td></tr>' : '') +
+    (notes      ? '<tr><td style="color:#666">Notes</td><td>' + htmlEscape(notes) + '</td></tr>' : '') +
+  '</table>' +
+  '<p style="margin:20px 0">' +
+    '<a href="' + addAsJobUrl + '" style="display:inline-block;background:#8B1F2F;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:600">Add this lead as a job →</a>' +
+  '</p>' +
+  '<p style="margin:0;font-size:12px;color:#888">' +
+    'CRM Sheet: <a href="https://docs.google.com/spreadsheets/d/' + SHEET_ID + '">' + SHEET_ID + '</a><br>' +
+    'Received: ' + htmlEscape(timestamp) +
+  '</p>' +
+'</div>';
+
+    GmailApp.sendEmail(NOTIFY_EMAIL, subject, plainBody, { htmlBody: htmlBody });
     if (BACKUP_EMAIL !== NOTIFY_EMAIL) {
-      GmailApp.sendEmail(BACKUP_EMAIL, subject, body);
+      GmailApp.sendEmail(BACKUP_EMAIL, subject, plainBody, { htmlBody: htmlBody });
     }
 
     // ── Text alert (email-to-SMS gateway) ─────────────────────

@@ -33,6 +33,18 @@ export type Product = {
   description: string;
   /** What we like / when we'd recommend it. Optional. */
   techNote?: string;
+  /**
+   * Optional product image, served from /public. Drop a square JPG/PNG/WEBP
+   * (~600-800px is plenty — Next.js will optimize) at
+   *   public/products/<id>.jpg
+   * and set this to `/products/<id>.jpg`. If left undefined, the page
+   * falls back to a branded category placeholder.
+   *
+   * Sourcing note: don't hotlink Amazon product images — that's against
+   * the Associates ToS. Use the manufacturer's press kit, GPR's product
+   * page, or your own photos from a service visit.
+   */
+  image?: string;
   /** The affiliate URL (Amazon shortlink, grillpartsreplacement, etc.). */
   url: string;
   /** Marketplace label shown on the button. */

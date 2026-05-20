@@ -99,7 +99,7 @@ export default function ProductsPage() {
                           {p.affiliate}
                         </span>
                         <a
-                          href={p.url}
+                          href={`/api/track/click?id=${encodeURIComponent(p.id)}`}
                           target="_blank"
                           rel="sponsored noopener noreferrer"
                           className="inline-flex items-center gap-2 rounded-md bg-burgundy hover:bg-burgundy-700 text-bone px-4 py-2 text-sm font-semibold transition"

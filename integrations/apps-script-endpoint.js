@@ -54,6 +54,14 @@ function doPost(e) {
     const raw  = e.postData ? e.postData.contents : '{}';
     const data = JSON.parse(raw);
 
+    // Event-kind dispatch. The default ('lead') preserves the existing
+    // contract for the website contact form. Other kinds — fired by the
+    // admin dashboard's tracking endpoints — log to dedicated tabs.
+    const kind = (data.kind || 'lead').toString();
+    if (kind === 'affiliate_click') {
+      return handleAffiliateClick_(data);
+    }
+
     // ── Build lead record ─────────────────────────────────────
     const firstName = (data.firstName || '').trim();
     const lastName  = (data.lastName  || '').trim();
@@ -192,6 +200,43 @@ function ok_(msg) {
   return ContentService
     .createTextOutput(JSON.stringify({ success: true, message: msg }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ── Affiliate click logger ───────────────────────────────────
+// Appends a row to the "🔗 Affiliate Clicks" tab, creating it with
+// a header row the first time. Called from the Next.js
+// /api/track/click route when a visitor clicks a product card on the
+// /products page. Logging is best-effort — never alerts on errors.
+function handleAffiliateClick_(data) {
+  try {
+    const ss   = SpreadsheetApp.openById(SHEET_ID);
+    const TAB  = '🔗 Affiliate Clicks';
+    let sheet  = ss.getSheetByName(TAB);
+    if (!sheet) {
+      sheet = ss.insertSheet(TAB);
+      const headers = [
+        'Timestamp', 'Product ID', 'Product Name',
+        'Affiliate', 'Destination', 'Referer', 'User Agent'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    }
+    const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    sheet.appendRow([
+      ts,
+      (data.productId    || '').toString(),
+      (data.productName  || '').toString(),
+      (data.affiliate    || '').toString(),
+      (data.destinationUrl || '').toString(),
+      (data.referer      || '').toString(),
+      (data.userAgent    || '').toString().slice(0, 240),
+    ]);
+    return ok_('Click logged');
+  } catch (err) {
+    Logger.log('Click log failed: ' + err.message);
+    return ok_('Error: ' + err.message);
+  }
 }
 
 function doGet() {

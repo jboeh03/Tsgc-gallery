@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working guidelines
+
+- **Think before coding.** State assumptions explicitly; if uncertain or multiple interpretations exist, ask rather than pick silently. Surface a simpler approach when one exists.
+- **Simplicity first.** Write the minimum code that solves the problem — no speculative features, abstractions for single-use code, or error handling for impossible cases.
+- **Surgical changes.** Touch only what the task requires. Match existing style, don't refactor or reformat adjacent code, and only remove orphans your own change created. Flag pre-existing dead code instead of deleting it.
+- **Goal-driven execution.** Turn the task into a verifiable success criterion and loop until it's met (e.g. `npm run typecheck` + `npm run lint` clean, the page behaves as intended in the browser).
+
 ## Commands
 
 ```bash

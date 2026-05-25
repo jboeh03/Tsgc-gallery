@@ -11,6 +11,7 @@ const KNOWN_PROMOS: Record<string, string> = {
   SUMMER2026: "Summer 2026 Promo",
   MEMORIAL2026: "Memorial Day 2026",
   LABORDAY2026: "Labor Day 2026",
+  GIVEAWAY2026: "Weber Spirit II Giveaway 2026",
   JASON10: "Jason Referral — 10% off",
   FACEBOOK10: "Facebook Promo — 10% off",
 };
@@ -141,6 +142,8 @@ export default async function CampaignsPage({
             Bookings are matched by reading <code className="bg-white px-1.5 rounded">Notes</code>{" "}
             on the CRM tab for the <code className="bg-white px-1.5 rounded">Promo: CODE</code>{" "}
             pattern. Update the CRM &quot;Notes&quot; field on a job to credit a sale to a code.
+            Giveaway entries land in the <code className="bg-white px-1.5 rounded">🎁 Giveaway Entries</code> tab
+            of the same sheet and are tracked separately from leads.
           </p>
         </div>
       </div>

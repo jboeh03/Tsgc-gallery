@@ -14,6 +14,7 @@ const SHEET_ID     = '18DaRXOuAI8VjYd1qrpy-rr9SoOTi57VpfPOx05aolCo';
 const SHEET_NAME   = '🌐 Website Leads';
 const CRM_TAB      = '📋 CRM + Jobs';
 const RAW_TAB      = '📥 Raw Leads';
+const GIVEAWAY_TAB = '🎁 Giveaway Entries';
 const NOTIFY_EMAIL = 'jeff@cincygrillcleaning.com';
 const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
 
@@ -44,6 +45,7 @@ const PROMO_CODES = {
   'SUMMER2026':     'Summer 2026 Promo',
   'MEMORIAL2026':   'Memorial Day 2026',
   'LABORDAY2026':   'Labor Day 2026',
+  'GIVEAWAY2026':   'Weber Spirit II Giveaway 2026',
   'JASON10':        'Jason Referral — 10% off',
   'FACEBOOK10':     'Facebook Promo — 10% off',
   // Add new codes here as campaigns launch
@@ -54,12 +56,15 @@ function doPost(e) {
     const raw  = e.postData ? e.postData.contents : '{}';
     const data = JSON.parse(raw);
 
-    // Event-kind dispatch. The default ('lead') preserves the existing
-    // contract for the website contact form. Other kinds — fired by the
-    // admin dashboard's tracking endpoints — log to dedicated tabs.
+    // Event-kind dispatch.
     const kind = (data.kind || 'lead').toString();
+
     if (kind === 'affiliate_click') {
       return handleAffiliateClick_(data);
+    }
+
+    if (kind === 'giveaway_entry') {
+      return handleGiveawayEntry_(data);
     }
 
     // ── Build lead record ─────────────────────────────────────
@@ -202,7 +207,239 @@ function ok_(msg) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── Affiliate click logger ───────────────────────────────────
+// ── Giveaway entry handler ───────────────────────────────────────────────────
+//
+// Writes to the "🎁 Giveaway Entries" tab. Columns:
+//   Timestamp | Entry ID | Name | Email | Phone | ZIP
+//   Base Entries | Bonus Booking | Bonus Share | Bonus Follow | Total Entries
+//   Booking Ref | Giveaway ID | Status | Notes
+//
+// Status is set to VALID on write. Duplicates (same email) are flagged DUPLICATE.
+// Booking bonuses are flagged PENDING_VERIFICATION until runGiveawayDraw_ confirms them.
+//
+function handleGiveawayEntry_(data) {
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    let sheet = ss.getSheetByName(GIVEAWAY_TAB);
+
+    if (!sheet) {
+      sheet = ss.insertSheet(GIVEAWAY_TAB);
+      const headers = [
+        'Timestamp', 'Entry ID', 'Name', 'Email', 'Phone', 'ZIP',
+        'Base Entries', 'Bonus Booking', 'Bonus Share', 'Bonus Follow',
+        'Total Entries', 'Booking Ref', 'Giveaway ID', 'Status', 'Notes'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    }
+
+    const firstName  = (data.firstName  || '').trim();
+    const lastName   = (data.lastName   || '').trim();
+    const name       = [firstName, lastName].filter(Boolean).join(' ') || 'Unknown';
+    const email      = (data.email      || '').trim().toLowerCase();
+    const phone      = (data.phone      || '').trim();
+    const zip        = (data.zip        || '').trim();
+    const bookingRef = (data.bookingRef || '').trim();
+    const giveawayId = (data.giveawayId || '').trim();
+
+    const baseEntries   = parseInt(data.baseEntries,   10) || 1;
+    const bonusBooking  = parseInt(data.bonusBooking,  10) || 0;
+    const bonusShare    = parseInt(data.bonusShare,    10) || 0;
+    const bonusFollow   = parseInt(data.bonusFollow,   10) || 0;
+    const totalEntries  = Math.min(baseEntries + bonusBooking + bonusShare + bonusFollow, 5);
+
+    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const entryId   = 'GW-' + Date.now().toString(36).toUpperCase();
+
+    // Duplicate check — scan existing entries for same email
+    const allRows   = sheet.getDataRange().getValues();
+    let isDuplicate = false;
+    for (let i = 1; i < allRows.length; i++) {
+      if ((allRows[i][3] || '').toString().toLowerCase() === email) {
+        isDuplicate = true;
+        break;
+      }
+    }
+
+    // Booking bonus is initially unverified — mark for review
+    const bookingNote = bonusBooking > 0 && !isDuplicate
+      ? 'Booking bonus PENDING_VERIFICATION'
+      : '';
+    const status = isDuplicate ? 'DUPLICATE' : 'VALID';
+    const notes  = [
+      isDuplicate ? 'Duplicate email — first entry kept, this entry void' : '',
+      bookingNote,
+    ].filter(Boolean).join(' | ');
+
+    sheet.appendRow([
+      timestamp, entryId, name, email, phone, zip,
+      baseEntries, bonusBooking, bonusShare, bonusFollow,
+      totalEntries, bookingRef, giveawayId, status, notes
+    ]);
+
+    // Alert Jeff
+    const subject = `New Giveaway Entry: ${name} — ${totalEntries} ${totalEntries === 1 ? 'entry' : 'entries'}${isDuplicate ? ' [DUPLICATE]' : ''}`;
+    const body =
+`New giveaway entry from tristategrillcleaning.com/giveaway
+
+Entry ID:  ${entryId}
+Name:      ${name}
+Email:     ${email}
+Phone:     ${phone}
+ZIP:       ${zip}
+Entries:   ${totalEntries} (base: ${baseEntries}, booking: ${bonusBooking}, share: ${bonusShare}, follow: ${bonusFollow})
+Booking ref: ${bookingRef || '(none)'}
+Status:    ${status}
+${notes ? 'Notes: ' + notes : ''}
+
+Giveaway sheet: https://docs.google.com/spreadsheets/d/${SHEET_ID}
+Received: ${timestamp}`;
+
+    GmailApp.sendEmail(NOTIFY_EMAIL, subject, body);
+    if (BACKUP_EMAIL !== NOTIFY_EMAIL) {
+      GmailApp.sendEmail(BACKUP_EMAIL, subject, body);
+    }
+
+    // SMS alert for new valid entries
+    if (SMS_GATEWAY && !isDuplicate) {
+      try {
+        GmailApp.sendEmail(SMS_GATEWAY, 'Giveaway entry',
+          `Giveaway: ${name} · ${totalEntries} entries · ${phone}`);
+      } catch (smsErr) {
+        Logger.log('Giveaway SMS failed: ' + smsErr.message);
+      }
+    }
+
+    // Auto-reply to entrant (valid entries only)
+    if (!isDuplicate && email && email.includes('@')) {
+      GmailApp.sendEmail(email,
+        "You're entered — Tri-State Grill Cleaning Giveaway",
+`Hi ${firstName || 'there'},
+
+You're officially entered in the Tri-State Grill Cleaning Weber Spirit II Giveaway!
+
+Your entries: ${totalEntries} out of a possible 5
+Entry ID: ${entryId}
+
+The winner will be announced via email and phone. Make sure to keep an eye out — we'll reach out directly if you win.
+
+No purchase was necessary to enter and none is required to win.
+
+Good luck,
+— Jeff
+Tri-State Grill Cleaning
+(657) 831-4276
+tristategrillcleaning.com`,
+        { name: 'Tri-State Grill Cleaning', replyTo: NOTIFY_EMAIL }
+      );
+    }
+
+    return ok_('Giveaway entry received');
+
+  } catch (err) {
+    Logger.log('handleGiveawayEntry_ error: ' + err.message);
+    return ok_('Error: ' + err.message);
+  }
+}
+
+// ── Giveaway draw ─────────────────────────────────────────────────────────────
+//
+// Run this function manually from the Apps Script editor AFTER the Entry Period closes.
+// Before running:
+//   1. Review the 🎁 Giveaway Entries tab and mark any unverified booking bonuses:
+//      - Cross-reference booking refs against the CRM tab
+//      - For valid bookings: leave Bonus Booking as-is
+//      - For invalid/unverified bookings: set Bonus Booking column to 0 and
+//        recalculate Total Entries manually (or re-run the entry)
+//   2. Confirm no VALID entries need to be voided for eligibility reasons
+//
+// The function logs:
+//   - Total valid entrant count
+//   - Total weighted pool size (used to calculate odds: 1/pool per entry)
+//   - All three winners (Grand, 2nd, 3rd) with name, email, and Entry ID
+//
+// Save the execution log as the documented draw record.
+//
+function runGiveawayDraw() {
+  const ss    = SpreadsheetApp.openById(SHEET_ID);
+  const sheet = ss.getSheetByName(GIVEAWAY_TAB);
+
+  if (!sheet) {
+    Logger.log('ERROR: No "' + GIVEAWAY_TAB + '" tab found. No entries have been received.');
+    return;
+  }
+
+  const rows    = sheet.getDataRange().getValues();
+  const entries = rows.slice(1); // skip header
+
+  // Only draw from VALID entries (not DUPLICATE or manually voided)
+  const validEntries = entries.filter(function(r) {
+    return (r[13] || '').toString().toUpperCase() === 'VALID';
+  });
+
+  Logger.log('=== TSGC WEBER SPIRIT II GIVEAWAY DRAW ===');
+  Logger.log('Draw timestamp: ' + new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  Logger.log('Total valid entrants: ' + validEntries.length);
+
+  if (validEntries.length === 0) {
+    Logger.log('ERROR: No valid entries to draw from.');
+    return;
+  }
+
+  // Build weighted pool: each entrant appears once per Total Entries value
+  // Columns: [0]Timestamp [1]EntryID [2]Name [3]Email [4]Phone [5]ZIP
+  //          [6]Base [7]BonusBooking [8]BonusShare [9]BonusFollow [10]TotalEntries
+  var pool = [];
+  validEntries.forEach(function(row) {
+    var entryId      = (row[1] || '').toString();
+    var name         = (row[2] || '').toString();
+    var email        = (row[3] || '').toString();
+    var totalEntries = parseInt(row[10], 10) || 1;
+    for (var i = 0; i < totalEntries; i++) {
+      pool.push({ name: name, email: email, entryId: entryId });
+    }
+  });
+
+  Logger.log('Total weighted pool size: ' + pool.length);
+  Logger.log('(Odds per single entry: 1/' + pool.length + ')');
+
+  // Fisher-Yates shuffle for a uniform random permutation
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i];
+    pool[i] = pool[j];
+    pool[j] = tmp;
+  }
+
+  // Select up to 3 unique winners (unique by email address)
+  var seen    = {};
+  var winners = [];
+  for (var k = 0; k < pool.length && winners.length < 3; k++) {
+    var candidate = pool[k];
+    if (!seen[candidate.email]) {
+      seen[candidate.email] = true;
+      winners.push(candidate);
+    }
+  }
+
+  var labels = ['GRAND PRIZE', '2ND PRIZE', '3RD PRIZE'];
+  Logger.log('');
+  Logger.log('=== WINNERS ===');
+  winners.forEach(function(w, idx) {
+    Logger.log(labels[idx] + ': ' + w.name + ' | ' + w.email + ' | Entry ID: ' + w.entryId);
+  });
+
+  if (winners.length < 3) {
+    Logger.log('WARNING: Fewer than 3 unique valid entrants — only ' + winners.length + ' winner(s) selected.');
+  }
+
+  Logger.log('');
+  Logger.log('=== END OF DRAW RECORD — SAVE THIS LOG ===');
+  Logger.log('Next step: notify winners by email and phone within 3 business days.');
+}
+
+// ── Affiliate click logger ───────────────────────────────────────────────────
 // Appends a row to the "🔗 Affiliate Clicks" tab, creating it with
 // a header row the first time. Called from the Next.js
 // /api/track/click route when a visitor clicks a product card on the
@@ -245,7 +482,7 @@ function doGet() {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── Add new promo code without redeploying ─────────────────────
+// ── Add new promo code without redeploying ─────────────────────────────────
 // Run this function manually from the editor:
 // addPromoCode('FALL2026', 'Fall 2026 Special')
 function addPromoCode(code, label) {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GIVEAWAY } from "@/lib/giveaway";
+import { notFound } from "next/navigation";
+import { GIVEAWAY, GIVEAWAY_PUBLIC } from "@/lib/giveaway";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -23,6 +24,8 @@ const announce = GIVEAWAY.announceDateDisplay.startsWith("[")
   : GIVEAWAY.announceDateDisplay;
 
 export default function GiveawayRulesPage() {
+  if (!GIVEAWAY_PUBLIC) notFound();
+
   return (
     <div className="bg-bone">
       <section className="bg-navy text-bone">

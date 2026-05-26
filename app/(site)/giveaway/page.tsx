@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { GIVEAWAY, isGiveawayActive, isGiveawayUpcoming } from "@/lib/giveaway";
+import {
+  GIVEAWAY,
+  GIVEAWAY_PUBLIC,
+  isGiveawayActive,
+  isGiveawayUpcoming,
+} from "@/lib/giveaway";
 import { SITE } from "@/lib/site";
 import EntryForm from "@/components/giveaway/EntryForm";
 
@@ -19,6 +25,8 @@ export const metadata: Metadata = {
 };
 
 export default function GiveawayPage() {
+  if (!GIVEAWAY_PUBLIC) notFound();
+
   const active = isGiveawayActive();
   const upcoming = isGiveawayUpcoming();
 

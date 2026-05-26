@@ -68,7 +68,16 @@ export const GIVEAWAY = {
   },
 } as const;
 
+/**
+ * Master visibility switch. While false, the giveaway is hidden from the
+ * public site: the promo banner won't surface it and the /giveaway pages
+ * 404. Flip to true to go live — the date windows below then gate the
+ * active/upcoming states as normal.
+ */
+export const GIVEAWAY_PUBLIC = false;
+
 export function isGiveawayActive(now: Date = new Date()): boolean {
+  if (!GIVEAWAY_PUBLIC) return false;
   return (
     now.getTime() >= new Date(GIVEAWAY.opensISO).getTime() &&
     now.getTime() <= new Date(GIVEAWAY.closesISO).getTime()
@@ -76,6 +85,7 @@ export function isGiveawayActive(now: Date = new Date()): boolean {
 }
 
 export function isGiveawayUpcoming(now: Date = new Date()): boolean {
+  if (!GIVEAWAY_PUBLIC) return false;
   return now.getTime() < new Date(GIVEAWAY.opensISO).getTime();
 }
 

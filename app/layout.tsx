@@ -27,17 +27,35 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE.canonicalUrl,
     siteName: SITE.name,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: `${SITE.name} — veteran-founded grill cleaning in Cincinnati, NKY & Dayton`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — Cincinnati, NKY & Dayton`,
+    description: SITE.tagline,
+    images: ["/og.png"],
   },
 };
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": ["HomeAndConstructionBusiness", "LocalBusiness"],
   name: SITE.name,
   description: SITE.tagline,
   url: SITE.canonicalUrl,
+  logo: `${SITE.canonicalUrl}/logos/logo-2-color.png`,
+  image: `${SITE.canonicalUrl}/gallery/tsg-011-after.webp`,
   telephone: "+16578314276",
   email: SITE.email,
+  foundingDate: String(SITE.foundedYear),
+  founder: { "@type": "Person", name: SITE.owner },
   address: {
     "@type": "PostalAddress",
     addressLocality: "Cincinnati",
@@ -56,6 +74,13 @@ const localBusinessSchema = {
   sameAs: [SITE.social.facebook, SITE.social.instagram],
 };
 
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.name,
+  url: SITE.canonicalUrl,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -68,6 +93,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(localBusinessSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
           }}
         />
       </head>

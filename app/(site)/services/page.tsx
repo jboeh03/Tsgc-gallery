@@ -3,9 +3,10 @@ import Link from "next/link";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Grill Cleaning Services | Tri-State Grill Cleaning — Cincinnati, NKY & Dayton",
+  title: "Grill Cleaning in Cincinnati, NKY & Dayton | Tri-State",
   description:
     "Professional grill and BBQ cleaning services. Deep degreasing, cleaning, sanitation, and safety inspection for gas grills, smokers, and flat tops. Serving Greater Cincinnati. Book a free quote.",
+  alternates: { canonical: "/services" },
 };
 
 const INCLUDED = [
@@ -92,9 +93,49 @@ const FAQ = [
   },
 ];
 
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Grill & BBQ Cleaning",
+  name: "Professional Grill Cleaning",
+  description:
+    "Full break-down, deep degreasing, sanitation, and safety inspection of gas grills, charcoal grills, smokers, and flat-top griddles — performed on-site at your home.",
+  provider: {
+    "@type": "LocalBusiness",
+    name: SITE.name,
+    url: SITE.canonicalUrl,
+    telephone: "+16578314276",
+  },
+  areaServed: [
+    { "@type": "City", name: "Cincinnati" },
+    { "@type": "City", name: "Covington" },
+    { "@type": "City", name: "Florence" },
+    { "@type": "City", name: "Dayton" },
+  ],
+  url: `${SITE.canonicalUrl}/services`,
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function ServicesPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <section className="bg-navy text-bone">
         <div className="mx-auto max-w-4xl px-5 py-16 md:py-20 text-center">
           <p className="uppercase tracking-widest text-bone/55 text-xs font-semibold">

@@ -3,9 +3,10 @@ import { getJobs, getFeaturedJob } from "@/lib/jobs";
 import GalleryClient from "@/components/gallery/GalleryClient";
 
 export const metadata: Metadata = {
-  title: "Gallery · Tri-State Grill Cleaning",
+  title: "Before & After Gallery | Tri-State Grill Cleaning",
   description:
-    "Before and after photos of grill cleanings across Cincinnati, Northern Kentucky, and Dayton.",
+    "Real before-and-after photos of gas, charcoal, and built-in grill cleanings across Cincinnati, Northern Kentucky, and Dayton. See the deep-clean results for yourself.",
+  alternates: { canonical: "/gallery" },
 };
 
 export default async function GalleryPage() {

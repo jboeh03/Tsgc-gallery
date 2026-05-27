@@ -23,6 +23,118 @@ body {
   border-radius: 4px;
 }
 
+/* ---------- Lenis smooth scroll ---------- */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Cinematic cursor ---------- */
+
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(247, 243, 238, 0.7);
+  mix-blend-mode: difference;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: #f7f3ee;
+  mix-blend-mode: difference;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none;
+  }
+  html.has-custom-cursor input,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor select,
+  html.has-custom-cursor [contenteditable] {
+    cursor: auto;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-ring,
+  .cursor-dot {
+    display: none;
+  }
+}
+
+/* ---------- Motion helpers ---------- */
+
+/* Mask-reveal: clip a line, slide its inner span up from below. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.scroll-cue {
+  animation: cue 2.1s ease-in-out infinite;
+}
+
+@keyframes cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(9px);
+    opacity: 1;
+  }
+}
+
+/* Slow ambient zoom for hero / closing backgrounds. */
+.ken-burns {
+  animation: kenburns 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.16);
+  }
+}
+
+/* Premium display tightening. */
+.display-tight {
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+}
+
 /* ---------- Lid Lift hero ---------- */
 
 .lidlift-stage {
@@ -114,11 +226,16 @@ body {
   .lidlift-lid,
   .knob-dial,
   .scrub-fadeout,
-  .scrub-pulse {
+  .scrub-pulse,
+  .ken-burns,
+  .scroll-cue {
     transition: none !important;
     animation: none !important;
   }
   .lidlift-lid[data-open="true"] {
     transform: rotateX(0deg);
+  }
+  .ken-burns {
+    transform: none !important;
   }
 }

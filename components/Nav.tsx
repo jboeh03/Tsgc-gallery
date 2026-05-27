@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
 
 const BASE_LINKS = [
@@ -16,9 +16,32 @@ const BASE_LINKS = [
 
 const PREVIEW_LINK = { href: "/preview", label: "AI Preview" };
 
-export default function Nav({ showPreview = false }: { showPreview?: boolean }) {
+export default function Nav({
+  showPreview = false,
+  bannerActive = false,
+}: {
+  showPreview?: boolean;
+  bannerActive?: boolean;
+}) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  // On the home page (when no promo banner is competing for the top
+  // of the document) the nav floats transparently over the cinematic
+  // hero and solidifies once the hero scrolls away.
+  const overlay = pathname === "/" && !bannerActive;
+
+  useEffect(() => {
+    if (!overlay) {
+      setScrolled(false);
+      return;
+    }
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.7);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [overlay]);
 
   const LINKS = showPreview
     ? [...BASE_LINKS.slice(0, 4), PREVIEW_LINK, BASE_LINKS[4]]
@@ -27,8 +50,15 @@ export default function Nav({ showPreview = false }: { showPreview?: boolean }) 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
+  const headerClass = overlay
+    ? [
+        "fixed inset-x-0 top-0 z-40 text-bone transition-colors duration-500",
+        scrolled || open ? "bg-navy/95 shadow-md backdrop-blur" : "bg-transparent",
+      ].join(" ")
+    : "sticky top-0 z-40 bg-navy text-bone shadow-md";
+
   return (
-    <header className="sticky top-0 z-40 bg-navy text-bone shadow-md">
+    <header className={headerClass}>
       <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between gap-4">
         <Link
           href="/"

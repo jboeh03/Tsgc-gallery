@@ -23,6 +23,7 @@ export async function generateMetadata({
   return {
     title: `${job.grillModel} · ${job.neighborhood} — Gallery | ${SITE.name}`,
     description: `Before-and-after photos of a ${job.grillModel} we cleaned in ${job.neighborhood}. ${job.serviceHours}-hour service.`,
+    alternates: { canonical: `/gallery/${jobSlug(job)}` },
     openGraph: {
       title: `${job.grillModel} — restored in ${job.neighborhood}`,
       description: `${job.pairs.length} before-and-after pair${
@@ -43,8 +44,32 @@ export default async function JobDetailPage({ params }: { params: Params }) {
     { month: "long", year: "numeric" }
   );
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE.canonicalUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Gallery",
+        item: `${SITE.canonicalUrl}/gallery`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${job.grillModel} · ${job.neighborhood}`,
+        item: `${SITE.canonicalUrl}/gallery/${jobSlug(job)}`,
+      },
+    ],
+  };
+
   return (
     <div className="bg-bone">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Hero band */}
       <section className="bg-navy text-bone">
         <div className="mx-auto max-w-5xl px-5 py-12 md:py-16">

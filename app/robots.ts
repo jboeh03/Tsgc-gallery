@@ -13,6 +13,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${SITE.canonicalUrl}/sitemap.xml`,
-    host: SITE.canonicalUrl,
   };
 }

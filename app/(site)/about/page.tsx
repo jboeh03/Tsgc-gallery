@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "About Us | Tri-State Grill Cleaning — Veteran-Founded, Cincinnati",
   description:
     "Tri-State Grill Cleaning is a veteran-founded grill cleaning service serving Greater Cincinnati, Northern Kentucky, and Dayton since 2018. Locally operated, professionally done.",
+  alternates: { canonical: "/about" },
 };
 
 const VALUES = [

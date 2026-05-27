@@ -6,6 +6,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: `Get a Free Quote | ${SITE.name} — Cincinnati, NKY & Dayton`,
   description: `Get a free grill cleaning quote from ${SITE.name}. Serving Cincinnati, Northern Kentucky, and Dayton. Fill out our quick form or call ${SITE.phone}.`,
+  alternates: { canonical: "/quote" },
 };
 
 export default function QuotePage() {

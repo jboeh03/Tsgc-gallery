@@ -1,0 +1,21 @@
+{
+  "name": "tsgc-imessage-relay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tails ~/Library/Messages/chat.db on a Mac signed into Jeff's iMessage and POSTs new messages to the TSGC ingest webhook for booking classification.",
+  "type": "module",
+  "main": "relay.js",
+  "bin": {
+    "tsgc-imessage-relay": "relay.js"
+  },
+  "scripts": {
+    "start": "node relay.js",
+    "once": "node relay.js --once"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

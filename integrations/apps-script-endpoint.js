@@ -15,8 +15,14 @@ const SHEET_NAME   = '🌐 Website Leads';
 const CRM_TAB      = '📋 CRM + Jobs';
 const RAW_TAB      = '📥 Raw Leads';
 const GIVEAWAY_TAB = '🎁 Giveaway Entries';
+const IMESSAGE_PENDING_TAB = '📱 iMessage Pending';
 const NOTIFY_EMAIL = 'jeff@cincygrillcleaning.com';
 const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
+
+// Google Calendar to write confirmed iMessage bookings to.
+// Must match the calendar name exactly (CalendarApp.getCalendarsByName).
+// Leave as empty string to fall back to the primary calendar.
+const TSGC_SCHEDULE_CALENDAR_NAME = 'TSGC Schedule';
 
 // Email-to-SMS gateway — sends a short text alert to Jeff's phone alongside
 // the lead email. Carriers use these gateway domains:
@@ -65,6 +71,14 @@ function doPost(e) {
 
     if (kind === 'giveaway_entry') {
       return handleGiveawayEntry_(data);
+    }
+
+    if (kind === 'imessage_pending_booking') {
+      return handleImessagePendingBooking_(data);
+    }
+
+    if (kind === 'imessage_confirm_booking') {
+      return handleImessageConfirmBooking_(data);
     }
 
     // ── Build lead record ─────────────────────────────────────
@@ -204,6 +218,15 @@ tristategrillcleaning.com`,
 function ok_(msg) {
   return ContentService
     .createTextOutput(JSON.stringify({ success: true, message: msg }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Like ok_ but returns the object directly as the JSON body (no envelope).
+// Used by the iMessage handlers — the Next.js side reads top-level fields
+// like `eventId`, `calendarUrl`, `error` directly.
+function okJson_(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -488,4 +511,249 @@ function doGet() {
 function addPromoCode(code, label) {
   Logger.log(`Add to PROMO_CODES: '${code.toUpperCase()}': '${label}'`);
   Logger.log('Then redeploy as a new version.');
+}
+
+// ── iMessage booking sync ────────────────────────────────────────────────────
+//
+// Two endpoints, both fired by app/api/imessage/* in the Next.js app:
+//
+//   handleImessagePendingBooking_ — write a "Pending Jeff confirmation" row
+//     to the 📱 iMessage Pending tab. The Next.js webhook calls this
+//     immediately after Claude classifies a thread as "confirmed", before
+//     sending the push notification with the one-tap link.
+//
+//   handleImessageConfirmBooking_ — Jeff tapped the one-tap link. Look up
+//     the pending row by ID, create the Google Calendar event on
+//     TSGC_SCHEDULE_CALENDAR_NAME, append a row to the CRM tab, and flip
+//     the pending row status to BOOKED.
+//
+// Columns on 📱 iMessage Pending:
+//   Created | Pending ID | Status | Customer Name | Customer Phone
+//   Chat GUID | Date | Time Label | Start Time | Duration Hours
+//   Agreed Price | Address | Grill | Notes | Transcript
+//   Photo Data URLs | Calendar Event ID | Calendar URL
+
+function imessagePendingHeaders_() {
+  return [
+    'Created', 'Pending ID', 'Status', 'Customer Name', 'Customer Phone',
+    'Chat GUID', 'Date', 'Time Label', 'Start Time', 'Duration Hours',
+    'Agreed Price', 'Address', 'Grill', 'Notes', 'Transcript',
+    'Photo Data URLs', 'Calendar Event ID', 'Calendar URL'
+  ];
+}
+
+function getOrCreateImessagePendingSheet_(ss) {
+  let sheet = ss.getSheetByName(IMESSAGE_PENDING_TAB);
+  if (!sheet) {
+    sheet = ss.insertSheet(IMESSAGE_PENDING_TAB);
+    const headers = imessagePendingHeaders_();
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function findPendingRow_(sheet, pendingId) {
+  const data = sheet.getDataRange().getValues();
+  // Pending ID is column index 1 (B).
+  for (let i = 1; i < data.length; i++) {
+    if ((data[i][1] || '').toString() === pendingId) {
+      return { rowIndex: i + 1, row: data[i] };
+    }
+  }
+  return null;
+}
+
+function handleImessagePendingBooking_(data) {
+  try {
+    const ss    = SpreadsheetApp.openById(SHEET_ID);
+    const sheet = getOrCreateImessagePendingSheet_(ss);
+
+    const booking      = data.booking || {};
+    const pendingId    = (data.pendingId || '').toString();
+    if (!pendingId) return okJson_({ ok: false, error: 'Missing pendingId' });
+
+    const photos = Array.isArray(data.photoDataUrls) ? data.photoDataUrls : [];
+    const photoSummary = photos.length
+      ? photos.length + ' photo(s) [data omitted for cell size]'
+      : '';
+    // Cells have a 50k char limit; transcript trimmed defensively.
+    const transcript = (data.transcript || '').toString().slice(0, 45000);
+
+    const created = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+
+    sheet.appendRow([
+      created,
+      pendingId,
+      'PENDING',
+      (data.customerName  || '').toString(),
+      (data.customerPhone || '').toString(),
+      (data.chatGuid      || '').toString(),
+      (booking.scheduledDate       || '').toString(),
+      (booking.scheduledTimeLabel  || '').toString(),
+      (booking.scheduledStartTime  || '').toString(),
+      booking.durationHours != null ? booking.durationHours : '',
+      booking.agreedPriceUsd != null ? booking.agreedPriceUsd : '',
+      (booking.address          || '').toString(),
+      (booking.grillDescription || '').toString(),
+      (booking.notes            || '').toString(),
+      transcript,
+      photoSummary,
+      '',
+      '',
+    ]);
+
+    return okJson_({ ok: true, pendingId: pendingId });
+  } catch (err) {
+    Logger.log('handleImessagePendingBooking_ error: ' + err.message);
+    return okJson_({ ok: false, error: err.message });
+  }
+}
+
+function handleImessageConfirmBooking_(data) {
+  try {
+    const pendingId = (data.pendingId || '').toString();
+    if (!pendingId) return okJson_({ ok: false, error: 'Missing pendingId' });
+
+    const ss      = SpreadsheetApp.openById(SHEET_ID);
+    const pending = ss.getSheetByName(IMESSAGE_PENDING_TAB);
+    if (!pending) return okJson_({ ok: false, error: 'No pending tab' });
+
+    const found = findPendingRow_(pending, pendingId);
+    if (!found) return okJson_({ ok: false, error: 'Pending row not found' });
+
+    const r = found.row;
+    // Column indices match imessagePendingHeaders_().
+    const status        = (r[2] || '').toString();
+    const customerName  = (r[3] || '').toString() || 'Customer';
+    const customerPhone = (r[4] || '').toString();
+    const dateStr       = (r[6] || '').toString();
+    const timeLabel     = (r[7] || '').toString();
+    const startTimeStr  = (r[8] || '').toString();
+    const durationHours = parseFloat(r[9]) || 3;
+    const agreedPrice   = parseFloat(r[10]) || null;
+    const address       = (r[11] || '').toString();
+    const grill         = (r[12] || '').toString();
+    const notes         = (r[13] || '').toString();
+
+    // Idempotent: if already BOOKED, just return the stored calendar info.
+    if (status === 'BOOKED') {
+      return okJson_({
+        ok: true,
+        eventId: (r[16] || '').toString(),
+        calendarUrl: (r[17] || '').toString(),
+        alreadyBooked: true,
+      });
+    }
+
+    if (!dateStr) {
+      return okJson_({ ok: false, error: 'Pending row has no scheduled date' });
+    }
+
+    // Build start/end. Times are local — America/New_York for TSGC.
+    let startDate, endDate, isAllDay = false;
+    if (startTimeStr && /^\d{1,2}:\d{2}$/.test(startTimeStr)) {
+      // YYYY-MM-DD + HH:MM in Eastern time.
+      const isoLocal = dateStr + 'T' + (startTimeStr.length === 4 ? '0' + startTimeStr : startTimeStr) + ':00';
+      startDate = new Date(isoLocal);
+      endDate   = new Date(startDate.getTime() + durationHours * 3600 * 1000);
+    } else {
+      // No specific time — all-day event with the label in the title.
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) {
+        return okJson_({ ok: false, error: 'Bad date format: ' + dateStr });
+      }
+      startDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      endDate   = new Date(startDate.getTime() + 24 * 3600 * 1000);
+      isAllDay  = true;
+    }
+
+    const titleParts = ['TSGC: ' + customerName];
+    if (grill) titleParts.push('(' + grill + ')');
+    if (agreedPrice) titleParts.push('— $' + agreedPrice);
+    const title = titleParts.join(' ');
+
+    const descLines = [];
+    if (customerPhone) descLines.push('Phone: ' + customerPhone);
+    if (agreedPrice)   descLines.push('Agreed: $' + agreedPrice);
+    if (timeLabel && !startTimeStr) descLines.push('Time window: ' + timeLabel);
+    if (durationHours) descLines.push('Estimated: ~' + durationHours + ' hr');
+    if (grill)   descLines.push('Grill: ' + grill);
+    if (notes)   descLines.push('Notes: ' + notes);
+    descLines.push('');
+    descLines.push('Pending ID: ' + pendingId);
+    descLines.push('Booked via iMessage relay → ' + new Date().toISOString());
+    const description = descLines.join('\n');
+
+    // Pick calendar.
+    let calendar = null;
+    if (TSGC_SCHEDULE_CALENDAR_NAME) {
+      const cals = CalendarApp.getCalendarsByName(TSGC_SCHEDULE_CALENDAR_NAME);
+      if (cals.length > 0) calendar = cals[0];
+    }
+    if (!calendar) calendar = CalendarApp.getDefaultCalendar();
+
+    const eventOptions = { description: description };
+    if (address) eventOptions.location = address;
+
+    const event = isAllDay
+      ? calendar.createAllDayEvent(title, startDate, eventOptions)
+      : calendar.createEvent(title, startDate, endDate, eventOptions);
+
+    const eventId  = event.getId();
+    const calendarId = calendar.getId();
+    const calendarUrl = 'https://calendar.google.com/calendar/u/0/r/eventedit/' +
+      Utilities.base64Encode(eventId.split('@')[0] + ' ' + calendarId).replace(/=+$/, '');
+
+    // Update the pending row: status + eventId + URL.
+    pending.getRange(found.rowIndex, 3).setValue('BOOKED');           // Status
+    pending.getRange(found.rowIndex, 17).setValue(eventId);            // Calendar Event ID
+    pending.getRange(found.rowIndex, 18).setValue(calendarUrl);        // Calendar URL
+
+    // Append to CRM + Jobs tab so it shows in the admin dashboard.
+    const crmSheet = ss.getSheetByName(CRM_TAB);
+    if (crmSheet) {
+      // CRM layout (from CRM constant at top of file):
+      // 1 Lead ID | 2 Date | 3 Name | 4 Phone | 5 Email | 6 ZIP
+      // 7 Service | 8 Grill | 9 Source | 10 Referred By | 11 Notes | 12 Status
+      const leadId = 'IM-' + pendingId.slice(0, 8).toUpperCase();
+      const crmNotes = [
+        timeLabel ? 'Time: ' + timeLabel : '',
+        agreedPrice ? 'Agreed: $' + agreedPrice : '',
+        notes,
+        'iMessage pending id: ' + pendingId,
+      ].filter(Boolean).join(' | ');
+      crmSheet.appendRow([
+        leadId,
+        dateStr,
+        customerName,
+        customerPhone,
+        '',                                       // email — usually unknown from SMS
+        '',                                       // ZIP
+        'Grill Cleaning',                         // service
+        grill,
+        'iMessage',
+        '',                                       // referred by
+        crmNotes,
+        'Booked',
+      ]);
+    }
+
+    // Confirmation email + SMS so Jeff sees it landed.
+    const subject = 'Booked: ' + customerName + (dateStr ? ' — ' + dateStr : '');
+    const body = title + '\n\n' + description + '\n\nEvent: ' + calendarUrl;
+    try { GmailApp.sendEmail(NOTIFY_EMAIL, subject, body); } catch (e) { Logger.log(e.message); }
+    if (SMS_GATEWAY) {
+      try {
+        GmailApp.sendEmail(SMS_GATEWAY, 'Booked',
+          'Booked: ' + customerName + ' · ' + (dateStr || '?') + ' ' + (startTimeStr || timeLabel || '') + (agreedPrice ? ' · $' + agreedPrice : ''));
+      } catch (e) { Logger.log('SMS gateway send failed: ' + e.message); }
+    }
+
+    return okJson_({ ok: true, eventId: eventId, calendarUrl: calendarUrl });
+  } catch (err) {
+    Logger.log('handleImessageConfirmBooking_ error: ' + err.message);
+    return okJson_({ ok: false, error: err.message });
+  }
 }

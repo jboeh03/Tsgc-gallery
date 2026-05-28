@@ -11,7 +11,10 @@ deploy step.
 - `apps-script-endpoint.js` — Web app that receives the website quote form
   POST, writes to the CRM Google Sheet, and sends Jeff + the customer email
   notifications. Deployed URL is referenced by
-  `SITE.quoteEndpoint` in `lib/site.ts`.
+  `SITE.quoteEndpoint` in `lib/site.ts`. Also handles affiliate clicks,
+  giveaway entries, and the iMessage booking sync handlers
+  (`imessage_pending_booking` / `imessage_confirm_booking` — see
+  `docs/imessage-booking-sync.md`).
 - `crm-sheet-script.js` — Container-bound script attached to Jeff's CRM
   Google Sheet (formatting, status workflows, alerts).
 - `gallery-auto-upload.js` — Container-bound script that watches the

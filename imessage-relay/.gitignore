@@ -1,0 +1,7 @@
+node_modules/
+.env
+.env.local
+state.db
+state.db-wal
+state.db-shm
+*.log

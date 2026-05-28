@@ -41,7 +41,7 @@ const LEGACY_LEAD_SHEET_ID = '1rv50ne0bFi84I9EEsZEjpo5JOwyNimyGK0EEIM_MxOI';
 //
 // Set to '' to disable. Note: some carriers have been deprecating these
 // gateways; if texts stop arriving consistently, swap to Twilio.
-const SMS_GATEWAY = '6578314276@vtext.com'; // ← Verizon. Swap suffix if Jeff is on another carrier.
+const SMS_GATEWAY = '5135784019@vtext.com'; // ← Jeff's personal cell (513) 578-4019, Verizon.
 
 // CRM column positions (must match 📋 CRM + Jobs exactly)
 const CRM = {
@@ -681,6 +681,9 @@ function handleImessageConfirmBooking_(data) {
     const address       = (r[11] || '').toString();
     const grill         = (r[12] || '').toString();
     const notes         = (r[13] || '').toString();
+    const qualScore     = (r[18] || '').toString();
+    const qualTier      = (r[19] || '').toString().toUpperCase();
+    const qualTag       = (qualScore && qualTier) ? '[' + qualTier + ' ' + qualScore + '] ' : '';
 
     // Idempotent: if already BOOKED, just return the stored calendar info.
     if (status === 'BOOKED') {
@@ -786,13 +789,13 @@ function handleImessageConfirmBooking_(data) {
     }
 
     // Confirmation email + SMS so Jeff sees it landed.
-    const subject = 'Booked: ' + customerName + (dateStr ? ' — ' + dateStr : '');
+    const subject = qualTag + 'Booked: ' + customerName + (dateStr ? ' — ' + dateStr : '');
     const body = title + '\n\n' + description + '\n\nEvent: ' + calendarUrl;
     try { GmailApp.sendEmail(NOTIFY_EMAIL, subject, body); } catch (e) { Logger.log(e.message); }
     if (SMS_GATEWAY) {
       try {
         GmailApp.sendEmail(SMS_GATEWAY, 'Booked',
-          'Booked: ' + customerName + ' · ' + (dateStr || '?') + ' ' + (startTimeStr || timeLabel || '') + (agreedPrice ? ' · $' + agreedPrice : ''));
+          qualTag + 'Booked: ' + customerName + ' · ' + (dateStr || '?') + ' ' + (startTimeStr || timeLabel || '') + (agreedPrice ? ' · $' + agreedPrice : ''));
       } catch (e) { Logger.log('SMS gateway send failed: ' + e.message); }
     }
 

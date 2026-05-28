@@ -17,12 +17,14 @@ import { classifyThread } from "@/lib/imessage/classify";
 import { sendBookingNotification } from "@/lib/imessage/notify";
 import { writePendingBooking } from "@/lib/imessage/appsScript";
 import { newPendingId, signConfirmToken, verifyRelayRequest } from "@/lib/imessage/sign";
+import { qualifyLead, describeQualification } from "@/lib/leads/qualify";
 import type {
   ExtractedBooking,
   IngestRequest,
   IngestResponse,
   PendingBookingPayload,
 } from "@/lib/imessage/types";
+import type { QualifiedLead } from "@/lib/leads/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -77,9 +79,11 @@ function notificationText(args: {
   customerPhone: string | null;
   summary: string;
   booking: ExtractedBooking;
+  qualification: QualifiedLead;
 }): { title: string; message: string } {
   const who = args.customerName || args.customerPhone || "New customer";
-  const title = `Booking ready: ${who}`;
+  const tier = args.qualification.tier.toUpperCase();
+  const title = `[${tier} ${args.qualification.score}] ${who}`;
   const b = args.booking;
   const dt = [b.scheduledDate, b.scheduledTimeLabel || b.scheduledStartTime]
     .filter(Boolean)
@@ -89,7 +93,8 @@ function notificationText(args: {
   const addr = b.address ? `\n${b.address}` : "";
   const notes = b.notes ? `\n📝 ${b.notes}` : "";
   const photos = b.photoCount > 0 ? `\n📷 ${b.photoCount} photo${b.photoCount === 1 ? "" : "s"} in thread` : "";
-  const message = `${dt || "(date ?)"} — ${price}${grill}${addr}${notes}${photos}\n\n${args.summary}`;
+  const qualLine = `\n⭐ ${describeQualification(args.qualification)}`;
+  const message = `${dt || "(date ?)"} — ${price}${grill}${addr}${notes}${photos}${qualLine}\n\n${args.summary}`;
   return { title, message };
 }
 
@@ -173,6 +178,23 @@ export async function POST(req: NextRequest) {
   });
   const confirmUrl = `${originFrom(req)}/api/imessage/confirm?token=${encodeURIComponent(token)}`;
 
+  const qualification = await qualifyLead({
+    name: result.booking.customerName ?? body.customerName,
+    phone: body.customerPhone,
+    email: null,
+    zip: null,
+    address: result.booking.address,
+    grillDescription: result.booking.grillDescription,
+    estimatedPriceLow: null,
+    estimatedPriceHigh: null,
+    agreedPriceUsd: result.booking.agreedPriceUsd,
+    services: "Grill Cleaning",
+    notes: result.booking.notes,
+  });
+  console.log(
+    `[imessage/ingest] qualified pendingId=${pendingId} ${describeQualification(qualification)}`
+  );
+
   const payload: PendingBookingPayload = {
     pendingId,
     chatGuid: body.chatGuid,
@@ -181,6 +203,7 @@ export async function POST(req: NextRequest) {
     booking: result.booking,
     transcript: formatTranscript(body),
     photoDataUrls: collectPhotoDataUrls(body),
+    qualification,
     createdAt: new Date().toISOString(),
   };
 
@@ -198,6 +221,7 @@ export async function POST(req: NextRequest) {
     customerPhone: body.customerPhone,
     summary: result.summary,
     booking: result.booking,
+    qualification,
   });
 
   const notifyRes = await sendBookingNotification({ title, message, confirmUrl });

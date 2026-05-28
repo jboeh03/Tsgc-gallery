@@ -39,6 +39,14 @@ export type Lead = {
   promoCode: string;
   notes: string;
   leadId: string;
+  // Lead qualifying — populated when the Apps Script handler wrote the
+  // row with score columns. Older rows have empty strings here.
+  score: string;
+  tier: string;
+  proximity: string;
+  valueTier: string;
+  customerType: string;
+  completeness: string;
 };
 
 export type Job = {
@@ -107,7 +115,9 @@ function pick(row: string[], idx: Map<string, number>, ...aliases: string[]): st
 
 const readLeadsCached = unstable_cache(
   async (): Promise<Lead[]> => {
-    const rows = await fetchRange(`${WEBSITE_LEADS_TAB}!A:N`);
+    // Pull A:T so we get the new score columns when present (rows
+    // written before the qualifying release leave these blank).
+    const rows = await fetchRange(`${WEBSITE_LEADS_TAB}!A:T`);
     if (rows.length < 2) return [];
     const idx = buildHeaderIndex(rows[0]);
     return rows.slice(1).map((row, i) => ({
@@ -126,6 +136,12 @@ const readLeadsCached = unstable_cache(
       promoCode: pick(row, idx, "promo code", "promo"),
       notes: pick(row, idx, "notes"),
       leadId: pick(row, idx, "lead id", "lead_id"),
+      score: pick(row, idx, "score"),
+      tier: pick(row, idx, "tier"),
+      proximity: pick(row, idx, "proximity"),
+      valueTier: pick(row, idx, "value tier", "value"),
+      customerType: pick(row, idx, "customer type", "customer"),
+      completeness: pick(row, idx, "completeness"),
     }));
   },
   ["admin-leads"],

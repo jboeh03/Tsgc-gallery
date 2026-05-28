@@ -1,10 +1,16 @@
 import { SITE } from "@/lib/site";
+import { qualifyLead, describeQualification } from "@/lib/leads/qualify";
 import type { Assessment } from "./types";
 
 /**
  * POST a preview-tool lead to the existing Apps Script CRM endpoint.
  * Uses the same field shape as the contact form so leads land in the
  * same sheet, tagged with source: "preview-tool".
+ *
+ * Also scores the lead before posting so Apps Script can write the
+ * qualification columns alongside the row (the Apps Script side
+ * computes its own score for direct website-form posts; when the
+ * payload already includes one we use it as an override).
  */
 export async function captureLead(args: {
   email: string;
@@ -17,6 +23,31 @@ export async function captureLead(args: {
     .toString(36)
     .slice(2, 8)}`;
 
+  const grillDescription = [
+    args.assessment.brandDetected,
+    args.assessment.grillTypeDetected,
+    args.assessment.burnerCount ? `${args.assessment.burnerCount}-burner` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const qualification = await qualifyLead({
+    name: args.firstName ?? null,
+    phone: null,
+    email: args.email,
+    zip: args.zip ?? null,
+    address: null,
+    grillDescription,
+    estimatedPriceLow: args.assessment.estimatedPriceLow,
+    estimatedPriceHigh: args.assessment.estimatedPriceHigh,
+    agreedPriceUsd: null,
+    services: `Preview tool: ${args.assessment.recommendedService}`,
+    notes: args.assessment.recommendation,
+  });
+  console.log(
+    `[lead] preview qualified leadId=${leadId} ${describeQualification(qualification)}`
+  );
+
   const payload = {
     firstName: args.firstName ?? "Preview",
     lastName: "Tool Lead",
@@ -24,13 +55,7 @@ export async function captureLead(args: {
     email: args.email,
     zip: args.zip ?? "",
     services: [`Preview tool: ${args.assessment.recommendedService}`],
-    grillModel: [
-      args.assessment.brandDetected,
-      args.assessment.grillTypeDetected,
-      args.assessment.burnerCount ? `${args.assessment.burnerCount}-burner` : null,
-    ]
-      .filter(Boolean)
-      .join(" "),
+    grillModel: grillDescription,
     hearAbout: "Preview tool",
     referredBy: "",
     promoCode: "",
@@ -47,6 +72,7 @@ export async function captureLead(args: {
     source: "preview-tool",
     timestamp: new Date().toISOString(),
     leadId,
+    qualification,
   };
 
   try {

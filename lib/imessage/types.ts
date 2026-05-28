@@ -104,5 +104,7 @@ export type PendingBookingPayload = {
   transcript: string;
   /** Image attachment data URLs (small photos shared in the thread). */
   photoDataUrls: string[];
+  /** Lead qualifying score 0-100 + breakdown (see lib/leads/qualify.ts). */
+  qualification: import("@/lib/leads/types").QualifiedLead;
   createdAt: string;
 };

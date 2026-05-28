@@ -67,6 +67,10 @@ Data is **read-only from Google Sheets** via `lib/admin/sheets.ts` using a serve
 
 The website never writes to Sheets directly. The quote form POSTs to `SITE.quoteEndpoint` (a Google Apps Script web app), which writes the lead, links the CRM tab, and emails Jeff. Affiliate clicks go through `/api/track/click?id=<product-id>` → fire-and-forget `logAffiliateClick()` (`lib/admin/events.ts`) → Apps Script (`kind: "affiliate_click"`) → then 302 to the affiliate URL. Logging is best-effort and never blocks the redirect.
 
+### Lead qualifying (`lib/leads/`)
+
+Every new lead — website form, AI preview, or iMessage confirmed booking — is scored 0-100 at intake on four weighted dimensions: proximity (ZIP tier, 30 pts), value tier (grill description / agreed price, 30 pts), customer type (returning vs new, 15 pts), completeness (filled fields, 25 pts). `lib/leads/qualify.ts` is the TypeScript source of truth; `qualifyLead_()` in `integrations/apps-script-endpoint.js` is the mirror used for direct website-form posts. **Keep both in sync** when changing weights or ZIP tiers — there's no compile-time link. The /admin/leads dashboard shows tier badges (HOT/WARM/COOL/COLD), can sort by score, and re-scores older rows on the fly via `qualifyLeadSync()`. See `docs/lead-qualifying.md`.
+
 ### Integrations are deployed separately
 
 `integrations/*.js` are **Google Apps Script** sources (not bundled with the Next.js app). They are checked in for version control; deploying = pasting into script.google.com and cutting a new deployment version. If the web-app URL changes, update `SITE.quoteEndpoint`. See `integrations/README.md` and `docs/admin-dashboard.md` for the full data-flow diagram, sheet schemas, and setup/troubleshooting.

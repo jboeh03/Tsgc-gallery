@@ -52,7 +52,7 @@ This system collapses steps 3 + 4 into a single push-notification tap.
 | Piece | Location | Purpose |
 | --- | --- | --- |
 | **Mac relay** | `imessage-relay/relay.js` | Tails chat.db, signs payloads, POSTs to ingest. Per-chat watermark + stage cache in `state.db`. |
-| **Ingest webhook** | `app/api/imessage/ingest/route.ts` | Verifies HMAC, classifies via Claude (`lib/imessage/classify.ts`), writes pending row, pings ntfy/Pushover. |
+| **Ingest webhook** | `app/api/imessage/ingest/route.ts` | Verifies HMAC, classifies via Claude (`lib/imessage/classify.ts`), qualifies the lead (`lib/leads/qualify.ts` — see `docs/lead-qualifying.md`), writes pending row, pings ntfy/Pushover with the tier in the title. |
 | **Confirm endpoint** | `app/api/imessage/confirm/route.ts` | Verifies HMAC token, asks Apps Script to materialize the booking. Renders a small success page. |
 | **Apps Script handlers** | `integrations/apps-script-endpoint.js` (`handleImessagePendingBooking_`, `handleImessageConfirmBooking_`) | Owns all Google writes: the pending sheet tab, the calendar event, the CRM row. |
 | **Notification** | `lib/imessage/notify.ts` | ntfy (default, free) or Pushover (paid, more reliable). Sends a high-priority push with the one-tap URL action. |

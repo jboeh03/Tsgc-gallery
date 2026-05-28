@@ -24,6 +24,11 @@ const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
 // Leave as empty string to fall back to the primary calendar.
 const TSGC_SCHEDULE_CALENDAR_NAME = 'TSGC Schedule';
 
+// Legacy Squarespace lead intake sheet — pre-2024 historical record.
+// Scanned by lookupCustomerType_() so customers who reached out via the
+// old site still count as "returning". Set to '' to disable.
+const LEGACY_LEAD_SHEET_ID = '1rv50ne0bFi84I9EEsZEjpo5JOwyNimyGK0EEIM_MxOI';
+
 // Email-to-SMS gateway — sends a short text alert to Jeff's phone alongside
 // the lead email. Carriers use these gateway domains:
 //
@@ -938,32 +943,77 @@ function classifyValue_(args) {
 }
 
 // ── Returning customer lookup against the existing sheet tabs ──
+//
+// Also scans the legacy Squarespace lead intake sheet
+// (LEGACY_LEAD_SHEET_ID) so customers from the pre-2024 site still
+// count as returning. Column lookups are header-name based with
+// aliases so Squarespace's form field naming variations work.
+
+function _scanTabForMatch_(tab, normPhone, normEmail) {
+  if (!tab) return false;
+  const data = tab.getDataRange().getValues();
+  if (data.length < 2) return false;
+  const headers = data[0].map(function(h) {
+    return (h || '').toString().toLowerCase().trim();
+  });
+  const phoneCols = [];
+  const emailCols = [];
+  headers.forEach(function(h, i) {
+    if (h.indexOf('phone') >= 0 || h.indexOf('mobile') >= 0 || h.indexOf('cell') >= 0) {
+      phoneCols.push(i);
+    }
+    if (h.indexOf('email') >= 0 || h.indexOf('e-mail') >= 0) {
+      emailCols.push(i);
+    }
+  });
+  for (let i = 1; i < data.length; i++) {
+    if (normPhone) {
+      for (let k = 0; k < phoneCols.length; k++) {
+        const p = (data[i][phoneCols[k]] || '').toString()
+          .replace(/[^\d]/g, '').replace(/^1(\d{10})$/, '$1');
+        if (p && p === normPhone) return true;
+      }
+    }
+    if (normEmail) {
+      for (let k = 0; k < emailCols.length; k++) {
+        const e = (data[i][emailCols[k]] || '').toString().trim().toLowerCase();
+        if (e && e === normEmail) return true;
+      }
+    }
+  }
+  return false;
+}
+
 function lookupCustomerType_(ss, phone, email) {
   const normPhone = (phone || '').toString().replace(/[^\d]/g, '').replace(/^1(\d{10})$/, '$1');
   const normEmail = (email || '').toString().trim().toLowerCase();
   if (!normPhone && !normEmail) return 'unknown';
 
-  const tabsToScan = [SHEET_NAME, CRM_TAB, RAW_TAB];
-  for (let t = 0; t < tabsToScan.length; t++) {
-    const tab = ss.getSheetByName(tabsToScan[t]);
-    if (!tab) continue;
-    const data = tab.getDataRange().getValues();
-    if (data.length < 2) continue;
-    // Header row → find phone/email column indices
-    const headers = data[0].map(function(h) { return (h || '').toString().toLowerCase(); });
-    const phoneIdx = headers.findIndex(function(h) { return h === 'phone'; });
-    const emailIdx = headers.findIndex(function(h) { return h === 'email'; });
-    for (let i = 1; i < data.length; i++) {
-      if (normPhone && phoneIdx >= 0) {
-        const p = (data[i][phoneIdx] || '').toString().replace(/[^\d]/g, '').replace(/^1(\d{10})$/, '$1');
-        if (p && p === normPhone) return 'returning';
-      }
-      if (normEmail && emailIdx >= 0) {
-        const e = (data[i][emailIdx] || '').toString().trim().toLowerCase();
-        if (e && e === normEmail) return 'returning';
-      }
+  // Current CRM sheet — scan known tabs.
+  const localTabs = [SHEET_NAME, CRM_TAB, RAW_TAB];
+  for (let t = 0; t < localTabs.length; t++) {
+    if (_scanTabForMatch_(ss.getSheetByName(localTabs[t]), normPhone, normEmail)) {
+      return 'returning';
     }
   }
+
+  // Legacy Squarespace sheet — scan ALL tabs (Squarespace can name the
+  // response tab anything; just brute-force everything once).
+  if (LEGACY_LEAD_SHEET_ID) {
+    try {
+      const legacySs = SpreadsheetApp.openById(LEGACY_LEAD_SHEET_ID);
+      const sheets = legacySs.getSheets();
+      for (let s = 0; s < sheets.length; s++) {
+        if (_scanTabForMatch_(sheets[s], normPhone, normEmail)) {
+          return 'returning';
+        }
+      }
+    } catch (err) {
+      Logger.log('Legacy sheet read failed: ' + err.message);
+      // Fall through — don't penalize the lead for a sheet access issue.
+    }
+  }
+
   return 'new';
 }
 

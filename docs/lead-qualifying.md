@@ -18,7 +18,7 @@ Four weighted dimensions, summing to 100:
 | --- | --- | --- |
 | **Proximity** | 30 | Distance from the Cincinnati base, by ZIP tier (core / extended / fringe / out-of-area). |
 | **Value tier** | 30 | Estimated job dollars from the grill description or quoted/agreed price. |
-| **Customer type** | 15 | Returning vs new (phone/email match against the CRM tabs). |
+| **Customer type** | 15 | Returning vs new (phone/email match against the CRM tabs **and** the legacy Squarespace lead intake sheet from the pre-2024 site, set via `LEGACY_LEAD_SHEET_ID`). |
 | **Completeness** | 25 | How much info Jeff has to act on (name, phone, email, ZIP, address, grill, services, notes). |
 
 Tier cutoffs:

@@ -1,15 +1,16 @@
-import { NextResponse } from "next/server";
-import { auth, isAdmin } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { SITE } from "@/lib/site";
+import { SESSION_COOKIE_NAME, verifySession } from "@/lib/auth/session";
 
 /**
  * Combined middleware:
  *  - /preview and /api/preview are hidden on production hosts
  *    (Jeff still wants the tool live on *.vercel.app for testing).
- *  - /admin/* is gated by Auth.js: requires an authenticated Google
- *    session whose email is in the ADMIN_EMAILS allowlist.
+ *  - /admin/* is gated by a password session cookie. The cookie is
+ *    HMAC-signed via Web Crypto (lib/auth/session.ts); we verify
+ *    here without any DB hop.
  */
-export default auth((req) => {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get("host")?.toLowerCase() ?? "";
   const isPublicHost = SITE.publicHosts.some((h) => host === h);
@@ -20,8 +21,9 @@ export default auth((req) => {
   }
 
   if (pathname.startsWith("/admin") && pathname !== "/admin/sign-in") {
-    const email = req.auth?.user?.email;
-    if (!isAdmin(email)) {
+    const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+    const iat = await verifySession(cookie);
+    if (!iat) {
       const url = req.nextUrl.clone();
       url.pathname = "/admin/sign-in";
       url.searchParams.set("from", pathname);
@@ -30,7 +32,7 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [

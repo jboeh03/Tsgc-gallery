@@ -1,54 +1,85 @@
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-
 /**
- * Auth.js v5 config for the /admin dashboard.
+ * Lightweight password-cookie auth for the /admin dashboard.
  *
- * Access is gated by an email allowlist (ADMIN_EMAILS env var, comma-
- * separated). Anyone else who completes the Google sign-in flow gets
- * bounced to /admin/sign-in?error=AccessDenied.
+ * Replaces the Auth.js v5 Google OAuth flow that was here before — the
+ * OAuth client kept rejecting the sign-in, and a single shared password
+ * is plenty for now. Restore the previous auth.ts from git history if
+ * we ever want OAuth back.
  *
- * Session strategy: JWT (no database). The JWT stores the verified
- * email; the middleware checks the allowlist on every /admin/* request.
+ * The crypto helpers live in lib/auth/session.ts because middleware.ts
+ * runs on Edge and can't use node:crypto / next/headers. This file
+ * adds the Node-only bits: cookies(), redirect(), server actions.
  */
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import {
+  ADMIN_PRINCIPAL,
+  SESSION_COOKIE_NAME,
+  SESSION_TTL_MS,
+  constantTimeEqualString,
+  getAdminPassword,
+  signSession,
+  verifySession,
+} from "@/lib/auth/session";
 
-export function isAdmin(email?: string | null): boolean {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase());
+export { verifySession as verifySessionCookie } from "@/lib/auth/session";
+
+/**
+ * Server helper: returns the current session if one is valid, or null.
+ * Mirrors the Auth.js auth() signature so dashboard pages that do
+ *   const session = await auth();
+ *   session?.user?.email
+ * keep working.
+ */
+export async function auth(): Promise<{ user: { email: string } } | null> {
+  const raw = cookies().get(SESSION_COOKIE_NAME)?.value;
+  const iat = await verifySession(raw);
+  return iat ? { user: { email: ADMIN_PRINCIPAL } } : null;
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-    }),
-  ],
-  pages: {
-    signIn: "/admin/sign-in",
-    error: "/admin/sign-in",
-  },
-  session: { strategy: "jwt" },
-  callbacks: {
-    async signIn({ profile }) {
-      // Block the sign-in entirely if the Google account isn't on the
-      // allowlist. This avoids creating a session that the middleware
-      // would then have to reject on every page navigation.
-      return isAdmin(profile?.email);
-    },
-    async jwt({ token, profile }) {
-      if (profile?.email) token.email = profile.email;
-      return token;
-    },
-    async session({ session, token }) {
-      if (token?.email && session.user) session.user.email = token.email as string;
-      return session;
-    },
-  },
-  trustHost: true,
-});
+export function isAdmin(email?: string | null): boolean {
+  return email === ADMIN_PRINCIPAL;
+}
+
+/**
+ * Server action used by the sign-in form. Validates the password,
+ * sets the session cookie, then redirects. On failure returns a
+ * short error message for the form to display.
+ */
+export async function signInWithPassword(formData: FormData): Promise<string | void> {
+  "use server";
+  const provided = (formData.get("password") || "").toString();
+  const callbackUrl = (formData.get("callbackUrl") || "/admin").toString();
+
+  if (!constantTimeEqualString(provided, getAdminPassword())) {
+    return "Wrong password.";
+  }
+
+  const iat = Date.now();
+  const value = await signSession(iat);
+  cookies().set({
+    name: SESSION_COOKIE_NAME,
+    value,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: Math.floor(SESSION_TTL_MS / 1000),
+  });
+
+  // Only redirect to in-app paths so a tampered callbackUrl can't
+  // bounce off-site.
+  const safeCallback = callbackUrl.startsWith("/") ? callbackUrl : "/admin";
+  redirect(safeCallback);
+}
+
+/**
+ * Mirror of Auth.js signOut(). Clears the session cookie and
+ * redirects to the sign-in page.
+ */
+export async function signOut(opts?: { redirectTo?: string }): Promise<void> {
+  "use server";
+  cookies().delete(SESSION_COOKIE_NAME);
+  redirect(opts?.redirectTo || "/admin/sign-in");
+}

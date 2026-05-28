@@ -649,6 +649,34 @@ function handleImessagePendingBooking_(data) {
       qual ? qual.breakdown.customer.type : '',
     ]);
 
+    // ── SMS alert via email gateway ────────────────────────────
+    // The iMessage relay's ntfy/Pushover push is the primary alert,
+    // but we also fire an SMS here so every NEW lead — website form,
+    // preview tool, or iMessage — produces an SMS with the
+    // qualification rating prefix. Matches the website-lead path.
+    if (SMS_GATEWAY) {
+      const qualTag = qual
+        ? '[' + qual.tier.toUpperCase() + ' ' + qual.score + '] '
+        : '';
+      const who = (data.customerName || data.customerPhone || 'Customer').toString();
+      const when = [
+        (booking.scheduledDate || '').toString(),
+        (booking.scheduledStartTime || booking.scheduledTimeLabel || '').toString(),
+      ].filter(Boolean).join(' ');
+      const priceStr = booking.agreedPriceUsd != null ? '$' + booking.agreedPriceUsd : '';
+      const smsBody = [
+        qualTag + 'iMsg: ' + who,
+        (data.customerPhone || '').toString(),
+        when,
+        priceStr,
+      ].filter(Boolean).join(' · ');
+      try {
+        GmailApp.sendEmail(SMS_GATEWAY, 'New iMessage lead', smsBody);
+      } catch (smsErr) {
+        Logger.log('iMessage SMS gateway send failed: ' + smsErr.message);
+      }
+    }
+
     return okJson_({ ok: true, pendingId: pendingId });
   } catch (err) {
     Logger.log('handleImessagePendingBooking_ error: ' + err.message);

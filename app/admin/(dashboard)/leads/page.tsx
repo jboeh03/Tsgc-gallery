@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
+import LeadsTabs from "@/components/admin/LeadsTabs";
 import { readLeads, checkSheetHealth, SHEET_ID, type Lead } from "@/lib/admin/sheets";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { qualifyLeadSync, tierBadgeColor, classifyTier } from "@/lib/leads/qualify";
@@ -60,6 +61,7 @@ export default async function LeadsPage({
     return (
       <>
         <Header email={session?.user?.email} title="Leads" showRange={false} />
+        <LeadsTabs current="all" />
         <div className="p-6">
           <EmptyState
             title={health.configured ? "Sheets error" : "Sheets not configured"}
@@ -93,6 +95,7 @@ export default async function LeadsPage({
   return (
     <>
       <Header email={session?.user?.email} title="Leads" />
+      <LeadsTabs current="all" />
       <div className="p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted">

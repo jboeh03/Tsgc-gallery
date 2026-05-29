@@ -7,7 +7,7 @@ import { parseSheetTimestamp } from "@/lib/admin/range";
 import { qualifyLead, tierBadgeColor } from "@/lib/leads/qualify";
 import { proximityLabel } from "@/lib/leads/serviceArea";
 import { valueLabel } from "@/lib/leads/valueEstimator";
-import type { LeadInput, QualifiedLead } from "@/lib/leads/types";
+import type { LeadFlag, LeadInput, QualifiedLead } from "@/lib/leads/types";
 import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
@@ -205,6 +205,9 @@ function LeadCard({ lead, q }: { lead: Lead; q: QualifiedLead }) {
               {driftLabel}
             </span>
           )}
+          {q.flags.map((f) => (
+            <FlagChip key={f} flag={f} />
+          ))}
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-display text-lg text-navy truncate">
@@ -270,6 +273,16 @@ function LeadCard({ lead, q }: { lead: Lead; q: QualifiedLead }) {
               points={q.breakdown.completeness.points}
               max={25}
             />
+            <ScoreRow
+              label="Intent signals"
+              detail={
+                q.breakdown.intent.signals.length > 0
+                  ? q.breakdown.intent.signals.join(", ")
+                  : "(none)"
+              }
+              points={q.breakdown.intent.points}
+              max={10}
+            />
           </ul>
         </section>
       </div>
@@ -293,6 +306,44 @@ function LeadCard({ lead, q }: { lead: Lead; q: QualifiedLead }) {
         </div>
       </footer>
     </article>
+  );
+}
+
+function FlagChip({ flag }: { flag: LeadFlag }) {
+  const styles: Record<LeadFlag, { bg: string; text: string; label: string; title: string }> = {
+    likely_spam: {
+      bg: "bg-red-100", text: "text-red-700", label: "SPAM",
+      title: "Detected sales/SEO solicitation phrases or multiple garbage fields. Score forced to 0.",
+    },
+    veteran: {
+      bg: "bg-emerald-100", text: "text-emerald-700", label: "VET",
+      title: "Customer mentioned veteran/military service. +5 intent.",
+    },
+    referral: {
+      bg: "bg-emerald-100", text: "text-emerald-700", label: "REFERRAL",
+      title: "Customer mentioned being referred. +5 intent.",
+    },
+    multi_grill: {
+      bg: "bg-amber-100", text: "text-amber-800", label: "MULTI-GRILL",
+      title: "Customer mentioned 2+ grills — larger-than-typical job. +3 intent.",
+    },
+    address_in_notes: {
+      bg: "bg-blue-100", text: "text-blue-700", label: "ADDR✓",
+      title: "Address detected in notes — credited completeness bonus.",
+    },
+    has_deadline: {
+      bg: "bg-amber-100", text: "text-amber-800", label: "DEADLINE",
+      title: "Customer named a specific date or window. +3 intent.",
+    },
+  };
+  const s = styles[flag];
+  return (
+    <span
+      title={s.title}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${s.bg} ${s.text}`}
+    >
+      {s.label}
+    </span>
   );
 }
 

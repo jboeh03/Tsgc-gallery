@@ -47,6 +47,8 @@ export type Lead = {
   valueTier: string;
   customerType: string;
   completeness: string;
+  intent: string;
+  flags: string;
 };
 
 export type Job = {
@@ -115,9 +117,9 @@ function pick(row: string[], idx: Map<string, number>, ...aliases: string[]): st
 
 const readLeadsCached = unstable_cache(
   async (): Promise<Lead[]> => {
-    // Pull A:T so we get the new score columns when present (rows
+    // Pull A:V so we get the new score columns when present (rows
     // written before the qualifying release leave these blank).
-    const rows = await fetchRange(`${WEBSITE_LEADS_TAB}!A:T`);
+    const rows = await fetchRange(`${WEBSITE_LEADS_TAB}!A:V`);
     if (rows.length < 2) return [];
     const idx = buildHeaderIndex(rows[0]);
     return rows.slice(1).map((row, i) => ({
@@ -142,6 +144,8 @@ const readLeadsCached = unstable_cache(
       valueTier: pick(row, idx, "value tier", "value"),
       customerType: pick(row, idx, "customer type", "customer"),
       completeness: pick(row, idx, "completeness"),
+      intent: pick(row, idx, "intent"),
+      flags: pick(row, idx, "flags"),
     }));
   },
   ["admin-leads"],

@@ -105,11 +105,18 @@ export function classifyZip(zipRaw: string | null | undefined): ProximityTier {
   if (CINCY_FRINGE.has(zip) || DAYTON_FRINGE.has(zip)) return "fringe";
   if (DAYTON_OUT.has(zip)) return "out_of_area";
 
-  // Heuristic fallback — coarse but informative for ZIPs we haven't
-  // classified yet. Real OH state ZIPs start 430-459; KY 400-427.
-  if (/^45[0-2]/.test(zip)) return "extended"; // Greater Cincinnati / Dayton OH
+  // Heuristic fallback — only catches ZIPs in the immediate Cincinnati
+  // / NKY / Dayton range. Previously the fallback was so loose that
+  // Columbus suburbs (43xxx, ~110 mi away) scored as 'fringe' — that
+  // gave them points they didn't deserve. Now anything outside the
+  // tri-state ZIP prefixes lands in out_of_area.
+  if (/^45[0-2]/.test(zip)) return "extended"; // Greater Cincinnati + inner Dayton
   if (/^41[0-1]/.test(zip)) return "extended"; // NKY
-  if (/^4[0-5]/.test(zip)) return "fringe";    // Wider OH/KY/IN
+  // Adjacent Indiana (47xxx) only along the Cincinnati border counts as fringe.
+  // Lawrenceburg = 47025, Aurora = 47001, Rising Sun = 47040, Brookville = 47012.
+  if (/^4700/.test(zip) || /^4702/.test(zip) || /^4704/.test(zip) || /^4701/.test(zip)) {
+    return "fringe";
+  }
   return "out_of_area";
 }
 

@@ -12,14 +12,31 @@ sheet. The score lands in three places:
 
 ## Scoring formula
 
-Four weighted dimensions, summing to 100:
+Five weighted dimensions. The first four sum to 100; the fifth (intent
+signals) adds up to 10 more on top — final score is hard-capped at 100,
+so the bonus lifts borderline leads without inflating the existing scale.
 
 | Dimension | Max | What it measures |
 | --- | --- | --- |
 | **Proximity** | 30 | Distance from the Cincinnati base, by ZIP tier (core / extended / fringe / out-of-area). |
 | **Value tier** | 30 | Estimated job dollars from the grill description or quoted/agreed price. |
 | **Customer type** | 15 | Returning vs new (phone/email match against the CRM tabs **and** the legacy Squarespace lead intake sheet from the pre-2024 site, set via `LEGACY_LEAD_SHEET_ID`). |
-| **Completeness** | 25 | How much info Jeff has to act on (name, phone, email, ZIP, address, grill, services, notes). |
+| **Completeness** | 25 | How much info Jeff has to act on (name, phone, email, ZIP, address, grill, services, notes). The "address" credit also fires when a street address is detected in the notes field. |
+| **Intent signals** | 10 | Bonus for high-intent context: referral (+5), veteran/`VET` promo (+5), multi-grill description (+3), explicit deadline mentioned (+3). Cap 10. |
+
+## Flags
+
+Independent of the score, the qualifier surfaces flags so the dashboard
+can highlight context the raw number misses:
+
+| Flag | Meaning | Score impact |
+| --- | --- | --- |
+| `likely_spam` | Notes contain SEO/Wikipedia/marketing solicitation phrases, or multiple garbage fields paired with an out-of-area ZIP. | **Forces score → 0 / tier → COLD** |
+| `referral` | Customer mentioned being referred (or `referredBy` is filled). | +5 intent |
+| `veteran` | Customer mentioned military service OR used a promo code containing "VET". | +5 intent |
+| `multi_grill` | 2+ distinct grill brand/type tokens spotted (e.g. "Blackstone + Weber"). | +3 intent |
+| `has_deadline` | Customer named a specific date or window ("by June 5", "this weekend"). | +3 intent |
+| `address_in_notes` | Street address detected in notes field, even though the form's address slot was empty. | +3 completeness |
 
 Tier cutoffs:
 

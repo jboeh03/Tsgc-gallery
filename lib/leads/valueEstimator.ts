@@ -11,14 +11,18 @@ import type { ValueTier } from "./types";
 
 const PREMIUM_KEYWORDS = [
   // Built-in brands
-  "built-in", "built in", "builtin", "island",
-  "lynx", "dcs", "hestan", "alfresco", "coyote", "fire magic", "firemagic",
+  "built-in", "built in", "builtin", "island", "outdoor kitchen",
+  "lynx", "sedona", "sedona lynx",
+  "dcs", "hestan", "alfresco", "coyote", "fire magic", "firemagic",
   "twin eagles", "twineagles", "blaze",
+  "wolf", "kalamazoo", "lion", "memphis",
+  // Premium freestanding brands that punch into built-in pricing
+  "viking", "napoleon prestige", "napoleon phantom",
   // Big sizes
   "36\"", "36 in", "36-inch", "42\"", "42 in", "42-inch", "48\"", "48-inch",
   "commercial",
   // Premium high-end portables/freestanding
-  "summit",
+  "summit", "weber summit",
 ];
 
 const STANDARD_PLUS_KEYWORDS = [
@@ -28,7 +32,9 @@ const STANDARD_PLUS_KEYWORDS = [
   "premium pellet", "kamado", "big green egg", "biggreenegg", "primo",
   "kj classic", "kamado joe",
   "genesis", "genesis ii",
-  "weber pro",
+  "weber pro", "saber", "bull",
+  // Napoleon's mid-tier lines (Prestige line was bumped to premium above)
+  "napoleon",
   "traeger pro 780", "traeger ironwood", "traeger timberline",
   // Premium pellet brands at standard+ tier
   "yoder", "rec tec", "rectec", "recteq",

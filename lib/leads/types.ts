@@ -50,16 +50,44 @@ export type CustomerType =
 
 export type LeadTier = "hot" | "warm" | "cool" | "cold";
 
+/**
+ * Side-channel signals surfaced alongside the score. The qualifier
+ * sets these based on patterns it spots in the lead — they don't
+ * always change the numeric score (intent signals do; veteran/referral
+ * etc. boost it) but they ALWAYS surface in the dashboard so Jeff can
+ * spot context the raw number misses.
+ */
+export type LeadFlag =
+  /** Notes contain SEO/Wikipedia/marketing solicitation phrases or
+   *  the lead has multiple garbage fields. Forces score → 0. */
+  | "likely_spam"
+  /** Promo code or notes mention veteran / military service. */
+  | "veteran"
+  /** Referral source filled in. */
+  | "referral"
+  /** Customer mentioned 2+ grills (e.g. "Blackstone + Weber"). */
+  | "multi_grill"
+  /** Address-shaped string spotted in the notes field, even though
+   *  the form's address field is empty. Credits completeness. */
+  | "address_in_notes"
+  /** Customer named a specific timeline (e.g. "by June 5"). */
+  | "has_deadline";
+
 export type ScoreBreakdown = {
   proximity: { tier: ProximityTier; points: number };
   value: { tier: ValueTier; points: number; estimatedJobUsdLow: number | null; estimatedJobUsdHigh: number | null };
   customer: { type: CustomerType; points: number };
   completeness: { points: number; filled: string[]; missing: string[] };
+  /** Bonus points from buying-signal flags — referral, veteran,
+   *  multi-grill. Capped at 10. Total max becomes 110 but the final
+   *  score is hard-capped at 100. */
+  intent: { points: number; signals: LeadFlag[] };
 };
 
 export type QualifiedLead = {
   score: number;
   tier: LeadTier;
+  flags: LeadFlag[];
   breakdown: ScoreBreakdown;
 };
 

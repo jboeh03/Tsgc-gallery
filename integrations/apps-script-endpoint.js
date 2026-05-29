@@ -124,7 +124,8 @@ function doPost(e) {
         'Timestamp', 'Status', 'Name', 'Phone', 'Email', 'ZIP',
         'Services', 'Grill Make/Model', 'Source', 'Referred By',
         'Best Time', 'Promo Code', 'Notes', 'Lead ID',
-        'Score', 'Tier', 'Proximity', 'Value Tier', 'Customer Type', 'Completeness'
+        'Score', 'Tier', 'Proximity', 'Value Tier', 'Customer Type',
+        'Completeness', 'Intent', 'Flags'
       ];
       webSheet.appendRow(headers);
       webSheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
@@ -133,7 +134,9 @@ function doPost(e) {
 
     // ── Qualify the lead before writing ────────────────────────
     // Use the score sent by Next.js if present (preview-tool path);
-    // otherwise compute inline (direct website-form path).
+    // otherwise compute inline (direct website-form path). Pass
+    // referredBy + promoCode so the qualifier can credit referral
+    // and veteran (e.g. promo "VET") intent signals.
     const qual = (data.qualification && data.qualification.score != null)
       ? data.qualification
       : qualifyLead_(ss, {
@@ -148,6 +151,8 @@ function doPost(e) {
           agreedPriceUsd: null,
           services: services,
           notes: notes,
+          referredBy: referredBy,
+          promoCode: promoRaw,
         });
 
     webSheet.appendRow([
@@ -160,7 +165,9 @@ function doPost(e) {
       qual.breakdown.value.tier,
       qual.breakdown.customer.type,
       qual.breakdown.completeness.filled.length + '/' +
-        (qual.breakdown.completeness.filled.length + qual.breakdown.completeness.missing.length)
+        (qual.breakdown.completeness.filled.length + qual.breakdown.completeness.missing.length),
+      (qual.breakdown.intent && qual.breakdown.intent.points) || 0,
+      (qual.flags || []).join(','),
     ]);
 
     // ── Also write to 📥 Raw Leads (so CRM import picks it up) ─
@@ -178,12 +185,15 @@ function doPost(e) {
     const promoLine  = promoLabel ? `\nPromo:    ${promoLabel}` : '';
     const notesLine  = notes      ? `\nNotes:    ${notes}`      : '';
     const timeLine   = bestTime   ? `\nBest time: ${bestTime}`  : '';
-    const tierTag    = `[${qual.tier.toUpperCase()} ${qual.score}]`;
+    const flagsList  = (qual.flags || []).filter(function(f) { return f !== 'likely_spam'; });
+    const spamPrefix = (qual.flags || []).indexOf('likely_spam') >= 0 ? '[SPAM] ' : '';
+    const tierTag    = `${spamPrefix}[${qual.tier.toUpperCase()} ${qual.score}]`;
     const subject    = `${tierTag} New Website Lead: ${name} — ${services.split(',')[0].trim()}`;
     const qualLine   = `\nLead score: ${qual.score} ${qual.tier.toUpperCase()} · ` +
                        `proximity: ${qual.breakdown.proximity.tier} · ` +
                        `value: ${qual.breakdown.value.tier} · ` +
-                       `customer: ${qual.breakdown.customer.type}`;
+                       `customer: ${qual.breakdown.customer.type}` +
+                       (flagsList.length > 0 ? `\nSignals: ${flagsList.join(', ')}` : '');
     const body =
 `New inquiry from tristategrillcleaning.com
 
@@ -893,10 +903,16 @@ function classifyZip_(zipRaw) {
   if (ZIP_TIERS.extended.indexOf(zip) >= 0) return 'extended';
   if (ZIP_TIERS.fringe.indexOf(zip) >= 0) return 'fringe';
   if (ZIP_TIERS.out_of_area.indexOf(zip) >= 0) return 'out_of_area';
-  // Heuristic fallback for unclassified ZIPs.
+  // Tightened fallback — only Greater Cincy / NKY / inner Dayton.
+  // Anything else (e.g. Columbus 43xxx, far Ohio, out of state)
+  // lands in out_of_area so it doesn't earn proximity points it
+  // doesn't deserve.
   if (/^45[0-2]/.test(zip)) return 'extended';
   if (/^41[0-1]/.test(zip)) return 'extended';
-  if (/^4[0-5]/.test(zip)) return 'fringe';
+  // Adjacent Indiana along the Cincinnati border.
+  if (/^4700/.test(zip) || /^4701/.test(zip) || /^4702/.test(zip) || /^4704/.test(zip)) {
+    return 'fringe';
+  }
   return 'out_of_area';
 }
 
@@ -932,10 +948,14 @@ function classifyValue_(args) {
   };
 
   if (has([
-    'built-in','built in','builtin','island','lynx','dcs','hestan','alfresco',
-    'coyote','fire magic','firemagic','twin eagles','twineagles','blaze',
+    'built-in','built in','builtin','island','outdoor kitchen',
+    'lynx','sedona','sedona lynx',
+    'dcs','hestan','alfresco','coyote','fire magic','firemagic',
+    'twin eagles','twineagles','blaze',
+    'wolf','kalamazoo','lion','memphis',
+    'viking','napoleon prestige','napoleon phantom',
     '36"','36 in','36-inch','42"','42 in','42-inch','48"','48-inch',
-    'commercial','summit',
+    'commercial','summit','weber summit',
   ])) {
     return { tier: 'premium', estimatedJobUsdLow: 499, estimatedJobUsdHigh: 799 };
   }
@@ -944,7 +964,8 @@ function classifyValue_(args) {
     '5-burner','5 burner','5burner',
     '6-burner','6 burner','6burner',
     'premium pellet','kamado','big green egg','biggreenegg','primo',
-    'kj classic','kamado joe','genesis','genesis ii','weber pro',
+    'kj classic','kamado joe','genesis','genesis ii',
+    'weber pro','saber','bull','napoleon',
     'traeger pro 780','traeger ironwood','traeger timberline',
     'yoder','rec tec','rectec','recteq',
   ])) {
@@ -1067,6 +1088,11 @@ const QUAL_COMPLETENESS = [
   { key: 'services',         weight: 2 },
   { key: 'notes',            weight: 1 },
 ];
+const QUAL_INTENT_MAX = 10;
+const QUAL_INTENT_REFERRAL = 5;
+const QUAL_INTENT_VETERAN = 5;
+const QUAL_INTENT_MULTI_GRILL = 3;
+const QUAL_INTENT_DEADLINE = 3;
 
 function tierForScore_(score) {
   if (score >= 75) return 'hot';
@@ -1075,10 +1101,72 @@ function tierForScore_(score) {
   return 'cold';
 }
 
+// Patterns lifted from lib/leads/qualify.ts — keep in sync.
+const QUAL_SPAM_PATTERNS = [
+  /wikipedia/i, /\bseo\b/i,
+  /respond with stop to opt-?out/i, /respond back to this email/i,
+  /marketing services/i, /page creation/i, /world'?s most/i,
+  /search engine ranking/i, /digital marketing/i,
+];
+const QUAL_VETERAN_RE = /\bvet\b|\bveteran\b|\bmilitary\b|\barmy\b|\bnavy\b|\bmarine\b|\bair[\s-]?force\b/i;
+const QUAL_DEADLINE_RE = /\bby\s+(?:next\s+)?(?:mon|tues|wednes|thurs|fri|satur|sun)/i;
+const QUAL_DEADLINE_DATE_RE = /\b(?:by|before)\s+\w+\s+\d{1,2}(?:st|nd|rd|th)?\b|\b(?:jan|feb|mar|apr|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep|oct|nov|dec)\w*\s+\d{1,2}(?:st|nd|rd|th)?\b|\b(?:this|next)\s+(?:week|weekend|month)\b|\bdeadline\b|\bby\s+\d{1,2}\/\d{1,2}\b/i;
+const QUAL_REFERRAL_RE = /\breferred\s+by\b|\brecommended\s+by\b|\btold\s+me\s+about\b|\bsent\s+me\b|\bsaw\s+(?:your|the)\s+(?:flyer|sign|ad|truck)\b/i;
+const QUAL_ADDRESS_RE = /\b\d{1,6}\s+[A-Za-z][\w'.-]*(?:\s+[A-Za-z][\w'.-]*){0,5}\s+(?:rd|road|st|street|ave|avenue|dr|drive|ln|lane|way|cir|circle|ct|court|pl|place|blvd|boulevard|hwy|highway|pkwy|parkway|ter|terrace|trail|trl|loop|crossing|square|sq|run|ridge|trace|commons?|mews|walk|row|park|grove|knoll|heights|hts|landing|estates?|manor)\b/i;
+
+// Sedona is omitted because Sedona IS the Lynx mid-tier line —
+// "Sedona Lynx" would otherwise read as 2 brands when it's 1 grill.
+const QUAL_GRILL_BRAND_TOKENS = [
+  'weber','blackstone','blaze','lynx','dcs','hestan','alfresco',
+  'coyote','viking','napoleon','wolf','kalamazoo','lion','memphis','twin eagles',
+  'fire magic','saber','bull','traeger','pit boss','pitboss','rec tec','rectec',
+  'recteq','yoder','kamado joe','big green egg','primo','smoker','griddle','kettle',
+];
+
+function _isMultiGrill_(grill) {
+  if (!grill) return false;
+  const g = grill.toLowerCase();
+  // Explicit conjunction between two recognizable parts wins immediately.
+  if (/\bweber\b[\s.,]+(?:and|plus|&)[\s.,]*(?:\w+)/i.test(g)) return true;
+  if (/\b(?:\w+)\s+(?:and|plus|&)\s+(?:weber|blackstone|traeger|napoleon|viking|lynx|blaze)\b/i.test(g)) return true;
+  // Otherwise need 2+ DISTINCT brand/type tokens. Avoids false positives
+  // from product names like "Blaze LTE+" or "4-burner, stainless".
+  const hits = {};
+  let n = 0;
+  for (let i = 0; i < QUAL_GRILL_BRAND_TOKENS.length; i++) {
+    const t = QUAL_GRILL_BRAND_TOKENS[i];
+    if (g.indexOf(t) >= 0 && !hits[t]) {
+      hits[t] = true;
+      n++;
+      if (n >= 2) return true;
+    }
+  }
+  return false;
+}
+
+function _isGarbageField_(v) {
+  if (!v) return false;
+  const s = String(v).trim();
+  if (s.length === 0) return false;
+  if (s.length < 3 && !/^\d+$/.test(s)) return true;
+  if (/^\d{1,3}$/.test(s) && s.length < 4) return true;
+  return false;
+}
+
+function _looksLikeSpam_(input, proximityTier) {
+  if (input.notes) {
+    for (let i = 0; i < QUAL_SPAM_PATTERNS.length; i++) {
+      if (QUAL_SPAM_PATTERNS[i].test(input.notes)) return true;
+    }
+  }
+  if (_isGarbageField_(input.grillDescription) && proximityTier === 'out_of_area') return true;
+  return false;
+}
+
 /**
- * qualifyLead_(ss, input) → { score, tier, breakdown }
- * Mirrors lib/leads/qualify.ts. Returns the same shape so downstream
- * code (Next.js + Apps Script) can use it interchangeably.
+ * qualifyLead_(ss, input) → { score, tier, flags, breakdown }
+ * Mirrors lib/leads/qualify.ts. Pass `input.referredBy` to credit
+ * a referral bonus without needing a "referred by" phrase in notes.
  */
 function qualifyLead_(ss, input) {
   const proximityTier = classifyZip_(input.zip);
@@ -1090,36 +1178,77 @@ function qualifyLead_(ss, input) {
   });
   const customerType = lookupCustomerType_(ss, input.phone, input.email);
 
+  // Address-in-notes credits completeness if the form's address
+  // field is empty but the customer pasted one into notes.
+  const addressInNotes = !input.address && !!(input.notes && QUAL_ADDRESS_RE.test(input.notes));
+  const addressFilled = !!input.address || addressInNotes;
+
   const filled = [];
   const missing = [];
   let completenessPoints = 0;
   for (let i = 0; i < QUAL_COMPLETENESS.length; i++) {
     const f = QUAL_COMPLETENESS[i];
-    const v = input[f.key];
-    const has = (typeof v === 'string') ? v.trim().length > 0 : v != null;
+    let has;
+    if (f.key === 'address') {
+      has = addressFilled;
+    } else {
+      const v = input[f.key];
+      has = (typeof v === 'string') ? v.trim().length > 0 : v != null;
+    }
     if (has) { filled.push(f.key); completenessPoints += f.weight; }
     else { missing.push(f.key); }
   }
 
-  const score = Math.min(100,
+  // Intent signals — bonus points up to QUAL_INTENT_MAX.
+  const intentSignals = [];
+  let intentPoints = 0;
+  const referredByExplicit = (input.referredBy || '').toString().trim().length > 0;
+  if (referredByExplicit || (input.notes && QUAL_REFERRAL_RE.test(input.notes))) {
+    intentSignals.push('referral'); intentPoints += QUAL_INTENT_REFERRAL;
+  }
+  if (input.notes && QUAL_VETERAN_RE.test(input.notes)) {
+    intentSignals.push('veteran'); intentPoints += QUAL_INTENT_VETERAN;
+  }
+  // Promo code containing "VET" also counts as veteran.
+  if (intentSignals.indexOf('veteran') < 0 && (input.promoCode || '').toString().toUpperCase().indexOf('VET') >= 0) {
+    intentSignals.push('veteran'); intentPoints += QUAL_INTENT_VETERAN;
+  }
+  if (_isMultiGrill_(input.grillDescription)) {
+    intentSignals.push('multi_grill'); intentPoints += QUAL_INTENT_MULTI_GRILL;
+  }
+  if (input.notes && (QUAL_DEADLINE_RE.test(input.notes) || QUAL_DEADLINE_DATE_RE.test(input.notes))) {
+    intentSignals.push('has_deadline'); intentPoints += QUAL_INTENT_DEADLINE;
+  }
+  intentPoints = Math.min(QUAL_INTENT_MAX, intentPoints);
+
+  const allFlags = intentSignals.slice();
+  if (addressInNotes) allFlags.push('address_in_notes');
+
+  const rawScore =
     QUAL_PROXIMITY_POINTS[proximityTier] +
     QUAL_VALUE_POINTS[value.tier] +
     QUAL_CUSTOMER_POINTS[customerType] +
-    completenessPoints
-  );
-  return {
-    score: score,
-    tier: tierForScore_(score),
-    breakdown: {
-      proximity: { tier: proximityTier, points: QUAL_PROXIMITY_POINTS[proximityTier] },
-      value: {
-        tier: value.tier,
-        points: QUAL_VALUE_POINTS[value.tier],
-        estimatedJobUsdLow: value.estimatedJobUsdLow,
-        estimatedJobUsdHigh: value.estimatedJobUsdHigh,
-      },
-      customer: { type: customerType, points: QUAL_CUSTOMER_POINTS[customerType] },
-      completeness: { points: completenessPoints, filled: filled, missing: missing },
+    completenessPoints +
+    intentPoints;
+
+  const breakdown = {
+    proximity: { tier: proximityTier, points: QUAL_PROXIMITY_POINTS[proximityTier] },
+    value: {
+      tier: value.tier,
+      points: QUAL_VALUE_POINTS[value.tier],
+      estimatedJobUsdLow: value.estimatedJobUsdLow,
+      estimatedJobUsdHigh: value.estimatedJobUsdHigh,
     },
+    customer: { type: customerType, points: QUAL_CUSTOMER_POINTS[customerType] },
+    completeness: { points: completenessPoints, filled: filled, missing: missing },
+    intent: { points: intentPoints, signals: intentSignals },
   };
+
+  if (_looksLikeSpam_(input, proximityTier)) {
+    allFlags.push('likely_spam');
+    return { score: 0, tier: 'cold', flags: allFlags, breakdown: breakdown };
+  }
+
+  const score = Math.min(100, rawScore);
+  return { score: score, tier: tierForScore_(score), flags: allFlags, breakdown: breakdown };
 }

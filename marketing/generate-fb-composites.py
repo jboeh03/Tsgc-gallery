@@ -28,7 +28,7 @@ import zipfile
 from datetime import datetime
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 JOBS_FILE = ROOT / "data" / "jobs.json"
@@ -69,8 +69,9 @@ def rounded_mask(size, radius):
 
 
 def contain_into(src_path, cell_w, cell_h, bg=NAVY):
-    """Aspect-fit src into a cell_w x cell_h canvas with bg backing."""
-    src = Image.open(src_path).convert("RGB")
+    """Aspect-fit src into a cell_w x cell_h canvas with bg backing.
+    Honors EXIF orientation so phone-uploaded JPEGs land upright."""
+    src = ImageOps.exif_transpose(Image.open(src_path)).convert("RGB")
     sw, sh = src.size
     scale = min(cell_w / sw, cell_h / sh)
     nw, nh = int(sw * scale), int(sh * scale)

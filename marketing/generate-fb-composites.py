@@ -1,19 +1,27 @@
 """
-Generate FB-style before/after composites for every job in data/jobs.json.
+Generate FB-style before/after composites.
 
-Matches the style of marketing/memorial-day-fb-composite.jpg:
-  - 2568x1280 outer canvas, 80px bone padding, 36px rounded figure corners
-  - Two photo halves with bone vertical divider
-  - Photos contain-fit into 4:3 cells with navy backing (no crop, full grill visible)
-  - Rounded BEFORE (transparent navy) and AFTER (burgundy) chips at top corners
-  - Bottom navy metadata band: burgundy location/date line, white model, faded service time
+Two modes:
 
-Outputs one JPG per job to marketing/fb-composites/ and bundles them into
-marketing/tsgc-before-afters-fb-style.zip.
+  Bulk (default) — iterate every job in data/jobs.json and write
+  one composite per pair to marketing/fb-composites/, plus a zip.
 
-Run from repo root:  python3 marketing/generate-fb-composites.py
+      python3 marketing/generate-fb-composites.py
+
+  One-off — render a single composite for a custom before/after with
+  a custom navy meta band (eyebrow / title / subtitle). Matches the
+  May 23 "stay tuned" post style: white BEFORE chip, burgundy AFTER
+  chip, thin burgundy accent above the band, domain anchored right.
+
+      python3 marketing/generate-fb-composites.py --one-off \\
+        --before path/to/before.jpg --after path/to/after.jpg \\
+        --eyebrow "SAME-DAY · CALLED THIS MORNING" \\
+        --title "Weber Genesis II." \\
+        --subtitle "Done before dinner" \\
+        --out marketing/weber-genesis-deck/reveal.jpg
 """
 
+import argparse
 import json
 import os
 import zipfile
@@ -163,6 +171,75 @@ def _fmt_hours(hours):
     return f"{hours} hrs"
 
 
+DOMAIN = "TRISTATEGRILLCLEANING.COM"
+SUBTITLE_GRAY = (180, 192, 212)
+
+
+def build_oneoff_composite(before_path, after_path, eyebrow, title, subtitle):
+    """May-23 style: white BEFORE chip, burgundy AFTER chip, burgundy
+    accent strip above a navy meta band with custom eyebrow/title/
+    subtitle and the domain anchored on the right."""
+    canvas = Image.new("RGB", (CANVAS_W, CANVAS_H), BONE)
+    figure = Image.new("RGB", (FIG_W, FIG_H), NAVY)
+
+    before_cell = contain_into(before_path, HALF_W, PHOTO_STRIP_H)
+    after_cell = contain_into(after_path, HALF_W, PHOTO_STRIP_H)
+    figure.paste(before_cell, (0, 0))
+    figure.paste(after_cell, (HALF_W + DIVIDER_W, 0))
+
+    fd = ImageDraw.Draw(figure)
+    fd.rectangle((HALF_W, 0, HALF_W + DIVIDER_W, PHOTO_STRIP_H), fill=BONE)
+
+    meta_y = PHOTO_STRIP_H
+    accent_h = 6
+    fd.rectangle((0, meta_y, FIG_W, meta_y + accent_h), fill=BURGUNDY)
+    fd.rectangle((0, meta_y + accent_h, FIG_W, FIG_H), fill=NAVY)
+
+    pad_x = 56
+    f_eyebrow = font(26, bold=True)
+    f_title = font(64, bold=True)
+    f_subtitle = font(28)
+    f_domain = font(24, bold=True)
+
+    text_y = meta_y + accent_h + 24
+    if eyebrow:
+        fd.text((pad_x, text_y), eyebrow, font=f_eyebrow, fill=BURGUNDY)
+    text_y += 44
+    if title:
+        fd.text((pad_x, text_y), title, font=f_title, fill=WHITE)
+    text_y += 78
+    if subtitle:
+        fd.text((pad_x, text_y), subtitle, font=f_subtitle, fill=SUBTITLE_GRAY)
+
+    domain_bbox = f_domain.getbbox(DOMAIN)
+    domain_w = domain_bbox[2] - domain_bbox[0]
+    domain_x = FIG_W - pad_x - domain_w
+    band_mid_y = meta_y + accent_h + (META_H - accent_h) // 2 - 14
+    fd.text((domain_x, band_mid_y), DOMAIN, font=f_domain, fill=WHITE)
+
+    figure_rgba = figure.convert("RGBA")
+    mask = rounded_mask((FIG_W, FIG_H), FIGURE_RADIUS)
+    canvas.paste(figure_rgba, (FIG_X, FIG_Y), mask=mask)
+    canvas_rgba = canvas.convert("RGBA")
+
+    chip_pad = 36
+    draw_chip(
+        canvas_rgba,
+        (FIG_X + chip_pad, FIG_Y + chip_pad),
+        "BEFORE",
+        bg=WHITE,
+        fg=NAVY,
+    )
+
+    f_chip = font(28, bold=True)
+    after_bbox = f_chip.getbbox("AFTER")
+    chip_w_after = (after_bbox[2] - after_bbox[0]) + 2 * 28
+    after_x = FIG_X + FIG_W - chip_pad - chip_w_after
+    draw_chip(canvas_rgba, (after_x, FIG_Y + chip_pad), "AFTER", bg=BURGUNDY, fg=WHITE)
+
+    return canvas_rgba.convert("RGB")
+
+
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for old in OUT_DIR.glob("*.jpg"):
@@ -190,5 +267,29 @@ def main():
     print(f"Zip size: {ZIP_PATH.stat().st_size // 1024} KB")
 
 
+def _cli():
+    p = argparse.ArgumentParser(description="Generate FB-style before/after composites.")
+    p.add_argument("--one-off", action="store_true", help="Render a single custom composite instead of iterating jobs.json.")
+    p.add_argument("--before", help="Path to the BEFORE photo (one-off mode).")
+    p.add_argument("--after", help="Path to the AFTER photo (one-off mode).")
+    p.add_argument("--eyebrow", default="", help="Burgundy uppercase line above the title.")
+    p.add_argument("--title", default="", help="Large white headline (e.g. 'Weber Genesis II.').")
+    p.add_argument("--subtitle", default="", help="Small light line under the title.")
+    p.add_argument("--out", help="Output JPG path (one-off mode).")
+    args = p.parse_args()
+
+    if args.one_off:
+        for required in ("before", "after", "out"):
+            if not getattr(args, required):
+                p.error(f"--{required} is required with --one-off")
+        img = build_oneoff_composite(args.before, args.after, args.eyebrow, args.title, args.subtitle)
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        img.save(out, "JPEG", quality=88, optimize=True)
+        print(f"  ✓ {out}  ({out.stat().st_size // 1024} KB)")
+    else:
+        main()
+
+
 if __name__ == "__main__":
-    main()
+    _cli()

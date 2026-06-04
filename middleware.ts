@@ -20,7 +20,9 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/admin") && pathname !== "/admin/sign-in") {
+  const isAuthEntryPath =
+    pathname === "/admin/sign-in" || pathname === "/admin/oauth-finish";
+  if (pathname.startsWith("/admin") && !isAuthEntryPath) {
     const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
     const iat = await verifySession(cookie);
     if (!iat) {

@@ -8,7 +8,7 @@
 
 import { getSupabase } from "./supabase";
 import type {
-  ContactRow, ConversationRow, MessageRow, DraftRow, AppointmentRow,
+  ContactRow, ConversationRow, MessageRow, DraftRow, AppointmentRow, JobRow,
   MessageDirection, MessageChannel, EventKind, PipelineStatus,
 } from "./types";
 
@@ -190,6 +190,13 @@ export async function createAppointment(
 export async function setJobStatus(jobId: string, status: PipelineStatus): Promise<void> {
   const sb = getSupabase();
   const { error } = await sb.from("jobs").update({ status }).eq("id", jobId);
+  if (error) throw new Error(error.message);
+}
+
+/** General job patch (status, quote, paid, review flags, …) from the admin CRM. */
+export async function updateJob(jobId: string, patch: Partial<JobRow>): Promise<void> {
+  const sb = getSupabase();
+  const { error } = await sb.from("jobs").update(patch).eq("id", jobId);
   if (error) throw new Error(error.message);
 }
 

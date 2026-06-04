@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { href: "/admin", label: "Overview", icon: "overview" as const },
   { href: "/admin/inbox", label: "Inbox", icon: "inbox" as const },
+  { href: "/admin/suggestions", label: "Suggestions", icon: "suggestions" as const },
   { href: "/admin/leads", label: "Leads", icon: "leads" as const },
   { href: "/admin/jobs", label: "Jobs", icon: "jobs" as const },
   { href: "/admin/campaigns", label: "Campaigns", icon: "campaigns" as const },
@@ -89,6 +90,12 @@ function NavIcon({ name, className }: { name: string; className?: string }) {
       return (
         <svg {...props}>
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      );
+    case "suggestions":
+      return (
+        <svg {...props}>
+          <path d="M9 18h6m-5 3h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z" />
         </svg>
       );
     case "leads":

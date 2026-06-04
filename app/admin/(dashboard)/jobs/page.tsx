@@ -4,6 +4,7 @@ import KpiCard from "@/components/admin/KpiCard";
 import EmptyState from "@/components/admin/EmptyState";
 import { readJobs } from "@/lib/db/reads";
 import { checkDbHealth } from "@/lib/db/supabase";
+import { listCalendarEvents } from "@/lib/calendar";
 import { SHEET_ID } from "@/lib/admin/sheets";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { format } from "date-fns";
@@ -36,7 +37,13 @@ export default async function JobsPage({
   const all = await readJobs();
   const inWindow = all.filter((j) => inRange(j.date, range));
   const completed = inWindow.filter((j) => COMPLETED.has(j.status.toLowerCase()));
-  const scheduled = inWindow.filter((j) => j.status.toLowerCase().includes("schedul"));
+
+  // Upcoming scheduled jobs come from the live TSGC Schedule calendar (next 30
+  // days), not the CRM jobs table — that's where the real schedule lives.
+  const upcoming = await listCalendarEvents(
+    new Date().toISOString(),
+    new Date(Date.now() + 30 * 86_400_000).toISOString()
+  );
 
   // Group by month for the table
   const byMonth = new Map<string, typeof completed>();
@@ -58,12 +65,55 @@ export default async function JobsPage({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard label="Jobs (window)" value={inWindow.length} hint="all statuses" />
           <KpiCard label="Completed" value={completed.length} />
-          <KpiCard label="Scheduled" value={scheduled.length} />
+          <KpiCard label="Upcoming" value={upcoming.length} hint="next 30 days · calendar" />
           <KpiCard
             label="Active customers"
             value={new Set(inWindow.map((j) => `${j.name}|${j.phone}`)).size}
             hint="unique name+phone"
           />
+        </div>
+
+        {/* Upcoming jobs from the TSGC Schedule Google Calendar */}
+        <div className="rounded-xl border border-border bg-white overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+            <h2 className="font-display text-base text-navy">Upcoming · TSGC Schedule</h2>
+            <span className="text-xs text-muted">{upcoming.length} on the calendar</span>
+          </div>
+          {upcoming.length === 0 ? (
+            <div className="p-5">
+              <EmptyState
+                title="Nothing upcoming on the calendar"
+                body="Connect the calendar (re-consent at sign-in) or add jobs to the TSGC Schedule calendar."
+              />
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs uppercase tracking-wider text-muted bg-bone/40">
+                <tr>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap">When</th>
+                  <th className="px-4 py-3 font-semibold">Job</th>
+                  <th className="px-4 py-3 font-semibold">Address</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {upcoming.map((e) => {
+                  const start = e.start ? new Date(e.allDay ? `${e.start}T12:00:00` : e.start) : null;
+                  const when = start
+                    ? e.allDay
+                      ? format(start, "EEE, MMM d")
+                      : format(start, "EEE, MMM d · h:mma")
+                    : "—";
+                  return (
+                    <tr key={e.id} className="hover:bg-bone/40 align-top">
+                      <td className="px-4 py-3 whitespace-nowrap text-ink/65">{when}</td>
+                      <td className="px-4 py-3 font-medium text-navy">{e.title || "—"}</td>
+                      <td className="px-4 py-3 text-ink/65 max-w-xs">{e.location || "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {months.length === 0 ? (

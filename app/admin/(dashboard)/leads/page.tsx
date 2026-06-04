@@ -1,29 +1,35 @@
+import Link from "next/link";
 import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
-import { readLeads } from "@/lib/db/reads";
+import { readCrmRows, type CrmRow } from "@/lib/db/reads";
 import { checkDbHealth } from "@/lib/db/supabase";
-import { SHEET_ID } from "@/lib/admin/sheets";
-import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { format } from "date-fns";
 
-export default async function LeadsPage({
+export const dynamic = "force-dynamic";
+
+// "Closed" = the pipeline has ended; everything else is new/ongoing ("active").
+const CLOSED = new Set(["paid", "lost"]);
+type Filter = "active" | "closed" | "all";
+
+export default async function CrmPage({
   searchParams,
 }: {
-  searchParams: { range?: string; q?: string };
+  searchParams: { filter?: string; q?: string };
 }) {
   const session = await auth();
-  const range = resolveRange(searchParams.range);
+  const filter: Filter =
+    searchParams.filter === "closed" ? "closed" : searchParams.filter === "all" ? "all" : "active";
   const q = (searchParams.q ?? "").trim().toLowerCase();
   const health = await checkDbHealth();
 
   if (!health.ok) {
     return (
       <>
-        <Header email={session?.user?.email} title="Leads" showRange={false} />
+        <Header email={session?.user?.email} title="CRM" showRange={false} />
         <div className="p-6">
           <EmptyState
-            title={health.configured ? "Sheets error" : "Sheets not configured"}
+            title={health.configured ? "Database error" : "Database not configured"}
             body={health.error}
           />
         </div>
@@ -31,38 +37,48 @@ export default async function LeadsPage({
     );
   }
 
-  const all = await readLeads();
+  const all = await readCrmRows();
+  const counts = {
+    active: all.filter((r) => !CLOSED.has(r.status)).length,
+    closed: all.filter((r) => CLOSED.has(r.status)).length,
+    all: all.length,
+  };
+
   const filtered = all
-    .filter((l) => inRange(l.timestamp, range))
-    .filter((l) => {
+    .filter((r) => (filter === "all" ? true : filter === "closed" ? CLOSED.has(r.status) : !CLOSED.has(r.status)))
+    .filter((r) => {
       if (!q) return true;
-      const hay =
-        `${l.name} ${l.phone} ${l.email} ${l.zip} ${l.services} ${l.source} ${l.notes}`.toLowerCase();
+      const hay = `${r.name} ${r.phone} ${r.email} ${r.zip} ${r.service} ${r.source} ${r.status}`.toLowerCase();
       return hay.includes(q);
-    })
-    .sort(
-      (a, b) =>
-        (parseSheetTimestamp(b.timestamp)?.getTime() ?? 0) -
-        (parseSheetTimestamp(a.timestamp)?.getTime() ?? 0)
-    );
+    });
+
+  const tabs: { id: Filter; label: string; n: number }[] = [
+    { id: "active", label: "New & ongoing", n: counts.active },
+    { id: "closed", label: "Closed", n: counts.closed },
+    { id: "all", label: "All", n: counts.all },
+  ];
 
   return (
     <>
-      <Header email={session?.user?.email} title="Leads" />
+      <Header email={session?.user?.email} title="CRM" showRange={false} />
       <div className="p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-muted">
-            {formatRangeLabel(range, range.id as never)} ·{" "}
-            <strong className="text-ink">{filtered.length}</strong> shown
-            {q && (
-              <>
-                {" "}
-                · filtered by &ldquo;<span className="text-burgundy">{q}</span>&rdquo;
-              </>
-            )}
-          </p>
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-white p-1">
+            {tabs.map((t) => (
+              <Link
+                key={t.id}
+                href={`/admin/leads?filter=${t.id}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+                className={[
+                  "rounded-md px-3 py-1.5 text-xs uppercase tracking-wider transition",
+                  filter === t.id ? "bg-navy text-bone" : "text-ink/65 hover:bg-bone",
+                ].join(" ")}
+              >
+                {t.label} <span className="opacity-60">({t.n})</span>
+              </Link>
+            ))}
+          </div>
           <form className="flex items-center gap-2" action="" method="get">
-            <input type="hidden" name="range" value={range.id} />
+            <input type="hidden" name="filter" value={filter} />
             <input
               type="search"
               name="q"
@@ -82,79 +98,78 @@ export default async function LeadsPage({
         <div className="rounded-xl border border-border bg-white overflow-x-auto">
           {filtered.length === 0 ? (
             <div className="p-5">
-              <EmptyState title="No leads match" />
+              <EmptyState title="No records match" />
             </div>
           ) : (
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase tracking-wider text-muted bg-bone/40">
                 <tr>
-                  <th className="px-4 py-3 font-semibold whitespace-nowrap">When</th>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap">Added</th>
                   <th className="px-4 py-3 font-semibold">Name</th>
                   <th className="px-4 py-3 font-semibold">Phone</th>
-                  <th className="px-4 py-3 font-semibold">Email</th>
                   <th className="px-4 py-3 font-semibold">ZIP</th>
-                  <th className="px-4 py-3 font-semibold">Services</th>
-                  <th className="px-4 py-3 font-semibold">Source</th>
-                  <th className="px-4 py-3 font-semibold">Promo</th>
+                  <th className="px-4 py-3 font-semibold">Service</th>
+                  <th className="px-4 py-3 font-semibold">Quote</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
+                  <th className="px-4 py-3 font-semibold"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map((l) => {
-                  const d = parseSheetTimestamp(l.timestamp);
-                  return (
-                    <tr key={l.rowNumber} className="hover:bg-bone/40">
-                      <td className="px-4 py-3 text-ink/60 whitespace-nowrap">
-                        {d ? format(d, "MMM d, h:mma") : l.timestamp}
-                      </td>
-                      <td className="px-4 py-3 font-medium text-navy">{l.name || "—"}</td>
-                      <td className="px-4 py-3 text-ink/75">
-                        {l.phone ? (
-                          <a className="hover:text-burgundy" href={`tel:${l.phone}`}>
-                            {l.phone}
-                          </a>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-ink/75">
-                        {l.email ? (
-                          <a className="hover:text-burgundy" href={`mailto:${l.email}`}>
-                            {l.email}
-                          </a>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-ink/75">{l.zip || "—"}</td>
-                      <td className="px-4 py-3 text-ink/75">{l.services || "—"}</td>
-                      <td className="px-4 py-3 text-ink/75">{l.source || "—"}</td>
-                      <td className="px-4 py-3 text-ink/75">{l.promoCode || "—"}</td>
-                      <td className="px-4 py-3">
-                        <StatusChip s={l.status} />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {filtered.map((r) => (
+                  <Row key={r.jobId} r={r} />
+                ))}
               </tbody>
             </table>
           )}
         </div>
 
         <p className="text-xs text-muted">
-          Source of truth:{" "}
-          <a
-            href={`https://docs.google.com/spreadsheets/d/${SHEET_ID}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-burgundy"
-          >
-            CRM sheet ↗
-          </a>{" "}
-          · Cache refreshes every 60s.
+          Click any row to edit contact info, quote, status, and notes. Saves write straight to your database · cache refreshes every 60s.
         </p>
       </div>
     </>
+  );
+}
+
+function Row({ r }: { r: CrmRow }) {
+  const d = r.createdAt ? new Date(r.createdAt) : null;
+  return (
+    <tr className="hover:bg-bone/40">
+      <td className="px-4 py-3 text-ink/60 whitespace-nowrap">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">
+          {d ? format(d, "MMM d") : "—"}
+        </Link>
+      </td>
+      <td className="px-4 py-3 font-medium text-navy">
+        <Link href={`/admin/leads/${r.jobId}`} className="block hover:text-burgundy">
+          {r.name || "—"}
+        </Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">{r.phone || "—"}</Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">{r.zip || "—"}</Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">{r.service || "—"}</Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">
+          {r.quoteAmount != null ? `$${r.quoteAmount}` : "—"}
+        </Link>
+      </td>
+      <td className="px-4 py-3">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">
+          <StatusChip s={r.status} />
+        </Link>
+      </td>
+      <td className="px-4 py-3 text-right">
+        <Link href={`/admin/leads/${r.jobId}`} className="text-xs uppercase tracking-wider text-burgundy hover:underline">
+          Edit
+        </Link>
+      </td>
+    </tr>
   );
 }
 
@@ -162,12 +177,10 @@ function StatusChip({ s }: { s: string }) {
   const lower = (s || "").toLowerCase();
   let cls = "bg-navy/10 text-navy";
   if (!s) cls = "bg-muted/20 text-muted";
-  else if (lower.includes("new")) cls = "bg-burgundy/15 text-burgundy";
-  else if (lower.includes("schedul")) cls = "bg-blue-100 text-blue-700";
-  else if (lower.includes("complet") || lower.includes("done") || lower.includes("paid"))
-    cls = "bg-emerald-100 text-emerald-700";
-  else if (lower.includes("lost") || lower.includes("dead"))
-    cls = "bg-muted/30 text-muted";
+  else if (lower === "new") cls = "bg-burgundy/15 text-burgundy";
+  else if (lower.includes("schedul") || lower === "booked") cls = "bg-blue-100 text-blue-700";
+  else if (lower === "completed" || lower === "paid") cls = "bg-emerald-100 text-emerald-700";
+  else if (lower === "lost") cls = "bg-muted/30 text-muted";
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${cls}`}

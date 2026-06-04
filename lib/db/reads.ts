@@ -135,6 +135,67 @@ export async function readConversations(): Promise<ConversationSummary[]> {
   return rows.map((r) => ({ ...r, lastMessageBody: lastByConv.get(r.id) ?? null }));
 }
 
+// ---- CRM (editable) reads --------------------------------------------------
+
+export type CrmRow = {
+  jobId: string;
+  contactId: string | null;
+  name: string;
+  phone: string;
+  email: string;
+  zip: string;
+  service: string;
+  source: string;
+  status: string;
+  grillModel: string;
+  quoteAmount: number | null;
+  createdAt: string;
+};
+
+/** Flat job+contact rows for the CRM list, carrying the real job UUID for editing. */
+export async function readCrmRows(): Promise<CrmRow[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await getSupabase()
+    .from("jobs")
+    .select("id, status, service, source, grill_model, quote_amount, created_at, contact_id, contact:contacts(name, phone_e164, email, zip, grill_model)")
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((j) => {
+    const row = j as unknown as JobRow & { contact: { name: string | null; phone_e164: string | null; email: string | null; zip: string | null; grill_model: string | null } | null };
+    const c = row.contact;
+    return {
+      jobId: row.id,
+      contactId: row.contact_id,
+      name: c?.name ?? "",
+      phone: c?.phone_e164 ?? "",
+      email: c?.email ?? "",
+      zip: c?.zip ?? "",
+      service: row.service ?? "",
+      source: row.source ?? "",
+      status: row.status ?? "",
+      grillModel: row.grill_model ?? c?.grill_model ?? "",
+      quoteAmount: row.quote_amount,
+      createdAt: row.created_at ?? "",
+    };
+  });
+}
+
+/** Full job + contact for the editable detail view. */
+export async function readJobDetail(jobId: string): Promise<{ job: JobRow; contact: ContactRow | null } | null> {
+  if (!isSupabaseConfigured()) return null;
+  const { data, error } = await getSupabase()
+    .from("jobs")
+    .select("*, contact:contacts(*)")
+    .eq("id", jobId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const row = data as unknown as JobRow & { contact: ContactRow | null };
+  const { contact, ...job } = row;
+  return { job: job as JobRow, contact: contact ?? null };
+}
+
 export async function readConversation(id: string): Promise<ConversationThread | null> {
   if (!isSupabaseConfigured()) return null;
   const sb = getSupabase();

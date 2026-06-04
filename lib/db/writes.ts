@@ -200,6 +200,13 @@ export async function updateJob(jobId: string, patch: Partial<JobRow>): Promise<
   if (error) throw new Error(error.message);
 }
 
+/** General contact patch (name, phone, email, address, grill, …) from the admin CRM. */
+export async function updateContact(contactId: string, patch: Partial<ContactRow>): Promise<void> {
+  const sb = getSupabase();
+  const { error } = await sb.from("contacts").update(patch).eq("id", contactId);
+  if (error) throw new Error(error.message);
+}
+
 /** Fire-and-forget-ish audit log; never throws into the caller's happy path. */
 export async function logEvent(
   kind: EventKind,

@@ -8,7 +8,7 @@ const NAV = [
   { href: "/admin", label: "Overview", icon: "overview" as const },
   { href: "/admin/inbox", label: "Inbox", icon: "inbox" as const },
   { href: "/admin/suggestions", label: "Suggestions", icon: "suggestions" as const },
-  { href: "/admin/leads", label: "Leads", icon: "leads" as const },
+  { href: "/admin/leads", label: "CRM", icon: "leads" as const },
   { href: "/admin/jobs", label: "Jobs", icon: "jobs" as const },
   { href: "/admin/marketing", label: "Marketing", icon: "marketing" as const },
   { href: "/admin/campaigns", label: "Campaigns", icon: "campaigns" as const },

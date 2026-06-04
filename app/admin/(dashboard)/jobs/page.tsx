@@ -3,6 +3,7 @@ import Header from "@/components/admin/Header";
 import KpiCard from "@/components/admin/KpiCard";
 import EmptyState from "@/components/admin/EmptyState";
 import CalendarJobList from "@/components/admin/CalendarJobList";
+import SyncCompletedButton from "@/components/admin/SyncCompletedButton";
 import { listCalendarEvents, type CalendarEvent } from "@/lib/calendar";
 import { format } from "date-fns";
 
@@ -76,9 +77,9 @@ export default async function JobsPage() {
 
         {/* Completed — past calendar events, last week by default + see all */}
         <div className="rounded-xl border border-border bg-white overflow-hidden">
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+          <div className="px-5 py-3 border-b border-border flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-base text-navy">Completed · TSGC Schedule</h2>
-            <span className="text-xs text-muted">{past.length} total</span>
+            <SyncCompletedButton />
           </div>
           <CalendarJobList events={past} initialCount={initialCount} />
         </div>

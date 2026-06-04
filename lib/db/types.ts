@@ -79,6 +79,7 @@ export type JobRow = {
   review_received: boolean;
   review_notes: string | null;
   legacy_lead_id: string | null;
+  gcal_event_id: string | null;
 };
 
 export type ConversationRow = {

@@ -6,6 +6,7 @@
  */
 
 import { ingestLead, type LeadInput } from "@/lib/db/ingest";
+import { publicFormAllowed, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,10 @@ export async function POST(req: Request) {
   // Need at least a phone or email to be a usable lead.
   if (!body.phone && !body.email) {
     return Response.json({ ok: false, error: "phone or email required" }, { status: 400 });
+  }
+
+  if (!(await publicFormAllowed("ingest", clientIp(req), body.phone || body.email))) {
+    return Response.json({ ok: false, error: "rate limited" }, { status: 429 });
   }
 
   const result = await ingestLead(body);

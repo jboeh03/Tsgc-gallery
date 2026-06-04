@@ -11,6 +11,7 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/db/supabase";
 import { upsertContactByPhone, createAppointment, logEvent } from "@/lib/db/writes";
 import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 import { normalizeE164 } from "@/lib/db/ingest";
+import { publicFormAllowed, clientIp } from "@/lib/ratelimit";
 import { SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
@@ -30,6 +31,10 @@ export async function POST(req: Request) {
   const phone = normalizeE164(b.phone);
   if (!phone || !b.preferredDate) {
     return Response.json({ ok: false, error: "A valid phone and a preferred date are required." }, { status: 400 });
+  }
+
+  if (!(await publicFormAllowed("book", clientIp(req), phone))) {
+    return Response.json({ ok: false, error: "Too many requests — please call or text us instead." }, { status: 429 });
   }
 
   try {

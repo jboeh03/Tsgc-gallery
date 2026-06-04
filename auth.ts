@@ -52,7 +52,8 @@ export async function signInWithPassword(formData: FormData): Promise<string | v
   const provided = (formData.get("password") || "").toString();
   const callbackUrl = (formData.get("callbackUrl") || "/admin").toString();
 
-  if (!constantTimeEqualString(provided, getAdminPassword())) {
+  const configured = getAdminPassword();
+  if (!configured || !constantTimeEqualString(provided, configured)) {
     return "Wrong password.";
   }
 

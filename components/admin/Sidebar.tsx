@@ -14,6 +14,7 @@ const NAV = [
   { href: "/admin/campaigns", label: "Campaigns", icon: "campaigns" as const },
   { href: "/admin/traffic", label: "Traffic", icon: "traffic" as const },
   { href: "/admin/products", label: "Affiliate", icon: "affiliate" as const },
+  { href: "/admin/agents", label: "Agents", icon: "agents" as const },
   { href: "/admin/settings", label: "Settings", icon: "settings" as const },
 ];
 
@@ -104,6 +105,13 @@ function NavIcon({ name, className }: { name: string; className?: string }) {
         <svg {...props}>
           <path d="m3 11 14-7v16L3 13v5H1v-7z" />
           <path d="M17 8a3 3 0 0 1 0 6" />
+        </svg>
+      );
+    case "agents":
+      return (
+        <svg {...props}>
+          <rect x="4" y="8" width="16" height="12" rx="2" />
+          <path d="M12 2v4M9 13h.01M15 13h.01M8 20v2M16 20v2" />
         </svg>
       );
     case "leads":

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    { "path": "/api/agents/digest", "schedule": "0 12 * * *" },
+    { "path": "/api/agents/followup", "schedule": "0 13 * * *" },
+    { "path": "/api/agents/reviews", "schedule": "30 13 * * *" },
+    { "path": "/api/agents/hygiene", "schedule": "45 13 * * *" }
+  ]
+}

@@ -81,19 +81,36 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       contactId = contactRow.id;
     }
 
-    const jobInsert: Partial<JobRow> = {
-      contact_id: contactId,
-      status: "new",
-      service: services || null,
-      source: input.source || "website-quote-form",
-      referred_by: input.referredBy || null,
-      notes,
-      grill_model: input.grillModel || null,
-      legacy_lead_id: input.legacyLeadId || null,
-    };
-    const { data: job, error: jobErr } = await sb.from("jobs").insert(jobInsert).select("id").single();
-    if (jobErr) throw new Error(jobErr.message);
-    const jobId = (job as { id: string }).id;
+    // Dedup: if this contact already opened a job in the last 24h (double-submit,
+    // retry, accidental double-click), reuse it instead of creating a duplicate.
+    const dayAgo = new Date(Date.now() - 86_400_000).toISOString();
+    const { data: recent } = await sb
+      .from("jobs")
+      .select("id")
+      .eq("contact_id", contactId)
+      .gte("created_at", dayAgo)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    let jobId: string;
+    if (recent) {
+      jobId = (recent as { id: string }).id;
+    } else {
+      const jobInsert: Partial<JobRow> = {
+        contact_id: contactId,
+        status: "new",
+        service: services || null,
+        source: input.source || "website-quote-form",
+        referred_by: input.referredBy || null,
+        notes,
+        grill_model: input.grillModel || null,
+        legacy_lead_id: input.legacyLeadId || null,
+      };
+      const { data: job, error: jobErr } = await sb.from("jobs").insert(jobInsert).select("id").single();
+      if (jobErr) throw new Error(jobErr.message);
+      jobId = (job as { id: string }).id;
+    }
 
     await logEvent("lead_created", { contactId, jobId }, {
       source: input.source,
@@ -136,7 +153,10 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
     }
 
     return { contactId, jobId };
-  } catch {
-    return null; // best-effort — never throw into the lead-capture path
+  } catch (err) {
+    // Never throw into the lead-capture path — but a lost lead is worth knowing about.
+    const { logError } = await import("@/lib/observability");
+    await logError("lead_ingest", err, { critical: true });
+    return null;
   }
 }

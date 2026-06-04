@@ -23,7 +23,7 @@ export type AppointmentStatus = "proposed" | "confirmed" | "completed" | "cancel
 export type EventKind =
   | "lead_created" | "message_in" | "message_out" | "draft_generated"
   | "status_change" | "appointment_created" | "appointment_confirmed"
-  | "mirror_synced" | "webhook_received";
+  | "mirror_synced" | "webhook_received" | "error" | "agent_run" | "backlog";
 
 // ---- row types -------------------------------------------------------------
 export type ContactRow = {
@@ -179,6 +179,7 @@ export type Database = {
       drafts: Tbl<DraftRow>;
       appointments: Tbl<AppointmentRow>;
       events: Tbl<EventRow>;
+      rate_events: Tbl<{ id: string; bucket: string; created_at: string }>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

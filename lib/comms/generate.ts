@@ -36,7 +36,9 @@ export async function generateDraftForConversation(conversationId: string): Prom
       promptTokens: result.usage?.input,
       completionTokens: result.usage?.output,
     });
-  } catch {
+  } catch (err) {
+    const { logError } = await import("@/lib/observability");
+    await logError("draft_generate", err, { conversationId });
     return null;
   }
 }

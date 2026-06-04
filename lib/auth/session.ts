@@ -15,10 +15,11 @@ export const SESSION_COOKIE_NAME = "tsgc-admin-session";
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const ADMIN_PRINCIPAL = "admin@tsgc";
 
-const FALLBACK_PASSWORD = "cincygrills";
-
 export function getAdminPassword(): string {
-  return process.env.ADMIN_PASSWORD || FALLBACK_PASSWORD;
+  // Production MUST set ADMIN_PASSWORD. The dev convenience password never
+  // applies in production — a missing env there fails login closed (callers
+  // also guard against an empty configured password).
+  return process.env.ADMIN_PASSWORD || (process.env.NODE_ENV === "production" ? "" : "cincygrills");
 }
 
 function toHex(buf: ArrayBuffer): string {

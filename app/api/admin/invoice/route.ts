@@ -28,6 +28,9 @@ export async function POST(req: Request) {
   if (!jobId || !amountUsd || amountUsd <= 0) {
     return Response.json({ error: "jobId and a positive amountUsd are required" }, { status: 400 });
   }
+  if (amountUsd > 5000) {
+    return Response.json({ error: "Amount over $5,000 — double-check before invoicing this much." }, { status: 400 });
+  }
 
   try {
     const result = await createInvoiceForJob({ jobId, amountUsd, description, sendNow: true });

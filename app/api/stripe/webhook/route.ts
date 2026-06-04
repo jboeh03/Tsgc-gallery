@@ -7,6 +7,7 @@
 
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import { updateJob, logEvent } from "@/lib/db/writes";
+import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -17,11 +18,12 @@ export async function POST(req: Request) {
   }
 
   const sig = req.headers.get("stripe-signature");
+  if (!sig) return new Response("missing signature", { status: 400 });
   const raw = await req.text();
 
   let event;
   try {
-    event = getStripe().webhooks.constructEvent(raw, sig ?? "", secret);
+    event = getStripe().webhooks.constructEvent(raw, sig, secret);
   } catch {
     return new Response("bad signature", { status: 400 });
   }
@@ -39,8 +41,9 @@ export async function POST(req: Request) {
         await logEvent("status_change", { jobId }, { via: "stripe_webhook", event: event.type });
       }
     }
-  } catch {
-    /* swallow — ack the event so Stripe doesn't retry-storm; reprocessing is safe */
+  } catch (err) {
+    // Ack anyway so Stripe doesn't retry-storm, but surface the failure.
+    await logError("stripe_webhook", err, { critical: true });
   }
 
   return Response.json({ received: true });

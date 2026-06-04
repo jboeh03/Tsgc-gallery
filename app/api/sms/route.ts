@@ -19,6 +19,7 @@ import {
 } from "@/lib/db/writes";
 import { isSupabaseConfigured } from "@/lib/db/supabase";
 import { generateDraftForConversation } from "@/lib/comms/generate";
+import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -92,8 +93,9 @@ export async function POST(req: Request) {
       }
       revalidateTag("admin-inbox");
     }
-  } catch {
-    /* swallow — never make Twilio retry; the message may be reprocessed safely thanks to idempotency */
+  } catch (err) {
+    // Never make Twilio retry — but no longer silent: record it + alert Jeff.
+    await logError("sms_inbound", err, { critical: true });
   }
 
   return ok();

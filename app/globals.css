@@ -239,3 +239,203 @@ html.lenis body {
     transform: none !important;
   }
 }
+
+/* ---------- "Where we'll be this week" map (Leaflet) ---------- */
+/* All scoped under .twmap (the map container) so they don't leak globally.
+   Marker markup is built in components/ThisWeekMap.tsx. */
+
+.twmap .leaflet-container {
+  font-family: inherit;
+  background: #f7f3ee;
+}
+
+/* Scheduled stop — branded grill teardrop pin */
+.twmap .pin {
+  position: relative;
+  width: 46px;
+  height: 58px;
+}
+.twmap .pin__body {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50% 50% 50% 0;
+  rotate: 45deg;
+  background: #1a3055;
+  border: 2px solid #f7f3ee;
+  box-shadow: 0 6px 14px rgba(16, 33, 64, 0.35);
+  animation: pin-bob 2.4s ease-in-out infinite;
+}
+.twmap .pin__glyph {
+  position: absolute;
+  left: 50%;
+  top: 21px;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 26px;
+  color: #f7f3ee;
+}
+.twmap .pin__badge {
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: #8b1f2f;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1.5px solid #f7f3ee;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+@keyframes pin-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -4px; }
+}
+
+/* Completed stop — clickable before/after thumbnail pin */
+.twmap .donepin {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+.twmap .donepin__thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #8b1f2f;
+  box-shadow: 0 6px 14px rgba(110, 24, 37, 0.4);
+}
+.twmap .donepin__check {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b1f2f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 2px solid #f7f3ee;
+}
+
+/* Before/after popup */
+.twmap .leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e5e0d8;
+}
+.twmap .leaflet-popup-content {
+  margin: 0;
+  width: 300px !important;
+}
+.twmap .ba__head {
+  padding: 11px 14px 9px;
+  background: #1a3055;
+  color: #f7f3ee;
+}
+.twmap .ba__hood {
+  font-family: var(--font-display, Oswald), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+.twmap .ba__meta {
+  font-size: 11px;
+  color: #a9b7cc;
+  margin-top: 2px;
+}
+.twmap .ba {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+  background: #000;
+  cursor: ew-resize;
+}
+.twmap .ba img {
+  position: absolute;
+  inset: 0;
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.twmap .ba__after {
+  clip-path: inset(0 0 0 50%);
+}
+.twmap .ba__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #f7f3ee;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.twmap .ba__grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f7f3ee;
+  border: 2px solid #8b1f2f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b1f2f;
+  font-size: 13px;
+  font-weight: 800;
+}
+.twmap .ba__tag {
+  position: absolute;
+  bottom: 8px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(16, 33, 64, 0.78);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.twmap .ba__tag--b { left: 8px; }
+.twmap .ba__tag--a { right: 8px; }
+.twmap .ba__foot {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f3ee;
+}
+.twmap .ba__foot a {
+  color: #8b1f2f;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+}
+.twmap .ba__hours {
+  font-size: 11px;
+  color: #6e6e68;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .twmap .pin__body {
+    animation: none !important;
+  }
+}

@@ -62,7 +62,7 @@ export const GIVEAWAY = {
     name: "Tri-State Grill Cleaning",
     ownerName: "Jeff Boeh",
     contact: "jeff@cincygrillcleaning.com",
-    phone: "(657) 831-4276",
+    phone: "(513) 790-4040",
     address: "Cincinnati, OH 45233",
     website: "https://tristategrillcleaning.com",
   },

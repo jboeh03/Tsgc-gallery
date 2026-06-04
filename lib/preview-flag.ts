@@ -11,3 +11,12 @@ export function isPreviewVisible(): boolean {
   if (!host) return true;
   return !SITE.publicHosts.some((h) => host === h);
 }
+
+/**
+ * Whether the internal /studio editor should be visible. Same host-gate
+ * as the preview tool — hidden on production, available on *.vercel.app
+ * and locally.
+ */
+export function isStudioVisible(): boolean {
+  return isPreviewVisible();
+}

@@ -54,6 +54,15 @@ export default function QuoteForm() {
     // override "source" select with a fixed string so leads roll up consistently.
     data.source = "website-quote-form";
 
+    // Dual-write into Supabase (best-effort, non-blocking). The Apps Script
+    // POST below remains the source of truth for the Sheet + alerts.
+    fetch("/api/leads/ingest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      keepalive: true,
+    }).catch(() => {});
+
     try {
       // Apps Script requires no-cors + text/plain to avoid preflight rejection.
       await fetch(SITE.quoteEndpoint, {

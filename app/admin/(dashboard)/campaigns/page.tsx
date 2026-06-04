@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import KpiCard from "@/components/admin/KpiCard";
-import { readLeads, readJobs, checkSheetHealth } from "@/lib/admin/sheets";
+import { readLeads, readJobs } from "@/lib/db/reads";
+import { checkDbHealth } from "@/lib/db/supabase";
 import { resolveRange, inRange, formatRangeLabel } from "@/lib/admin/range";
 
 // Mirrors the PROMO_CODES table in integrations/apps-script-endpoint.js
@@ -25,7 +26,7 @@ export default async function CampaignsPage({
 }) {
   const session = await auth();
   const range = resolveRange(searchParams.range);
-  const health = await checkSheetHealth();
+  const health = await checkDbHealth();
 
   if (!health.ok) {
     return (

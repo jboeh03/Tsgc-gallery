@@ -15,12 +15,29 @@ type BacklogItem = {
   priority: "high" | "medium" | "low";
 };
 
-const PRODUCT = `Tri-State Grill Cleaning runs its whole business from a Next.js + Supabase admin "HQ": an AI SMS inbox (Twilio + Claude), CRM pipeline (lead→quoted→booked→scheduled→completed→invoiced→paid→review), one-click Suggestions, Stripe invoicing + pay links, a customer booking page, marketing content generators, and a team of human-in-the-loop background agents (follow-up, reviews, hygiene, marketing, digest). It's a SOLO operator (Jeff). Everything an agent produces is a draft Jeff approves — nothing auto-sends.`;
+const PRODUCT = `Tri-State Grill Cleaning runs its whole business from a Next.js + Supabase admin "HQ". It's a SOLO operator (Jeff). Everything an agent produces is a draft Jeff approves — nothing auto-sends.`;
+
+// What's ALREADY shipped — the PM agent must not re-propose these.
+const ALREADY_BUILT = [
+  "AI SMS inbox + Claude-drafted replies (Twilio), incl. opt-out/STOP handling",
+  "CRM on Supabase (lead→quoted→booked→scheduled→completed→invoiced→paid→review)",
+  "one-click Suggestions feed (mark complete, request review, follow-up)",
+  "Stripe invoicing + pay links + paid webhook; invoice amount cap",
+  "customer booking page (/book) + appointments + this-week map",
+  "marketing generators (social/blog/Radar) + weekly marketing-batch agent",
+  "dual admin login (Google OAuth + password)",
+  "lead follow-up auto-draft on new lead; preferred-contact field",
+  "background agents: follow-up/collections, reviews, hygiene, marketing, digest, PM",
+  "observability (error logging + critical-path SMS alerts) + /admin/agents health",
+  "rate limiting on public forms; lead-ingest dedup",
+  "lead scoring/qualification (lib/leads)",
+  "design system doc (docs/design.md)",
+];
 
 async function proposeBacklog(signals: Record<string, number>, openTitles: string[]): Promise<BacklogItem[]> {
   if (!process.env.ANTHROPIC_API_KEY) return [];
   const client = new Anthropic();
-  const system = `You are the product manager + lead engineer for this product:\n${PRODUCT}\n\nGiven the current signals and what's already on the backlog, propose up to 6 of the HIGHEST-leverage next moves for a solo operator — a mix of features, growth ideas, ops fixes, and risks/bugs worth addressing. Each must be specific and actionable (one sentence of detail). Prioritize ruthlessly by impact-for-effort. NEVER repeat anything already on the backlog. You only propose — you do not build.`;
+  const system = `You are the product manager + lead engineer for this product:\n${PRODUCT}\n\nALREADY BUILT (do NOT propose any of these or close variants — they exist):\n${ALREADY_BUILT.map((s) => `- ${s}`).join("\n")}\n\nGiven the current signals and what's already on the backlog, propose up to 6 of the HIGHEST-leverage NEW moves for a solo operator — a mix of features, growth ideas, ops fixes, and risks/bugs worth addressing that go BEYOND what's already built. Each must be specific and actionable (one sentence of detail). Prioritize ruthlessly by impact-for-effort. NEVER repeat anything already built or already on the backlog. You only propose — you do not build.`;
 
   const r = await client.messages.create({
     model: "claude-haiku-4-5",

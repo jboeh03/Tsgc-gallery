@@ -1,6 +1,7 @@
 import type { ContactRow, JobRow } from "@/lib/db/types";
 import { type MissingField, FIELD_LABELS } from "@/lib/comms/missingFields";
 import ScheduleButton from "./ScheduleButton";
+import InvoiceButton from "./InvoiceButton";
 
 const REQUIRED: MissingField[] = ["service_address", "grill_model", "grill_size"];
 
@@ -59,6 +60,13 @@ export default function ContactPanel({
           jobId={job?.id ?? null}
         />
       </section>
+
+      {job && (
+        <section className="rounded-xl border border-border bg-white p-4">
+          <h4 className="text-xs uppercase tracking-wider text-muted mb-2">Billing</h4>
+          <InvoiceButton jobId={job.id} />
+        </section>
+      )}
     </aside>
   );
 }

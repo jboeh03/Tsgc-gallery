@@ -32,8 +32,8 @@ export default function FathersDayPage() {
         {/* Background media layer */}
         <div className="absolute inset-0">
           <video
-            className="h-full w-full object-cover motion-safe:animate-[kenburns_22s_ease-out_both]"
-            poster="/gallery/tsg-016-after.webp"
+            className="h-full w-full object-cover"
+            poster="/fathers-day-hero-poster.jpg"
             autoPlay
             muted
             loop
@@ -41,7 +41,8 @@ export default function FathersDayPage() {
             aria-hidden="true"
             tabIndex={-1}
           >
-            {/* HIGGSFIELD: replace src with the generated Father's Day motion video */}
+            {/* Higgsfield (Seedance 2.0) image-to-video hero, generated from a real after-shot. */}
+            <source src="/fathers-day-hero.mp4" type="video/mp4" />
           </video>
           {/* Smoke-and-fire wash: navy anchor + a burgundy ember from below */}
           <div

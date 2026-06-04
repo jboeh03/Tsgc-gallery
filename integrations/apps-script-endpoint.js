@@ -86,14 +86,6 @@ function doPost(e) {
       return handleImessageConfirmBooking_(data);
     }
 
-    if (kind === 'calendar_create') {
-      return handleCalendarCreate_(data);
-    }
-
-    if (kind === 'calendar_list') {
-      return handleCalendarList_(data);
-    }
-
     // ── Build lead record ─────────────────────────────────────
     const firstName = (data.firstName || '').trim();
     const lastName  = (data.lastName  || '').trim();
@@ -848,87 +840,6 @@ function handleImessageConfirmBooking_(data) {
     return okJson_({ ok: true, eventId: eventId, calendarUrl: calendarUrl });
   } catch (err) {
     Logger.log('handleImessageConfirmBooking_ error: ' + err.message);
-    return okJson_({ ok: false, error: err.message });
-  }
-}
-
-// ── Hub ⇄ TSGC Schedule calendar (generic, used by the /admin appointments) ──
-//
-// Same CalendarApp path as the iMessage flow (runs as Jeff, no OAuth), but
-// decoupled from the iMessage pending sheet so the admin hub can create and
-// read calendar events directly.
-
-function getTsgcCalendar_() {
-  if (TSGC_SCHEDULE_CALENDAR_NAME) {
-    var cals = CalendarApp.getCalendarsByName(TSGC_SCHEDULE_CALENDAR_NAME);
-    if (cals.length > 0) return cals[0];
-  }
-  return CalendarApp.getDefaultCalendar();
-}
-
-// kind: "calendar_create" — create an event on the TSGC Schedule calendar.
-// Body: { title, date (yyyy-mm-dd), start (HH:mm|''), durationHours, location,
-// description }. Returns { eventId, calendarUrl }.
-function handleCalendarCreate_(data) {
-  try {
-    var title = (data.title || 'TSGC Job').toString();
-    var dateStr = (data.date || '').toString();
-    var startStr = (data.start || '').toString();
-    var durationHours = Number(data.durationHours) || 1.5;
-    var location = (data.location || '').toString();
-    var description = (data.description || '').toString();
-    if (!dateStr) return okJson_({ ok: false, error: 'date required' });
-
-    var p = dateStr.split('-');
-    var y = Number(p[0]), m = Number(p[1]), d = Number(p[2]);
-    var calendar = getTsgcCalendar_();
-    var options = {};
-    if (description) options.description = description;
-    if (location) options.location = location;
-
-    var event;
-    if (startStr) {
-      var tp = startStr.split(':');
-      var start = new Date(y, m - 1, d, Number(tp[0]) || 0, Number(tp[1]) || 0);
-      var end = new Date(start.getTime() + durationHours * 3600 * 1000);
-      event = calendar.createEvent(title, start, end, options);
-    } else {
-      event = calendar.createAllDayEvent(title, new Date(y, m - 1, d), options);
-    }
-
-    var eventId = event.getId();
-    var calendarId = calendar.getId();
-    var calendarUrl = 'https://calendar.google.com/calendar/u/0/r/eventedit/' +
-      Utilities.base64Encode(eventId.split('@')[0] + ' ' + calendarId).replace(/=+$/, '');
-    return okJson_({ ok: true, eventId: eventId, calendarUrl: calendarUrl });
-  } catch (err) {
-    Logger.log('handleCalendarCreate_ error: ' + err.message);
-    return okJson_({ ok: false, error: err.message });
-  }
-}
-
-// kind: "calendar_list" — read upcoming TSGC Schedule events.
-// Body: { fromISO, toISO }. Returns { events: [{ id, title, start, end,
-// location, description, allDay }] }.
-function handleCalendarList_(data) {
-  try {
-    var from = data.fromISO ? new Date(data.fromISO) : new Date();
-    var to = data.toISO ? new Date(data.toISO) : new Date(from.getTime() + 14 * 86400000);
-    var calendar = getTsgcCalendar_();
-    var events = calendar.getEvents(from, to).map(function (e) {
-      return {
-        id: e.getId(),
-        title: e.getTitle(),
-        start: e.getStartTime().toISOString(),
-        end: e.getEndTime().toISOString(),
-        location: e.getLocation() || '',
-        description: e.getDescription() || '',
-        allDay: e.isAllDayEvent(),
-      };
-    });
-    return okJson_({ ok: true, events: events });
-  } catch (err) {
-    Logger.log('handleCalendarList_ error: ' + err.message);
     return okJson_({ ok: false, error: err.message });
   }
 }

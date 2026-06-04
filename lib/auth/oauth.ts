@@ -13,6 +13,7 @@
 
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { saveGoogleRefreshToken } from "@/lib/google/tokens";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
@@ -29,6 +30,15 @@ export const { handlers, auth: oauthAuth, signIn: oauthSignIn, signOut: oauthSig
     Google({
       clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+      // Request Calendar access + an offline refresh token (prompt=consent so
+      // Google actually returns a refresh_token we can reuse server-side).
+      authorization: {
+        params: {
+          scope: "openid email profile https://www.googleapis.com/auth/calendar",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
     }),
   ],
   pages: { signIn: "/admin/sign-in", error: "/admin/sign-in" },
@@ -38,8 +48,13 @@ export const { handlers, auth: oauthAuth, signIn: oauthSignIn, signOut: oauthSig
     async signIn({ profile }) {
       return isAllowedEmail(profile?.email);
     },
-    async jwt({ token, profile }) {
+    async jwt({ token, profile, account }) {
       if (profile?.email) token.email = profile.email;
+      // Persist the refresh token (only present on first consent) for the
+      // Calendar integration to use later, including from background reads.
+      if (account?.refresh_token && profile?.email) {
+        await saveGoogleRefreshToken(profile.email, account.refresh_token, account.scope ?? undefined);
+      }
       return token;
     },
     async session({ session, token }) {

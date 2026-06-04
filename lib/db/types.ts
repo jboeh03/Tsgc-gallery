@@ -200,6 +200,13 @@ export type GiveawayEntryRow = {
   source: string | null;
 };
 
+export type GoogleTokenRow = {
+  email: string;
+  refresh_token: string;
+  scope: string | null;
+  updated_at: string;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -260,6 +267,7 @@ export type Database = {
       coo_tasks: Tbl<CooTaskRow>;
       affiliate_clicks: Tbl<AffiliateClickRow>;
       giveaway_entries: Tbl<GiveawayEntryRow>;
+      google_tokens: Tbl<GoogleTokenRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

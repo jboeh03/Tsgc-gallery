@@ -8,9 +8,12 @@ export const SITE = {
     "Veteran-founded grill cleaning serving Cincinnati, Northern Kentucky, and Dayton since 2018.",
   foundedYear: 2018,
   owner: "Jeff Boeh",
-  phone: "(513) 790-4040",
-  phoneHref: "tel:+15137904040",
-  smsHref: "sms:+15137904040",
+  // TEMP: published number reverted to Jeff's direct line while the 513 Twilio
+  // number's A2P 10DLC campaign is pending (outbound blocked w/ err 30034).
+  // Flip back to (513) 790-4040 / +15137904040 the moment the campaign verifies.
+  phone: "(657) 831-4276",
+  phoneHref: "tel:+16578314276",
+  smsHref: "sms:+16578314276",
   email: "jeff@cincygrillcleaning.com",
   emailHref: "mailto:jeff@cincygrillcleaning.com",
   cityState: "Cincinnati, OH 45233",

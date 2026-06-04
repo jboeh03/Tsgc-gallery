@@ -182,6 +182,24 @@ export type AffiliateClickRow = {
   user_agent: string | null;
 };
 
+export type GiveawayEntryRow = {
+  id: string;
+  created_at: string;
+  giveaway_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  zip: string | null;
+  booking_ref: string | null;
+  base_entries: number;
+  bonus_booking: number;
+  bonus_share: number;
+  bonus_follow: number;
+  total_entries: number;
+  source: string | null;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -241,6 +259,7 @@ export type Database = {
       coo_messages: Tbl<CooMessageRow>;
       coo_tasks: Tbl<CooTaskRow>;
       affiliate_clicks: Tbl<AffiliateClickRow>;
+      giveaway_entries: Tbl<GiveawayEntryRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

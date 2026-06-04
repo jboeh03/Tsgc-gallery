@@ -107,12 +107,12 @@ export default function EntryForm({
     data.source = "giveaway-entry-form";
 
     try {
-      await fetch(SITE.quoteEndpoint, {
+      const res = await fetch("/api/giveaway/enter", {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (!res.ok) throw new Error("entry failed");
       setStatus("success");
       (e.target as HTMLFormElement).reset();
       setHasBooking(false);

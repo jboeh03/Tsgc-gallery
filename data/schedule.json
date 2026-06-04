@@ -1,0 +1,11 @@
+{
+  "_comment": "Weekly route for the 'Where we'll be this week' map. Each stop references an areaId from lib/areas.ts and a date (yyyy-mm-dd). Add a jobId once the visit is done and its before/after is in jobs.json — that flips the pin from a grill marker to a clickable before/after. Sample data below is the week of Jun 1–7, 2026.",
+  "stops": [
+    { "id": "stop-2026-06-01", "areaId": "hyde-park", "date": "2026-06-01", "jobId": "tsg-014" },
+    { "id": "stop-2026-06-02", "areaId": "west-chester", "date": "2026-06-02", "jobId": "tsg-015" },
+    { "id": "stop-2026-06-03", "areaId": "mason", "date": "2026-06-03" },
+    { "id": "stop-2026-06-04", "areaId": "blue-ash", "date": "2026-06-04" },
+    { "id": "stop-2026-06-05", "areaId": "florence-ky", "date": "2026-06-05" },
+    { "id": "stop-2026-06-06", "areaId": "anderson-twp", "date": "2026-06-06" }
+  ]
+}

@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import { checkSheetHealth, SHEET_ID } from "@/lib/admin/sheets";
+import { checkDbHealth } from "@/lib/db/supabase";
+import { checkTwilioHealth } from "@/lib/sms/twilio";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
@@ -10,6 +12,8 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
 export default async function SettingsPage() {
   const session = await auth();
   const health = await checkSheetHealth();
+  const dbHealth = await checkDbHealth();
+  const twilioHealth = await checkTwilioHealth();
 
   const envChecks = [
     {
@@ -46,6 +50,31 @@ export default async function SettingsPage() {
       value: process.env.GOOGLE_SHEET_ID
         ? "Set (overridden)"
         : `Defaulting to ${SHEET_ID.slice(0, 12)}…`,
+    },
+    {
+      key: "SUPABASE_URL",
+      ok: Boolean(process.env.SUPABASE_URL),
+      value: process.env.SUPABASE_URL ? "Set" : "Not set",
+    },
+    {
+      key: "SUPABASE_SERVICE_ROLE_KEY",
+      ok: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+      value: process.env.SUPABASE_SERVICE_ROLE_KEY ? "Set" : "Not set — comms hub disabled",
+    },
+    {
+      key: "TWILIO_ACCOUNT_SID",
+      ok: Boolean(process.env.TWILIO_ACCOUNT_SID),
+      value: process.env.TWILIO_ACCOUNT_SID ? "Set" : "Not set",
+    },
+    {
+      key: "TWILIO_AUTH_TOKEN",
+      ok: Boolean(process.env.TWILIO_AUTH_TOKEN),
+      value: process.env.TWILIO_AUTH_TOKEN ? "Set" : "Not set",
+    },
+    {
+      key: "TWILIO_PHONE_NUMBER",
+      ok: Boolean(process.env.TWILIO_PHONE_NUMBER),
+      value: process.env.TWILIO_PHONE_NUMBER || "Not set — outbound texts disabled",
     },
   ];
 
@@ -97,6 +126,28 @@ export default async function SettingsPage() {
                 health.ok
                   ? `Connected to sheet ${health.sheetId?.slice(0, 12)}…`
                   : health.error || "Unknown error"
+              }
+            />
+            <ConnectionRow
+              label="Supabase (comms system of record)"
+              ok={dbHealth.ok}
+              detail={
+                dbHealth.ok
+                  ? "Connected — text inbox, contacts, jobs, appointments."
+                  : dbHealth.configured
+                    ? dbHealth.error || "Unknown error"
+                    : "Not configured — set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY."
+              }
+            />
+            <ConnectionRow
+              label="Twilio SMS"
+              ok={twilioHealth.ok}
+              detail={
+                twilioHealth.ok
+                  ? `Connected — ${twilioHealth.number}`
+                  : twilioHealth.configured
+                    ? twilioHealth.error || "Unknown error"
+                    : "Not configured — set TWILIO_ACCOUNT_SID / AUTH_TOKEN / PHONE_NUMBER."
               }
             />
             <ConnectionRow

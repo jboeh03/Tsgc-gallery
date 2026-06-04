@@ -2,7 +2,9 @@ import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import KpiCard from "@/components/admin/KpiCard";
 import EmptyState from "@/components/admin/EmptyState";
-import { readJobs, checkSheetHealth, SHEET_ID } from "@/lib/admin/sheets";
+import { readJobs } from "@/lib/db/reads";
+import { checkDbHealth } from "@/lib/db/supabase";
+import { SHEET_ID } from "@/lib/admin/sheets";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { format } from "date-fns";
 
@@ -15,7 +17,7 @@ export default async function JobsPage({
 }) {
   const session = await auth();
   const range = resolveRange(searchParams.range);
-  const health = await checkSheetHealth();
+  const health = await checkDbHealth();
 
   if (!health.ok) {
     return (

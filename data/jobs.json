@@ -1,6 +1,47 @@
 {
   "jobs": [
     {
+      "id": "tsg-017",
+      "neighborhood": "Mason, OH",
+      "date": "2026-06-02",
+      "grillType": "gas",
+      "grillModel": "Weber Genesis II",
+      "serviceHours": 3,
+      "pairs": [
+        {
+          "before": "/gallery/tsg-017-before.webp",
+          "after": "/gallery/tsg-017-after.webp",
+          "beforeAlt": "Before: a 12-year-old Weber Genesis II gas grill in a Mason backyard, lid open — grease-darkened grates and a soot-stained hood interior before service",
+          "afterAlt": "After: the same Weber Genesis II with clean grates reinstalled, the warming rack in place, and a wiped-down cookbox — ready to cook"
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": "tsg-016",
+      "neighborhood": "Mt. Lookout, Cincinnati",
+      "date": "2026-05-28",
+      "grillType": "gas",
+      "grillModel": "Weber Genesis with Sear Station",
+      "serviceHours": 3,
+      "pairs": [
+        {
+          "before": "/gallery/tsg-016-before.webp",
+          "after": "/gallery/tsg-016-after.webp",
+          "beforeAlt": "Before: Weber Genesis gas grill with Sear Station, lid open on a Mt. Lookout deck — discolored hood interior, soot-stained cookbox, and grease-darkened grates before service",
+          "afterAlt": "After: the same Weber Genesis with Sear Station — clean grates reinstalled, a brightened cookbox, and a wiped-down hood interior"
+        },
+        {
+          "before": "/gallery/tsg-016-cookbox-before.webp",
+          "after": "/gallery/tsg-016-cookbox-after.webp",
+          "beforeAlt": "Before: the Genesis cookbox mid-strip — flavorizer bars crusted with carbon and the firebox walls caked in baked-on grease",
+          "afterAlt": "After: the same cookbox cleaned down to bare metal — flavorizer bars and firebox walls scrubbed clear",
+          "caption": "Cookbox & flavorizer bars"
+        }
+      ],
+      "featured": false
+    },
+    {
       "id": "tsg-015",
       "neighborhood": "West Chester, OH",
       "date": "2026-05-18",

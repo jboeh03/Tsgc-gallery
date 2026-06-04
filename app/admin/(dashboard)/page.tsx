@@ -5,7 +5,8 @@ import KpiCard from "@/components/admin/KpiCard";
 import EmptyState from "@/components/admin/EmptyState";
 import LeadsByDay, { type DailyPoint } from "@/components/admin/charts/LeadsByDay";
 import DonutBreakdown, { type BreakdownItem } from "@/components/admin/charts/DonutBreakdown";
-import { readLeads, readJobs, checkSheetHealth } from "@/lib/admin/sheets";
+import { readLeads, readJobs } from "@/lib/db/reads";
+import { checkDbHealth } from "@/lib/db/supabase";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { format, eachDayOfInterval } from "date-fns";
 
@@ -16,7 +17,7 @@ export default async function OverviewPage({
 }) {
   const session = await auth();
   const range = resolveRange(searchParams.range);
-  const health = await checkSheetHealth();
+  const health = await checkDbHealth();
 
   if (!health.configured) {
     return (
@@ -24,8 +25,8 @@ export default async function OverviewPage({
         <Header email={session?.user?.email} title="Overview" showRange={false} />
         <div className="p-6">
           <EmptyState
-            title="Sheets API not configured"
-            body="Set GOOGLE_SHEETS_API_KEY and GOOGLE_SHEET_ID on the Vercel project, then reload. See Settings for the exact values."
+            title="Database not configured"
+            body="Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY on the Vercel project, then reload. See Settings for status."
             cta={
               <Link
                 href="/admin/settings"

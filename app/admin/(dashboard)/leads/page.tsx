@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
-import { readLeads, checkSheetHealth, SHEET_ID } from "@/lib/admin/sheets";
+import { readLeads } from "@/lib/db/reads";
+import { checkDbHealth } from "@/lib/db/supabase";
+import { SHEET_ID } from "@/lib/admin/sheets";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { format } from "date-fns";
 
@@ -13,7 +15,7 @@ export default async function LeadsPage({
   const session = await auth();
   const range = resolveRange(searchParams.range);
   const q = (searchParams.q ?? "").trim().toLowerCase();
-  const health = await checkSheetHealth();
+  const health = await checkDbHealth();
 
   if (!health.ok) {
     return (

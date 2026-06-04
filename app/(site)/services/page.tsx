@@ -161,6 +161,54 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* Pricing — quote-based with a "from" anchor (premium, just-under-Bar-B-Clean
+          position). $269 floor is modeled off competitor pricing; confirm against a
+          real Bar-B-Clean quote + actual job costs before deploy. We deliberately do
+          NOT post a full grid — at this price point a visible cheaper competitor
+          ($149) would win the side-by-side before we can sell our value. */}
+      <section className="bg-navy text-bone">
+        <div className="mx-auto max-w-3xl px-5 py-16 md:py-20 text-center">
+          <p className="uppercase tracking-widest text-bone/55 text-xs font-semibold">
+            Pricing
+          </p>
+          <h2 className="mt-3 font-display text-3xl md:text-4xl">
+            Pro-Grade Cleaning, Honest Quotes
+          </h2>
+          <div className="mt-7 flex items-baseline justify-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-bone/60">
+              Starting at
+            </span>
+            <span className="font-display text-6xl leading-none">$269</span>
+          </div>
+          <p className="mt-6 text-bone/85 max-w-xl mx-auto">
+            Every grill is different — size, condition, and how long it&apos;s
+            been since the last clean all factor in. So instead of a
+            one-size-fits-all price tag, we give you an exact quote up front:
+            no surprises, no upsell pressure. Every job is the full
+            break-down, deep degrease, sanitation, and safety inspection
+            described above.
+          </p>
+          <p className="mt-3 text-bone/65 text-sm">
+            Free quotes · Price confirmed before we start · Veteran-owned,
+            serving Cincinnati, NKY &amp; Dayton since {SITE.foundedYear}
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/quote"
+              className="rounded-md bg-bone text-navy px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-white shadow"
+            >
+              Get My Free Quote &rarr;
+            </Link>
+            <a
+              href={SITE.phoneHref}
+              className="rounded-md border border-bone/40 px-7 py-3.5 font-semibold uppercase tracking-widest text-sm hover:bg-bone/10"
+            >
+              ☎ {SITE.phone}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Why */}
       <section className="bg-bone">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">

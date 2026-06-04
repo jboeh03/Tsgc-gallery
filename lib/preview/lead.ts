@@ -1,4 +1,5 @@
 import { SITE } from "@/lib/site";
+import { ingestLead } from "@/lib/db/ingest";
 import type { Assessment } from "./types";
 
 /**
@@ -58,6 +59,19 @@ export async function captureLead(args: {
   } catch (err) {
     console.error("[lead] capture failed", err);
   }
+
+  // Dual-write into Supabase (best-effort; the Sheet write above is unaffected).
+  await ingestLead({
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    email: args.email,
+    zip: args.zip,
+    services: payload.services,
+    grillModel: payload.grillModel,
+    source: "preview-tool",
+    notes: payload.notes,
+    legacyLeadId: leadId,
+  });
 
   return leadId;
 }

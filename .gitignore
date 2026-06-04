@@ -10,3 +10,5 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .idea/
 .vscode/
+marketing/all-photos-raw/.outputs/
+marketing/composites/

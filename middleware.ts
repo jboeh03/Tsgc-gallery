@@ -4,8 +4,8 @@ import { SITE } from "@/lib/site";
 
 /**
  * Combined middleware:
- *  - /preview and /api/preview are hidden on production hosts
- *    (Jeff still wants the tool live on *.vercel.app for testing).
+ *  - /preview, /api/preview, /studio, /api/studio are hidden on
+ *    production hosts (live on *.vercel.app for internal testing).
  *  - /admin/* is gated by Auth.js: requires an authenticated Google
  *    session whose email is in the ADMIN_EMAILS allowlist.
  */
@@ -14,7 +14,13 @@ export default auth((req) => {
   const host = req.headers.get("host")?.toLowerCase() ?? "";
   const isPublicHost = SITE.publicHosts.some((h) => host === h);
 
-  if (pathname.startsWith("/preview") || pathname.startsWith("/api/preview")) {
+  const isHiddenTool =
+    pathname.startsWith("/preview") ||
+    pathname.startsWith("/api/preview") ||
+    pathname.startsWith("/studio") ||
+    pathname.startsWith("/api/studio");
+
+  if (isHiddenTool) {
     if (isPublicHost) return new NextResponse("Not Found", { status: 404 });
     return NextResponse.next();
   }
@@ -38,6 +44,10 @@ export const config = {
     "/preview/:path*",
     "/api/preview",
     "/api/preview/:path*",
+    "/studio",
+    "/studio/:path*",
+    "/api/studio",
+    "/api/studio/:path*",
     "/admin/:path*",
   ],
 };

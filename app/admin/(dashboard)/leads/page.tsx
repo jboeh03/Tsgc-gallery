@@ -95,40 +95,86 @@ export default async function CrmPage({
           </form>
         </div>
 
-        <div className="rounded-xl border border-border bg-white overflow-x-auto">
-          {filtered.length === 0 ? (
-            <div className="p-5">
-              <EmptyState title="No records match" />
+        {filtered.length === 0 ? (
+          <div className="rounded-xl border border-border bg-white p-5">
+            <EmptyState title="No records match" />
+          </div>
+        ) : (
+          <>
+            {/* Mobile: tappable cards */}
+            <ul className="lg:hidden space-y-2.5">
+              {filtered.map((r) => (
+                <CrmCard key={r.jobId} r={r} />
+              ))}
+            </ul>
+
+            {/* Desktop: full table */}
+            <div className="hidden lg:block rounded-xl border border-border bg-white overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-left text-xs uppercase tracking-wider text-muted bg-bone/40">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Added</th>
+                    <th className="px-4 py-3 font-semibold">Name</th>
+                    <th className="px-4 py-3 font-semibold">Phone</th>
+                    <th className="px-4 py-3 font-semibold">ZIP</th>
+                    <th className="px-4 py-3 font-semibold">Service</th>
+                    <th className="px-4 py-3 font-semibold">Quote</th>
+                    <th className="px-4 py-3 font-semibold">Status</th>
+                    <th className="px-4 py-3 font-semibold">Last activity</th>
+                    <th className="px-4 py-3 font-semibold"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filtered.map((r) => (
+                    <Row key={r.jobId} r={r} />
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase tracking-wider text-muted bg-bone/40">
-                <tr>
-                  <th className="px-4 py-3 font-semibold whitespace-nowrap">Added</th>
-                  <th className="px-4 py-3 font-semibold">Name</th>
-                  <th className="px-4 py-3 font-semibold">Phone</th>
-                  <th className="px-4 py-3 font-semibold">ZIP</th>
-                  <th className="px-4 py-3 font-semibold">Service</th>
-                  <th className="px-4 py-3 font-semibold">Quote</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold">Last activity</th>
-                  <th className="px-4 py-3 font-semibold"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filtered.map((r) => (
-                  <Row key={r.jobId} r={r} />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+          </>
+        )}
 
         <p className="text-xs text-muted">
           Click any row to edit contact info, quote, status, and notes. Saves write straight to your database · cache refreshes every 60s.
         </p>
       </div>
     </>
+  );
+}
+
+function CrmCard({ r }: { r: CrmRow }) {
+  return (
+    <li>
+      <Link
+        href={`/admin/leads/${r.jobId}`}
+        className="block rounded-xl border border-border bg-white p-4 active:bg-bone/50 transition"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-medium text-navy truncate">{r.name || "Unnamed lead"}</p>
+            <p className="text-sm text-ink/60 truncate">
+              {r.phone || "no phone"}
+              {r.zip ? ` · ${r.zip}` : ""}
+            </p>
+          </div>
+          <StatusChip s={r.status} />
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-3 text-sm">
+          <span className="text-ink/70 truncate">{r.service || "—"}</span>
+          <span className="text-ink/70 whitespace-nowrap">{r.quoteAmount != null ? `$${r.quoteAmount}` : ""}</span>
+        </div>
+        {r.lastActivity && (
+          <p className="mt-2 text-xs text-ink/55 truncate border-t border-border pt-2">
+            {r.lastChannel === "email" ? "✉️ " : "💬 "}
+            {r.lastDirection === "outbound" ? "You: " : ""}
+            {r.lastActivity}
+            {r.lastActivityAt && (
+              <span className="text-muted"> · {formatDistanceToNow(new Date(r.lastActivityAt), { addSuffix: true })}</span>
+            )}
+          </p>
+        )}
+      </Link>
+    </li>
   );
 }
 

@@ -26,12 +26,12 @@ export const WEBER_SPRINT = {
     neighbor: 30, // % off if the "booking with a neighbor/friend" box is checked
   },
 
-  // Price tiers by burner count (matches the Claude pricing logic in lib/preview).
-  // basePrice is the pre-discount charge. EDIT to your real Weber pricing.
+  // Price tiers by burner count. basePrice is the standard (pre-discount) charge.
   tiers: [
-    { id: "weber-2-3", minBurners: 2, maxBurners: 3, basePrice: 249, label: "Spirit · 2–3 burner" },
-    { id: "weber-4", minBurners: 4, maxBurners: 4, basePrice: 399, label: "Genesis · 4 burner" },
-    { id: "weber-5p", minBurners: 5, maxBurners: 99, basePrice: 449, label: "Summit · 5+ burner" },
+    { id: "weber-2", minBurners: 2, maxBurners: 2, basePrice: 299, label: "2-burner Weber" },
+    { id: "weber-3", minBurners: 3, maxBurners: 3, basePrice: 349, label: "3-burner Weber" },
+    { id: "weber-4", minBurners: 4, maxBurners: 4, basePrice: 395, label: "4-burner Weber" },
+    { id: "weber-5p", minBurners: 5, maxBurners: 99, basePrice: 425, label: "5+ burner Weber" },
   ],
 
   // Live ticker milestone. EDIT target + tease.

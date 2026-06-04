@@ -8,8 +8,8 @@ export const runtime = "nodejs";
  * /api/track/click?id=<product-id>
  *
  * Used by the /products page on every outbound affiliate link. Logs the
- * click (fire-and-forget) to the Apps Script, then 302-redirects to the
- * product's affiliate URL.
+ * click to Supabase (best-effort), then 302-redirects to the product's
+ * affiliate URL.
  *
  * If the id is unknown or the product has no URL, bounce back to /products
  * so the visitor doesn't dead-end.
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/products", req.url));
   }
 
-  logAffiliateClick({
+  await logAffiliateClick({
     productId: product.id,
     productName: product.name,
     affiliate: product.affiliate,

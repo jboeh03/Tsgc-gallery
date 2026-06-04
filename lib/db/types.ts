@@ -171,6 +171,17 @@ export type BacklogRow = {
   source: string;
 };
 
+export type AffiliateClickRow = {
+  id: string;
+  created_at: string;
+  product_id: string;
+  product_name: string | null;
+  affiliate: string | null;
+  destination_url: string | null;
+  referer: string | null;
+  user_agent: string | null;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -229,6 +240,7 @@ export type Database = {
       backlog: Tbl<BacklogRow>;
       coo_messages: Tbl<CooMessageRow>;
       coo_tasks: Tbl<CooTaskRow>;
+      affiliate_clicks: Tbl<AffiliateClickRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

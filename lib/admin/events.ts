@@ -1,16 +1,12 @@
 /**
- * Fire-and-forget event logger — sends event records to the Apps Script
- * web app, which writes them to the appropriate Sheet tab.
+ * Affiliate-click logger — writes to Supabase (the system of record). Was
+ * previously a fire-and-forget POST to Apps Script + a Sheet tab; now it's a
+ * direct insert into the affiliate_clicks table, read back by /admin/products.
  *
- * The Apps Script branches on `kind`:
- *   kind: "lead"           → 🌐 Website Leads + alert email (default)
- *   kind: "affiliate_click" → 🔗 Affiliate Clicks
- *
- * Logging never blocks the response — if the script is slow or down,
- * the user-facing flow keeps working.
+ * Still best-effort: a logging failure must never break the outbound redirect.
  */
 
-import { SITE } from "@/lib/site";
+import { getSupabase, isSupabaseConfigured } from "@/lib/db/supabase";
 
 type ClickEventInput = {
   productId: string;
@@ -21,29 +17,18 @@ type ClickEventInput = {
   userAgent?: string;
 };
 
-export function logAffiliateClick(input: ClickEventInput): void {
-  const url = process.env.APPS_SCRIPT_URL || SITE.quoteEndpoint;
-  if (!url) return;
-
-  const body = JSON.stringify({
-    kind: "affiliate_click",
-    timestamp: new Date().toISOString(),
-    ...input,
-  });
-
-  // Fire-and-forget. We deliberately don't await — the caller's redirect
-  // should happen instantly even if Apps Script is slow. keepalive lets
-  // the request finish after the response is sent.
+export async function logAffiliateClick(input: ClickEventInput): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
-    fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body,
-      keepalive: true,
-    }).catch(() => {
-      /* swallow — logging is best-effort */
+    await getSupabase().from("affiliate_clicks").insert({
+      product_id: input.productId,
+      product_name: input.productName,
+      affiliate: input.affiliate,
+      destination_url: input.destinationUrl,
+      referer: input.referer ?? null,
+      user_agent: input.userAgent ?? null,
     });
   } catch {
-    /* swallow */
+    /* best-effort — never block the redirect */
   }
 }

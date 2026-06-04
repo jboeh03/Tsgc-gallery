@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import KpiCard from "@/components/admin/KpiCard";
 import EmptyState from "@/components/admin/EmptyState";
-import { readAffiliateClicks, checkSheetHealth } from "@/lib/admin/sheets";
+import { readAffiliateClicks } from "@/lib/db/reads";
+import { checkDbHealth } from "@/lib/db/supabase";
 import { resolveRange, inRange, parseSheetTimestamp, formatRangeLabel } from "@/lib/admin/range";
 import { PRODUCTS } from "@/lib/products";
 import { format } from "date-fns";
@@ -14,7 +15,7 @@ export default async function AffiliatePage({
 }) {
   const session = await auth();
   const range = resolveRange(searchParams.range);
-  const health = await checkSheetHealth();
+  const health = await checkDbHealth();
 
   if (!health.ok) {
     return (
@@ -22,7 +23,7 @@ export default async function AffiliatePage({
         <Header email={session?.user?.email} title="Affiliate" showRange={false} />
         <div className="p-6">
           <EmptyState
-            title={health.configured ? "Sheets error" : "Sheets not configured"}
+            title={health.configured ? "Database error" : "Database not configured"}
             body={health.error}
           />
         </div>
@@ -127,7 +128,7 @@ export default async function AffiliatePage({
                 {recent.map((c) => {
                   const d = parseSheetTimestamp(c.timestamp);
                   return (
-                    <tr key={c.rowNumber} className="hover:bg-bone/40">
+                    <tr key={c.id} className="hover:bg-bone/40">
                       <td className="px-4 py-3 text-ink/65 whitespace-nowrap">
                         {d ? format(d, "MMM d, h:mma") : c.timestamp}
                       </td>

@@ -305,6 +305,36 @@ export async function readCooTasks(): Promise<CooTaskRow[]> {
   try { return await readCooTasksCached(); } catch { return []; }
 }
 
+// ---- affiliate clicks (migrated off the Sheet) ----------------------------
+
+export type AffiliateClick = {
+  id: string;
+  timestamp: string;
+  productId: string;
+  productName: string;
+  referer: string;
+};
+
+export async function readAffiliateClicks(): Promise<AffiliateClick[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data } = await getSupabase()
+      .from("affiliate_clicks")
+      .select("id, created_at, product_id, product_name, referer")
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    return ((data ?? []) as { id: string; created_at: string; product_id: string; product_name: string | null; referer: string | null }[]).map((c) => ({
+      id: c.id,
+      timestamp: c.created_at,
+      productId: c.product_id,
+      productName: c.product_name ?? "",
+      referer: c.referer ?? "",
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function readCooHistory(limit = 12): Promise<CooMessageRow[]> {
   if (!isSupabaseConfigured()) return [];
   const { data } = await getSupabase()

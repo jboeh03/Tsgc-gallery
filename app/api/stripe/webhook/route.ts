@@ -5,8 +5,10 @@
  * set STRIPE_WEBHOOK_SECRET on Vercel.
  */
 
+import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import { updateJob, logEvent } from "@/lib/db/writes";
+import { fulfillWeberBooking } from "@/lib/weber/fulfill";
 import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
@@ -39,6 +41,13 @@ export async function POST(req: Request) {
           pay_method: "stripe",
         });
         await logEvent("status_change", { jobId }, { via: "stripe_webhook", event: event.type });
+      }
+    } else if (event.type === "checkout.session.completed") {
+      // Weber-sprint self-serve booking — fulfill the paid slot (idempotent).
+      const session = event.data.object as Stripe.Checkout.Session;
+      const pendingId = session.metadata?.tsgc_pending_id;
+      if (pendingId && session.payment_status === "paid") {
+        await fulfillWeberBooking(pendingId, session.id);
       }
     }
   } catch (err) {

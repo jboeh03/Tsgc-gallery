@@ -208,6 +208,30 @@ export type GoogleTokenRow = {
   updated_at: string;
 };
 
+export type PendingBookingRow = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  status: string; // pending | fulfilling | fulfilled
+  stripe_session_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  phone_e164: string | null;
+  email: string | null;
+  service_address: string | null;
+  preferred_date: string | null;
+  preferred_time: string | null;
+  grill_model: string | null;
+  burner_count: number | null;
+  neighbor: boolean;
+  base_price: number | null;
+  discount_percent: number | null;
+  amount: number | null;
+  assessment: Record<string, unknown> | null;
+  fulfilled_at: string | null;
+  fulfilled_job_id: string | null;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -269,6 +293,7 @@ export type Database = {
       affiliate_clicks: Tbl<AffiliateClickRow>;
       giveaway_entries: Tbl<GiveawayEntryRow>;
       google_tokens: Tbl<GoogleTokenRow>;
+      pending_bookings: Tbl<PendingBookingRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

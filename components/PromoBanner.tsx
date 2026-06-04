@@ -5,16 +5,20 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CAMPAIGN, isCampaignActive } from "@/lib/campaign";
 import { GIVEAWAY, isGiveawayActive, isGiveawayUpcoming } from "@/lib/giveaway";
+import { WEBER_SPRINT, isWeberSprintActive } from "@/lib/campaign-weber";
 
 export default function PromoBanner({ active }: { active: boolean }) {
   const pathname = usePathname() ?? "";
   const [dismissed, setDismissed] = useState(false);
 
+  const weberActive = isWeberSprintActive();
   const giveawayActive = isGiveawayActive();
   const giveawayUpcoming = isGiveawayUpcoming();
   const campaignActive = isCampaignActive();
 
-  const mode = giveawayActive
+  const mode = weberActive
+    ? "weber"
+    : giveawayActive
     ? "giveaway-active"
     : giveawayUpcoming
     ? "giveaway-upcoming"
@@ -23,14 +27,18 @@ export default function PromoBanner({ active }: { active: boolean }) {
     : "none";
 
   const dismissKey =
-    mode === "campaign"
+    mode === "weber"
+      ? `tsgc-promo-dismissed-${WEBER_SPRINT.id}`
+      : mode === "campaign"
       ? `tsgc-promo-dismissed-${CAMPAIGN.id}`
       : mode !== "none"
       ? `tsgc-promo-dismissed-${GIVEAWAY.id}`
       : null;
 
   const hiddenPaths =
-    mode === "campaign"
+    mode === "weber"
+      ? [WEBER_SPRINT.landingPath, "/quote", "/preview"]
+      : mode === "campaign"
       ? [CAMPAIGN.landingPath, "/quote", "/preview"]
       : [GIVEAWAY.landingPath, "/quote", "/preview"];
 
@@ -80,6 +88,23 @@ export default function PromoBanner({ active }: { active: boolean }) {
       </svg>
     </button>
   );
+
+  // ── Weber Sprint banner ───────────────────────────────────────────────
+  if (mode === "weber") {
+    return (
+      <div className="bg-burgundy text-bone">
+        <div className="mx-auto max-w-6xl px-4 py-2.5 flex items-center justify-between gap-3">
+          <Link href={WEBER_SPRINT.landingPath} className="flex-1 min-w-0 flex items-center gap-2 hover:opacity-90">
+            <span className="hidden sm:inline text-xs uppercase tracking-widest font-semibold text-amber-200">Weber Sprint</span>
+            <span className="hidden sm:inline text-amber-200/60">·</span>
+            <span className="text-sm font-medium truncate">15% off your Weber deep clean — 30% with a neighbor. 2 weeks only.</span>
+            <span className="hidden md:inline text-sm font-semibold underline underline-offset-4 ml-1">Book now →</span>
+          </Link>
+          {closeBtn("focus-visible:ring-amber-200", "hover:bg-burgundy-700")}
+        </div>
+      </div>
+    );
+  }
 
   // ── Giveaway banner (active or upcoming) ──────────────────────────────
   if (mode === "giveaway-active" || mode === "giveaway-upcoming") {

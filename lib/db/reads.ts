@@ -335,6 +335,24 @@ export async function readAffiliateClicks(): Promise<AffiliateClick[]> {
   }
 }
 
+// ---- Weber sprint ticker ---------------------------------------------------
+
+export async function readWeberSprintCount(): Promise<number> {
+  const { WEBER_SPRINT } = await import("@/lib/campaign-weber");
+  if (!isSupabaseConfigured()) return 0;
+  try {
+    const { count } = await getSupabase()
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("source", WEBER_SPRINT.source)
+      .gte("created_at", WEBER_SPRINT.startISO)
+      .lte("created_at", WEBER_SPRINT.endISO);
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function readCooHistory(limit = 12): Promise<CooMessageRow[]> {
   if (!isSupabaseConfigured()) return [];
   const { data } = await getSupabase()

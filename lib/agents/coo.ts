@@ -14,6 +14,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { getSupabase, isSupabaseConfigured } from "@/lib/db/supabase";
+import { listCalendarEvents } from "@/lib/calendar";
 import type { CooMessageRow, CooTaskRow } from "@/lib/db/types";
 
 const MODEL = process.env.COO_MODEL || "claude-haiku-4-5";
@@ -107,6 +108,20 @@ const TOOLS: Anthropic.Tool[] = [
 type ToolResult = string;
 
 async function getNextJob(): Promise<ToolResult> {
+  // Two-way: prefer the live TSGC Schedule Google Calendar.
+  const events = await listCalendarEvents();
+  if (events.length > 0) {
+    const soonest = [...events].sort((a, b) => a.start.localeCompare(b.start))[0];
+    return JSON.stringify({
+      source: "TSGC Schedule calendar",
+      title: soonest.title,
+      start: soonest.start,
+      address: soonest.location || "no address on the event",
+      details: soonest.description || null,
+    });
+  }
+
+  // Fallback: Supabase appointments (when the calendar bridge isn't deployed yet).
   const sb = getSupabase();
   const today = new Date().toISOString().slice(0, 10);
   const { data } = await sb

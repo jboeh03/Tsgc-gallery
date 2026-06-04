@@ -187,6 +187,12 @@ export async function createAppointment(
   return data as AppointmentRow;
 }
 
+export async function updateAppointment(id: string, patch: Partial<AppointmentRow>): Promise<void> {
+  const sb = getSupabase();
+  const { error } = await sb.from("appointments").update(patch).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export async function setJobStatus(jobId: string, status: PipelineStatus): Promise<void> {
   const sb = getSupabase();
   const { error } = await sb.from("jobs").update({ status }).eq("id", jobId);

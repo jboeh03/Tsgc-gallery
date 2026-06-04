@@ -137,6 +137,8 @@ export type AppointmentRow = {
   notes: string | null;
   booking_token: string | null;
   confirmed_at: string | null;
+  gcal_event_id: string | null;
+  gcal_url: string | null;
 };
 
 export type EventRow = {

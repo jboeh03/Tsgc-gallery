@@ -9,9 +9,10 @@ import { revalidateTag } from "next/cache";
 import { auth, isAdmin } from "@/auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/db/supabase";
 import {
-  createAppointment, setJobStatus, appendMessage, touchConversation, logEvent,
+  createAppointment, updateAppointment, setJobStatus, appendMessage, touchConversation, logEvent,
 } from "@/lib/db/writes";
 import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
+import { createCalendarEvent } from "@/lib/calendar";
 import { SITE } from "@/lib/site";
 import type { ContactRow } from "@/lib/db/types";
 
@@ -55,6 +56,31 @@ export async function POST(req: Request) {
       appointmentId: appt.id,
       date: b.scheduledDate,
     });
+
+    // Sync to the TSGC Schedule Google Calendar (best-effort, via Apps Script).
+    try {
+      const { data: cRow } = await getSupabase()
+        .from("contacts")
+        .select("name, phone_e164, service_address")
+        .eq("id", b.contactId)
+        .maybeSingle();
+      const c = cRow as Pick<ContactRow, "name" | "phone_e164" | "service_address"> | null;
+      let service: string | null = null;
+      if (b.jobId) {
+        const { data: jRow } = await getSupabase().from("jobs").select("service").eq("id", b.jobId).maybeSingle();
+        service = (jRow as { service: string | null } | null)?.service ?? null;
+      }
+      const created = await createCalendarEvent({
+        title: `${c?.name || "Grill cleaning"} — ${service || "Grill Cleaning"}`,
+        date: b.scheduledDate,
+        start: b.scheduledStart ?? null,
+        location: c?.service_address ?? null,
+        description: [c?.phone_e164 ? `Phone: ${c.phone_e164}` : "", service ? `Service: ${service}` : "", "Booked from TSGC HQ"].filter(Boolean).join("\n"),
+      });
+      if (created) await updateAppointment(appt.id, { gcal_event_id: created.eventId, gcal_url: created.calendarUrl });
+    } catch {
+      /* calendar sync is best-effort — the appointment still stands */
+    }
 
     // Optional confirmation text.
     if (b.sendConfirmation && isTwilioConfigured()) {

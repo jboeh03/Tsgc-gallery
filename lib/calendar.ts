@@ -138,7 +138,7 @@ export async function listCalendarEvents(fromISO?: string, toISO?: string): Prom
     const timeMax = toISO || new Date(Date.now() + 14 * 86_400_000).toISOString();
     const url =
       `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId())}/events` +
-      `?singleEvents=true&orderBy=startTime&timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&maxResults=50`;
+      `?singleEvents=true&orderBy=startTime&timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&maxResults=250`;
     const res = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
     if (!res.ok) return [];
     const data = (await res.json().catch(() => null)) as {

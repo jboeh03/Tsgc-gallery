@@ -46,6 +46,7 @@ export type ContactRow = {
   sms_consent_at: string | null;
   sms_opt_out: boolean;
   notes: string | null;
+  preferred_contact: string | null;
   legacy_lead_id: string | null;
   legacy_sheet_row: number | null;
 };

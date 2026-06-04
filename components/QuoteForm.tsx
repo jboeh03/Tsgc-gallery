@@ -169,6 +169,14 @@ export default function QuoteForm() {
         </Field>
       </div>
 
+      <Field label="Preferred way to reach you" htmlFor="preferredContact">
+        <select id="preferredContact" name="preferredContact" defaultValue="Either" className={inputCls}>
+          <option value="Either">Either text or email</option>
+          <option value="Text">Text message</option>
+          <option value="Email">Email</option>
+        </select>
+      </Field>
+
       <fieldset>
         <legend className={labelCls}>
           What service(s) are you interested in? *{" "}

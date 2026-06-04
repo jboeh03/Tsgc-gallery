@@ -7,8 +7,12 @@
  * best-effort so a Supabase hiccup never blocks the lead reaching the Sheet.
  */
 
+import { revalidateTag } from "next/cache";
 import { getSupabase, isSupabaseConfigured } from "./supabase";
-import { upsertContactByPhone, logEvent } from "./writes";
+import { upsertContactByPhone, logEvent, getOrCreateConversation, setSuggestedDraft } from "./writes";
+import { computeMissingFields } from "@/lib/comms/missingFields";
+import { draftFollowupOpener } from "@/lib/comms/followup";
+import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 import type { ContactRow, JobRow } from "./types";
 
 export type LeadInput = {
@@ -24,8 +28,11 @@ export type LeadInput = {
   bestTime?: string;
   promoCode?: string;
   notes?: string;
+  preferredContact?: string;
   legacyLeadId?: string;
 };
+
+const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
 
 /** Best-effort US E.164 normalization. Returns null if it can't form 10/11 digits. */
 export function normalizeE164(raw?: string): string | null {
@@ -57,18 +64,21 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       grill_model: input.grillModel || null,
       source: input.source || "website-quote-form",
       referred_by: input.referredBy || null,
+      preferred_contact: input.preferredContact || null,
       legacy_lead_id: input.legacyLeadId || null,
     };
 
     let contactId: string;
+    let contactRow: ContactRow | null = null;
     if (phone) {
-      const c = await upsertContactByPhone(phone, contactFields);
-      contactId = c.id;
+      contactRow = await upsertContactByPhone(phone, contactFields);
+      contactId = contactRow.id;
     } else {
       // No phone (e.g. the AI preview tool captures email only) — insert fresh.
-      const { data, error } = await sb.from("contacts").insert(contactFields).select("id").single();
+      const { data, error } = await sb.from("contacts").insert(contactFields).select("*").single();
       if (error) throw new Error(error.message);
-      contactId = (data as { id: string }).id;
+      contactRow = data as ContactRow;
+      contactId = contactRow.id;
     }
 
     const jobInsert: Partial<JobRow> = {
@@ -89,6 +99,42 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       source: input.source,
       promoCode: input.promoCode || null,
     });
+
+    // Human-in-the-loop follow-up: if they can be texted (preference is Text/
+    // Either, or unspecified) and gave a phone, draft an opener that asks for
+    // the missing quote info and drop it in the inbox + ping Jeff. He reviews
+    // and presses send — the natural delay keeps it from feeling automated.
+    const pref = (input.preferredContact || "").toLowerCase();
+    if (phone && contactRow && pref !== "email") {
+      try {
+        const twilioNumber = process.env.TWILIO_PHONE_NUMBER || "+15137904040";
+        const conv = await getOrCreateConversation(contactId, twilioNumber);
+        const missing = computeMissingFields(contactRow, { hasPhoto: false });
+        const opener = await draftFollowupOpener(contactRow, missing);
+        if (opener) {
+          await setSuggestedDraft({
+            conversationId: conv.id,
+            body: opener,
+            missingFields: missing,
+            model: "claude-haiku-4-5",
+          });
+          await sb
+            .from("conversations")
+            .update({ unread: true, last_message_at: new Date().toISOString() })
+            .eq("id", conv.id);
+          if (isTwilioConfigured()) {
+            try {
+              await sendSms({
+                to: NOTIFY_TO,
+                body: `New lead${name ? ` — ${name}` : ""}. Follow-up drafted in your inbox — review & send.`,
+              });
+            } catch { /* best-effort */ }
+          }
+          revalidateTag("admin-inbox");
+        }
+      } catch { /* best-effort — follow-up is a bonus, never blocks the lead */ }
+    }
+
     return { contactId, jobId };
   } catch {
     return null; // best-effort — never throw into the lead-capture path

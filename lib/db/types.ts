@@ -149,6 +149,26 @@ export type EventRow = {
   meta: Record<string, unknown>;
 };
 
+export type MarketingDraftRow = {
+  id: string;
+  created_at: string;
+  job_id: string | null;
+  kind: string;
+  body: string | null;
+  status: string; // new | used | dismissed
+};
+
+export type BacklogRow = {
+  id: string;
+  created_at: string;
+  title: string;
+  detail: string | null;
+  category: string | null; // feature | bug | improvement | growth
+  priority: string | null; // high | medium | low
+  status: string; // open | done | dismissed
+  source: string;
+};
+
 // ---- composed view types (used by the inbox UI) ----------------------------
 export type ConversationSummary = ConversationRow & {
   contact: Pick<ContactRow, "id" | "name" | "phone_e164" | "service_address"> | null;
@@ -180,6 +200,8 @@ export type Database = {
       appointments: Tbl<AppointmentRow>;
       events: Tbl<EventRow>;
       rate_events: Tbl<{ id: string; bucket: string; created_at: string }>;
+      marketing_drafts: Tbl<MarketingDraftRow>;
+      backlog: Tbl<BacklogRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

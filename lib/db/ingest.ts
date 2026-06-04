@@ -13,6 +13,8 @@ import { upsertContactByPhone, logEvent, getOrCreateConversation, setSuggestedDr
 import { computeMissingFields } from "@/lib/comms/missingFields";
 import { draftFollowupOpener } from "@/lib/comms/followup";
 import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
+import { sendPush } from "@/lib/imessage/notify";
+import { SITE } from "@/lib/site";
 import type { ContactRow, JobRow } from "./types";
 
 export type LeadInput = {
@@ -93,6 +95,7 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       .limit(1)
       .maybeSingle();
 
+    const isNewJob = !recent;
     let jobId: string;
     if (recent) {
       jobId = (recent as { id: string }).id;
@@ -119,8 +122,9 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
 
     // Human-in-the-loop follow-up: if they can be texted (preference is Text/
     // Either, or unspecified) and gave a phone, draft an opener that asks for
-    // the missing quote info and drop it in the inbox + ping Jeff. He reviews
-    // and presses send — the natural delay keeps it from feeling automated.
+    // the missing quote info and drop it in the inbox. He reviews and presses
+    // send — the natural delay keeps it from feeling automated.
+    let draftQueued = false;
     const pref = (input.preferredContact || "").toLowerCase();
     if (phone && contactRow && pref !== "email") {
       try {
@@ -139,17 +143,31 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
             .from("conversations")
             .update({ unread: true, last_message_at: new Date().toISOString() })
             .eq("id", conv.id);
-          if (isTwilioConfigured()) {
-            try {
-              await sendSms({
-                to: NOTIFY_TO,
-                body: `New lead${name ? ` — ${name}` : ""}. Follow-up drafted in your inbox — review & send.`,
-              });
-            } catch { /* best-effort */ }
-          }
+          draftQueued = true;
           revalidateTag("admin-inbox");
         }
       } catch { /* best-effort — follow-up is a bonus, never blocks the lead */ }
+    }
+
+    // Alert Jeff on EVERY genuinely-new lead — push + text, unconditionally
+    // (not gated on phone/preference/AI like the old behavior). Skipped on
+    // 24h-dedup re-submits so double-clicks don't double-ping.
+    if (isNewJob) {
+      const bits = [name, services || null, input.zip || null].filter(Boolean).join(" · ");
+      const summary = `🌐 New lead — ${bits || "details in HQ"}.${draftQueued ? " Follow-up drafted — review & send." : ""}`;
+      const url = `${SITE.canonicalUrl.replace(/\/$/, "")}${draftQueued ? "/admin/inbox" : "/admin/leads"}`;
+      if (isTwilioConfigured()) {
+        try { await sendSms({ to: NOTIFY_TO, body: summary.slice(0, 320) }); } catch { /* best-effort */ }
+      }
+      try {
+        await sendPush({
+          title: "New website lead",
+          message: bits || "Open HQ for details",
+          url,
+          urlTitle: draftQueued ? "Review follow-up" : "Open CRM",
+          tags: "globe_with_meridians",
+        });
+      } catch { /* best-effort */ }
     }
 
     return { contactId, jobId };

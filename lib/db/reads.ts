@@ -35,6 +35,16 @@ function toLead(j: JobWithContact, i: number): Lead {
     promoCode: "",
     notes: j.notes ?? "",
     leadId: j.legacy_lead_id ?? j.id,
+    // Scoring columns (origin's lead-qualifier). Blank for Supabase rows; the
+    // admin leads page recomputes a score on the fly when these are empty.
+    score: "",
+    tier: "",
+    proximity: "",
+    valueTier: "",
+    customerType: "",
+    completeness: "",
+    intent: "",
+    flags: "",
   };
 }
 

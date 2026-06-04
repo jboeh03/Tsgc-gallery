@@ -12,7 +12,7 @@ import { unstable_cache } from "next/cache";
 import { getSupabase, isSupabaseConfigured } from "./supabase";
 import type {
   Lead, Job, JobRow, ContactRow, ConversationRow, MessageRow,
-  ConversationSummary, ConversationThread,
+  ConversationSummary, ConversationThread, MessageDirection, MessageChannel,
 } from "./types";
 
 type JobWithContact = JobRow & { contact: ContactRow | null };
@@ -150,7 +150,60 @@ export type CrmRow = {
   grillModel: string;
   quoteAmount: number | null;
   createdAt: string;
+  // Most-recent interaction (SMS today; email once Gmail sync lands).
+  lastActivityAt: string | null;
+  lastActivity: string | null;
+  lastDirection: MessageDirection | null;
+  lastChannel: MessageChannel | null;
 };
+
+/**
+ * For a set of contacts, the single most-recent message (any channel) per
+ * contact — powers the CRM "Last activity" column. One conversations query +
+ * one messages query, then reduced in memory.
+ */
+async function latestActivityByContact(
+  contactIds: string[]
+): Promise<Map<string, { at: string; body: string | null; direction: MessageDirection | null; channel: MessageChannel | null }>> {
+  const out = new Map<string, { at: string; body: string | null; direction: MessageDirection | null; channel: MessageChannel | null }>();
+  if (contactIds.length === 0) return out;
+  const sb = getSupabase();
+  const { data: convs } = await sb
+    .from("conversations")
+    .select("id, contact_id, last_message_at, last_direction")
+    .in("contact_id", contactIds)
+    .not("last_message_at", "is", null);
+  const rows = (convs ?? []) as Pick<ConversationRow, "id" | "contact_id" | "last_message_at" | "last_direction">[];
+  if (rows.length === 0) return out;
+
+  // Latest conversation per contact.
+  const convByContact = new Map<string, { id: string; at: string; direction: MessageDirection | null }>();
+  for (const r of rows) {
+    if (!r.last_message_at) continue;
+    const cur = convByContact.get(r.contact_id);
+    if (!cur || r.last_message_at > cur.at) {
+      convByContact.set(r.contact_id, { id: r.id, at: r.last_message_at, direction: r.last_direction });
+    }
+  }
+
+  // Latest message body per chosen conversation.
+  const convIds = [...convByContact.values()].map((v) => v.id);
+  const { data: msgs } = await sb
+    .from("messages")
+    .select("conversation_id, body, channel, created_at")
+    .in("conversation_id", convIds)
+    .order("created_at", { ascending: false });
+  const bodyByConv = new Map<string, { body: string | null; channel: MessageChannel | null }>();
+  for (const m of (msgs ?? []) as Pick<MessageRow, "conversation_id" | "body" | "channel">[]) {
+    if (!bodyByConv.has(m.conversation_id)) bodyByConv.set(m.conversation_id, { body: m.body ?? null, channel: m.channel ?? null });
+  }
+
+  for (const [contactId, v] of convByContact) {
+    const b = bodyByConv.get(v.id);
+    out.set(contactId, { at: v.at, body: b?.body ?? null, direction: v.direction, channel: b?.channel ?? null });
+  }
+  return out;
+}
 
 /** Flat job+contact rows for the CRM list, carrying the real job UUID for editing. */
 export async function readCrmRows(): Promise<CrmRow[]> {
@@ -161,9 +214,16 @@ export async function readCrmRows(): Promise<CrmRow[]> {
     .order("created_at", { ascending: false })
     .limit(500);
   if (error) throw new Error(error.message);
-  return (data ?? []).map((j) => {
-    const row = j as unknown as JobRow & { contact: { name: string | null; phone_e164: string | null; email: string | null; zip: string | null; grill_model: string | null } | null };
+  const jobs = (data ?? []) as unknown as (JobRow & {
+    contact: { name: string | null; phone_e164: string | null; email: string | null; zip: string | null; grill_model: string | null } | null;
+  })[];
+
+  const contactIds = [...new Set(jobs.map((j) => j.contact_id).filter((id): id is string => Boolean(id)))];
+  const activity = await latestActivityByContact(contactIds);
+
+  return jobs.map((row) => {
     const c = row.contact;
+    const act = row.contact_id ? activity.get(row.contact_id) : undefined;
     return {
       jobId: row.id,
       contactId: row.contact_id,
@@ -177,8 +237,36 @@ export async function readCrmRows(): Promise<CrmRow[]> {
       grillModel: row.grill_model ?? c?.grill_model ?? "",
       quoteAmount: row.quote_amount,
       createdAt: row.created_at ?? "",
+      lastActivityAt: act?.at ?? null,
+      lastActivity: act?.body ?? null,
+      lastDirection: act?.direction ?? null,
+      lastChannel: act?.channel ?? null,
     };
   });
+}
+
+/** The most-recent conversation + its messages for a contact, for the CRM detail thread. */
+export async function readContactThread(
+  contactId: string
+): Promise<{ conversationId: string; messages: MessageRow[] } | null> {
+  if (!isSupabaseConfigured()) return null;
+  const sb = getSupabase();
+  const { data: conv } = await sb
+    .from("conversations")
+    .select("id")
+    .eq("contact_id", contactId)
+    .order("last_message_at", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+  const conversationId = (conv as { id: string } | null)?.id;
+  if (!conversationId) return null;
+
+  const { data: messages } = await sb
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("created_at", { ascending: true });
+  return { conversationId, messages: (messages ?? []) as MessageRow[] };
 }
 
 /** Full job + contact for the editable detail view. */

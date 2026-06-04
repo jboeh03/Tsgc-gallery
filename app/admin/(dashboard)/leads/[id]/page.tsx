@@ -3,7 +3,8 @@ import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import CrmEditor from "@/components/admin/CrmEditor";
-import { readJobDetail } from "@/lib/db/reads";
+import CrmConversation from "@/components/admin/CrmConversation";
+import { readJobDetail, readContactThread } from "@/lib/db/reads";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function CrmDetailPage({ params }: { params: { id: string }
   }
 
   const title = detail.contact?.name || detail.contact?.phone_e164 || "CRM record";
+  const thread = detail.contact ? await readContactThread(detail.contact.id) : null;
 
   return (
     <>
@@ -34,6 +36,9 @@ export default async function CrmDetailPage({ params }: { params: { id: string }
         <Link href="/admin/leads" className="inline-block text-xs uppercase tracking-wider text-muted hover:text-burgundy">
           ← Back to CRM
         </Link>
+        <div className="max-w-3xl">
+          <CrmConversation conversationId={thread?.conversationId ?? null} messages={thread?.messages ?? []} />
+        </div>
         <CrmEditor job={detail.job} contact={detail.contact} />
       </div>
     </>

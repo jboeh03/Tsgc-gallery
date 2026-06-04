@@ -4,7 +4,7 @@ import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import { readCrmRows, type CrmRow } from "@/lib/db/reads";
 import { checkDbHealth } from "@/lib/db/supabase";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +111,7 @@ export default async function CrmPage({
                   <th className="px-4 py-3 font-semibold">Service</th>
                   <th className="px-4 py-3 font-semibold">Quote</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
+                  <th className="px-4 py-3 font-semibold">Last activity</th>
                   <th className="px-4 py-3 font-semibold"></th>
                 </tr>
               </thead>
@@ -162,6 +163,26 @@ function Row({ r }: { r: CrmRow }) {
       <td className="px-4 py-3">
         <Link href={`/admin/leads/${r.jobId}`} className="block">
           <StatusChip s={r.status} />
+        </Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75 max-w-[15rem]">
+        <Link href={`/admin/leads/${r.jobId}`} className="block">
+          {r.lastActivity ? (
+            <>
+              <span className="block truncate">
+                {r.lastChannel === "email" ? "✉️ " : "💬 "}
+                {r.lastDirection === "outbound" ? "You: " : ""}
+                {r.lastActivity}
+              </span>
+              {r.lastActivityAt && (
+                <span className="text-[11px] text-muted">
+                  {formatDistanceToNow(new Date(r.lastActivityAt), { addSuffix: true })}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-muted">—</span>
+          )}
         </Link>
       </td>
       <td className="px-4 py-3 text-right">

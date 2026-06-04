@@ -1,9 +1,11 @@
 import { auth } from "@/auth";
 import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
+import CooConsole from "@/components/admin/CooConsole";
 import { getSupabase, isSupabaseConfigured, checkDbHealth } from "@/lib/db/supabase";
 import { checkTwilioHealth } from "@/lib/sms/twilio";
 import { checkStripeHealth } from "@/lib/stripe/client";
+import { readCooTasks, readCooHistory } from "@/lib/db/reads";
 import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
@@ -28,10 +30,14 @@ export default async function AgentsPage() {
     errors = (e ?? []) as Ev[];
   }
 
+  const [cooTasks, cooHistory] = await Promise.all([readCooTasks(), readCooHistory()]);
+
   return (
     <>
       <Header email={session?.user?.email} title="Agents & Health" showRange={false} />
       <div className="p-6 space-y-6 max-w-4xl">
+        <CooConsole initialHistory={cooHistory} initialTasks={cooTasks} />
+
         <section className="rounded-xl border border-border bg-white p-5">
           <h2 className="font-display text-base text-navy mb-3">System health</h2>
           <div className="grid sm:grid-cols-2 gap-2">

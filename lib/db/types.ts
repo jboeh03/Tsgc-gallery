@@ -169,6 +169,29 @@ export type BacklogRow = {
   source: string;
 };
 
+export type CooRole = "user" | "assistant";
+export type CooMessageRow = {
+  id: string;
+  created_at: string;
+  role: CooRole;
+  content: string;
+  meta: Record<string, unknown>;
+};
+
+export type CooTaskStatus = "proposed" | "approved" | "in_progress" | "done" | "dismissed";
+export type CooTaskRow = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  detail: string | null;
+  assignee: string | null;
+  status: CooTaskStatus;
+  priority: string | null;
+  source_message_id: string | null;
+  meta: Record<string, unknown>;
+};
+
 // ---- composed view types (used by the inbox UI) ----------------------------
 export type ConversationSummary = ConversationRow & {
   contact: Pick<ContactRow, "id" | "name" | "phone_e164" | "service_address"> | null;
@@ -202,6 +225,8 @@ export type Database = {
       rate_events: Tbl<{ id: string; bucket: string; created_at: string }>;
       marketing_drafts: Tbl<MarketingDraftRow>;
       backlog: Tbl<BacklogRow>;
+      coo_messages: Tbl<CooMessageRow>;
+      coo_tasks: Tbl<CooTaskRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

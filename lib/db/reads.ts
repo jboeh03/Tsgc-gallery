@@ -13,6 +13,7 @@ import { getSupabase, isSupabaseConfigured } from "./supabase";
 import type {
   Lead, Job, JobRow, ContactRow, ConversationRow, MessageRow,
   ConversationSummary, ConversationThread, MessageDirection, MessageChannel,
+  CooTaskRow, CooMessageRow,
 } from "./types";
 
 type JobWithContact = JobRow & { contact: ContactRow | null };
@@ -282,6 +283,36 @@ export async function readJobDetail(jobId: string): Promise<{ job: JobRow; conta
   const row = data as unknown as JobRow & { contact: ContactRow | null };
   const { contact, ...job } = row;
   return { job: job as JobRow, contact: contact ?? null };
+}
+
+// ---- COO agent reads -------------------------------------------------------
+
+const readCooTasksCached = unstable_cache(
+  async (): Promise<CooTaskRow[]> => {
+    if (!isSupabaseConfigured()) return [];
+    const { data } = await getSupabase()
+      .from("coo_tasks")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    return (data ?? []) as CooTaskRow[];
+  },
+  ["db-coo-tasks"],
+  { revalidate: 30, tags: ["admin-coo"] }
+);
+
+export async function readCooTasks(): Promise<CooTaskRow[]> {
+  try { return await readCooTasksCached(); } catch { return []; }
+}
+
+export async function readCooHistory(limit = 12): Promise<CooMessageRow[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data } = await getSupabase()
+    .from("coo_messages")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return ((data ?? []) as CooMessageRow[]).reverse();
 }
 
 export async function readConversation(id: string): Promise<ConversationThread | null> {

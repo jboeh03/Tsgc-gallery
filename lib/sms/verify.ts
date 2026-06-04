@@ -12,30 +12,51 @@
  */
 
 import { validateRequest } from "twilio";
+import { SITE } from "@/lib/site";
 
+/**
+ * Validate the Twilio signature against ANY of the candidate URLs. Behind
+ * Vercel's proxy the host Twilio called (apex domain, www, or *.vercel.app)
+ * may not match what we reconstruct from headers — so a single guess produces
+ * false 403s that silently drop real inbound texts. Trying every plausible
+ * public URL fixes that WITHOUT weakening the gate: a forged request still has
+ * to carry a valid HMAC over the auth token for one of them.
+ */
 export function verifyTwilioSignature(args: {
   signature: string | null;
-  url: string;
+  url: string | string[];
   params: Record<string, string>;
 }): boolean {
   const token = process.env.TWILIO_AUTH_TOKEN;
   if (!token || !args.signature) return false;
-  try {
-    return validateRequest(token, args.signature, args.url, args.params);
-  } catch {
-    return false;
+  const urls = Array.isArray(args.url) ? args.url : [args.url];
+  for (const url of urls) {
+    try {
+      if (validateRequest(token, args.signature, url, args.params)) return true;
+    } catch {
+      /* try the next candidate */
+    }
   }
+  return false;
 }
 
 /**
- * Reconstruct the public webhook URL Twilio used. Prefers an explicit override,
- * else builds from forwarded headers (Vercel sets x-forwarded-host/proto).
+ * Every public URL Twilio could have used to call this webhook. An explicit
+ * TWILIO_WEBHOOK_URL override always wins; otherwise we offer the
+ * header-derived host AND the canonical/public hosts so the signature matches
+ * regardless of which one Twilio is configured with.
  */
-export function resolveWebhookUrl(req: Request, pathname: string): string {
+export function resolveWebhookUrl(req: Request, pathname: string): string | string[] {
   const override = process.env.TWILIO_WEBHOOK_URL;
   if (override) return override;
   const h = req.headers;
   const proto = h.get("x-forwarded-proto") ?? "https";
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
-  return `${proto}://${host}${pathname}`;
+  const candidates = new Set<string>();
+  const fwdHost = h.get("x-forwarded-host");
+  const host = h.get("host");
+  if (fwdHost) candidates.add(`${proto}://${fwdHost}${pathname}`);
+  if (host) candidates.add(`${proto}://${host}${pathname}`);
+  candidates.add(`${SITE.canonicalUrl.replace(/\/$/, "")}${pathname}`);
+  for (const ph of SITE.publicHosts) candidates.add(`https://${ph}${pathname}`);
+  return [...candidates];
 }

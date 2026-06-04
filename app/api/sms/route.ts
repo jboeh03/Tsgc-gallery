@@ -20,8 +20,45 @@ import {
 import { isSupabaseConfigured } from "@/lib/db/supabase";
 import { generateDraftForConversation } from "@/lib/comms/generate";
 import { logError } from "@/lib/observability";
+import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
+import { sendPush } from "@/lib/imessage/notify";
+import { SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
+
+// Jeff's personal phone — where inbound customer texts get forwarded.
+const FORWARD_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+
+/**
+ * Heads-up to Jeff that a customer texted the business line: a forwarded SMS to
+ * his phone PLUS a push (if ntfy/Pushover is configured). Both best-effort —
+ * a notification failure must never fail the webhook.
+ */
+async function notifyInbound(args: { fromName: string; from: string; body: string }): Promise<void> {
+  const who = args.fromName || args.from;
+  const preview = args.body.trim() || "(no text — media only)";
+  const inboxUrl = `${SITE.canonicalUrl.replace(/\/$/, "")}/admin/inbox`;
+
+  // Don't forward Jeff's own texts back to himself (loop guard).
+  if (isTwilioConfigured() && args.from !== FORWARD_TO) {
+    try {
+      await sendSms({ to: FORWARD_TO, body: `📩 ${who}: ${preview}`.slice(0, 320) });
+    } catch (e) {
+      await logError("sms_forward", e, {});
+    }
+  }
+  try {
+    await sendPush({
+      title: `New text — ${who}`,
+      message: preview,
+      url: inboxUrl,
+      urlTitle: "Open inbox",
+      tags: "speech_balloon",
+    });
+  } catch {
+    /* push is best-effort */
+  }
+}
 
 const OPT_OUT = new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]);
 const OPT_IN = new Set(["START", "YES", "UNSTOP"]);
@@ -87,6 +124,8 @@ export async function POST(req: Request) {
     if (inserted) {
       await touchConversation(conv.id, { lastDirection: "inbound", unread: true });
       await logEvent("message_in", { contactId: contact.id, conversationId: conv.id }, { sid });
+      // Forward + push to Jeff so he sees it on his phone, not just in /admin.
+      await notifyInbound({ fromName: contact.name ?? "", from, body });
       if (!OPT_OUT.has(keyword)) {
         await generateDraftForConversation(conv.id);
         await logEvent("draft_generated", { contactId: contact.id, conversationId: conv.id });

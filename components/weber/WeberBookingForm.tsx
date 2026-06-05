@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
+import { compressImage } from "@/lib/image-compress";
 import type { Assessment } from "@/lib/preview/types";
 import type { WeberModel } from "@/lib/campaign-weber";
 
@@ -42,18 +43,17 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
   const [photo, setPhoto] = useState<{ base64: string; mime: string; preview: string } | null>(null);
   const [quote, setQuote] = useState<Quote | null>(null);
 
-  function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { setError("Photo must be under 5 MB."); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = String(reader.result);
-      const base64 = dataUrl.split(",")[1] ?? "";
-      setPhoto({ base64, mime: file.type, preview: dataUrl });
+    if (file.size > 30 * 1024 * 1024) { setError("That photo is over 30 MB — please pick a smaller one."); return; }
+    try {
+      // Compress in the browser so big iPhone photos upload without friction.
+      setPhoto(await compressImage(file));
       setError(null);
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      setError("Couldn't read that photo. Try a JPG or PNG.");
+    }
   }
 
   async function getQuote(e: React.FormEvent) {

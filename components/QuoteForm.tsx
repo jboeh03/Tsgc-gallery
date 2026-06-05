@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site";
 import { tierByCode } from "@/lib/campaign";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
+import { compressImage } from "@/lib/image-compress";
 
 const MEMBERSHIP = "🚨 Annual Membership *Limited Time Offer";
 
@@ -56,17 +57,17 @@ export default function QuoteForm() {
 
   const needsRepairDesc = serviceType === "Inspection & Repair" || serviceType === "Both";
 
-  function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { setErr("Photo must be under 5 MB."); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const url = String(reader.result);
-      setPhoto({ base64: url.split(",")[1] ?? "", mime: file.type, preview: url });
+    if (file.size > 30 * 1024 * 1024) { setErr("That photo is over 30 MB — please pick a smaller one."); return; }
+    try {
+      // Compress in the browser so big iPhone photos upload without friction.
+      setPhoto(await compressImage(file));
       setErr(null);
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      setErr("Couldn't read that photo. Try a JPG or PNG.");
+    }
   }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {

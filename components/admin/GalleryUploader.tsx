@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { compressImage, type ImagePart } from "@/lib/image-compress";
 import type { GalleryJobRow } from "@/lib/db/types";
 
 /**
@@ -12,65 +13,7 @@ import type { GalleryJobRow } from "@/lib/db/types";
 
 const GRILL_TYPES = ["gas", "charcoal", "pellet", "kamado", "griddle"] as const;
 
-type Part = { base64: string; mime: string; preview: string };
-type FilePart = Part | null;
-
-/**
- * Downscale + re-encode to JPEG in the browser before upload. Phone photos are
- * 3–12 MB (and often HEIC); two of them base64'd in one JSON body blow past the
- * serverless request-body cap. Drawing through a canvas caps the longest edge,
- * normalizes HEIC→JPEG, and drops the payload to a few hundred KB.
- */
-function downscaleToJpeg(file: File, maxDim = 1600, quality = 0.82): Promise<Part> {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let { width, height } = img;
-      if (Math.max(width, height) > maxDim) {
-        const scale = maxDim / Math.max(width, height);
-        width = Math.round(width * scale);
-        height = Math.round(height * scale);
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) { reject(new Error("Canvas unsupported")); return; }
-      ctx.drawImage(img, 0, 0, width, height);
-      const dataUrl = canvas.toDataURL("image/jpeg", quality);
-      const base64 = dataUrl.split(",")[1] ?? "";
-      if (!base64) { reject(new Error("Could not encode image")); return; }
-      resolve({ base64, mime: "image/jpeg", preview: dataUrl });
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not load image")); };
-    img.src = url;
-  });
-}
-
-/** Fallback: read the raw file as a data URL (used only if canvas decode fails). */
-function readRaw(file: File): Promise<Part> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string; // data:<mime>;base64,<data>
-      const base64 = result.split(",")[1] ?? "";
-      resolve({ base64, mime: file.type || "image/jpeg", preview: result });
-    };
-    reader.onerror = () => reject(new Error("Could not read file"));
-    reader.readAsDataURL(file);
-  });
-}
-
-async function processFile(file: File): Promise<Part> {
-  try {
-    return await downscaleToJpeg(file);
-  } catch {
-    // Desktop browsers can't decode HEIC into a canvas — fall back to raw bytes.
-    return await readRaw(file);
-  }
-}
+type FilePart = ImagePart | null;
 
 export default function GalleryUploader({ existing }: { existing: GalleryJobRow[] }) {
   const router = useRouter();
@@ -91,7 +34,7 @@ export default function GalleryUploader({ existing }: { existing: GalleryJobRow[
     if (!file) return;
     if (file.size > 30 * 1024 * 1024) { setMsg("That photo is over 30 MB — pick a smaller one."); return; }
     try {
-      const part = await processFile(file);
+      const part = await compressImage(file);
       (which === "before" ? setBefore : setAfter)(part);
       setMsg(null);
     } catch {

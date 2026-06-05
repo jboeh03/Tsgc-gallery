@@ -12,9 +12,45 @@ import type { GalleryJobRow } from "@/lib/db/types";
 
 const GRILL_TYPES = ["gas", "charcoal", "pellet", "kamado", "griddle"] as const;
 
-type FilePart = { base64: string; mime: string; preview: string } | null;
+type Part = { base64: string; mime: string; preview: string };
+type FilePart = Part | null;
 
-function readFile(file: File): Promise<{ base64: string; mime: string; preview: string }> {
+/**
+ * Downscale + re-encode to JPEG in the browser before upload. Phone photos are
+ * 3–12 MB (and often HEIC); two of them base64'd in one JSON body blow past the
+ * serverless request-body cap. Drawing through a canvas caps the longest edge,
+ * normalizes HEIC→JPEG, and drops the payload to a few hundred KB.
+ */
+function downscaleToJpeg(file: File, maxDim = 1600, quality = 0.82): Promise<Part> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (Math.max(width, height) > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("Canvas unsupported")); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      const base64 = dataUrl.split(",")[1] ?? "";
+      if (!base64) { reject(new Error("Could not encode image")); return; }
+      resolve({ base64, mime: "image/jpeg", preview: dataUrl });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not load image")); };
+    img.src = url;
+  });
+}
+
+/** Fallback: read the raw file as a data URL (used only if canvas decode fails). */
+function readRaw(file: File): Promise<Part> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -25,6 +61,15 @@ function readFile(file: File): Promise<{ base64: string; mime: string; preview: 
     reader.onerror = () => reject(new Error("Could not read file"));
     reader.readAsDataURL(file);
   });
+}
+
+async function processFile(file: File): Promise<Part> {
+  try {
+    return await downscaleToJpeg(file);
+  } catch {
+    // Desktop browsers can't decode HEIC into a canvas — fall back to raw bytes.
+    return await readRaw(file);
+  }
 }
 
 export default function GalleryUploader({ existing }: { existing: GalleryJobRow[] }) {
@@ -44,13 +89,13 @@ export default function GalleryUploader({ existing }: { existing: GalleryJobRow[
 
   async function pick(which: "before" | "after", file: File | undefined) {
     if (!file) return;
-    if (file.size > 8 * 1024 * 1024) { setMsg("Photos must be under 8 MB."); return; }
+    if (file.size > 30 * 1024 * 1024) { setMsg("That photo is over 30 MB — pick a smaller one."); return; }
     try {
-      const part = await readFile(file);
+      const part = await processFile(file);
       (which === "before" ? setBefore : setAfter)(part);
       setMsg(null);
     } catch {
-      setMsg("Could not read that file.");
+      setMsg("Could not read that file. Try a JPG or PNG.");
     }
   }
 
@@ -73,8 +118,11 @@ export default function GalleryUploader({ existing }: { existing: GalleryJobRow[
           serviceHours, notes, featured,
         }),
       });
-      const d = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok || !d.ok) throw new Error(d.error || "Upload failed");
+      const d = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (!res.ok || !d?.ok) {
+        if (res.status === 413) throw new Error("Photos too large — try smaller images.");
+        throw new Error(d?.error || `Upload failed (${res.status})`);
+      }
       setMsg("Published ✓ — live on the gallery within ~30s.");
       reset();
       router.refresh();

@@ -116,6 +116,31 @@ export async function POST(req: NextRequest) {
     // Ping Jeff to review + send the link.
     const summary = `🔥 Weber request — ${name ?? phone} · ${model} ${burners}-burner · suggest $${q.discountedPrice} · ${preferredDate}`;
     if (isTwilioConfigured()) { try { await sendSms({ to: NOTIFY_TO, body: summary.slice(0, 320) }); } catch { /* best-effort */ } }
+
+    // Email/text Jeff via the same Apps Script the website quote form uses
+    // (GmailApp → NOTIFY_EMAIL + the email-to-SMS gateway), so notifications
+    // arrive even while Twilio A2P is pending. Best-effort, non-blocking.
+    try {
+      const zip = serviceAddress.match(/\b(\d{5})\b/)?.[1] ?? "";
+      await fetch(SITE.quoteEndpoint, {
+        method: "POST",
+        headers: { "content-type": "text/plain" },
+        body: JSON.stringify({
+          name: name ?? "",
+          email,
+          phone,
+          services: "Weber deep clean",
+          grillModel: `Weber ${model} · ${burners}-burner`,
+          serviceAddress,
+          zip,
+          source: "weber-sprint",
+          notes,
+          timestamp: new Date().toISOString(),
+        }),
+        signal: AbortSignal.timeout(8000),
+      });
+    } catch { /* best-effort */ }
+
     try {
       await sendPush({
         title: "New Weber request",

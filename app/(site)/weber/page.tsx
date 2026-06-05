@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getJobs } from "@/lib/jobs";
 import { WEBER_SPRINT, isWeberSprintActive } from "@/lib/campaign-weber";
 import { readWeberSprintCount } from "@/lib/db/reads";
+import { getWeberAvailableDates } from "@/lib/calendar";
 import FathersDayCountdown from "@/components/FathersDayCountdown";
 import WeberThermometer from "@/components/weber/WeberThermometer";
 import WeberBookingForm from "@/components/weber/WeberBookingForm";
@@ -24,7 +25,11 @@ export const metadata: Metadata = {
 
 export default async function WeberPage() {
   const active = isWeberSprintActive();
-  const [jobs, count] = await Promise.all([getJobs(), readWeberSprintCount()]);
+  const [jobs, count, availableDates] = await Promise.all([
+    getJobs(),
+    readWeberSprintCount(),
+    active ? getWeberAvailableDates() : Promise.resolve<string[]>([]),
+  ]);
   const webers = jobs.filter((j) => j.grillModel?.toLowerCase().includes("weber")).slice(0, 4);
   const cleanedCount = WEBER_SPRINT.milestone.baseline + count;
 
@@ -55,9 +60,10 @@ export default async function WeberPage() {
             Your Weber, cooking like new again.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-bone/80">
-            Send us a photo of your Weber and we&apos;ll send back an honest quote with your discount already in it.
-            <strong className="text-bone"> 15% off solo, 30% if you split a visit with a neighbor.</strong> You pay
-            online and pick the day — we text to lock the window.
+            Send us a photo of your Weber and we&apos;ll send back a real-time quote within the hour, discount already in it.
+            <strong className="text-bone"> 15% off solo, 30% if you split a visit with a neighbor or friend within 5 miles.</strong> You
+            pick the day and time and let us know what we&apos;re working with — we&apos;ll send a payment link to secure your
+            booking and get you on the schedule.
           </p>
           {active ? (
             <div className="mt-8 flex flex-col items-center gap-4">
@@ -80,13 +86,16 @@ export default async function WeberPage() {
             <div className="rounded-2xl border border-border bg-white p-6 text-sm text-ink/75 space-y-3">
               <h2 className="font-display text-lg text-navy">How it works</h2>
               <ol className="list-decimal list-inside space-y-1.5">
-                <li>Snap a photo of your Weber, and tell us the model.</li>
-                <li>Get an honest quote — real number, discount already applied, no upsell.</li>
-                <li>Pay and pick your day. We text to confirm your window.</li>
+                <li>Send a photo, pick your day &amp; time, and tell us what we&apos;re working with.</li>
+                <li>Get a real-time quote within the hour — discount already applied, no upsell.</li>
+                <li>We send a payment link to secure your booking and get you on the schedule.</li>
               </ol>
+              <p className="text-xs text-ink/55">
+                The cleaning doesn&apos;t have to happen within the two weeks — it just needs to be scheduled, paid, and booked.
+              </p>
             </div>
           </div>
-          {active ? <WeberBookingForm /> : null}
+          {active ? <WeberBookingForm availableDates={availableDates} /> : null}
         </div>
       </section>
 

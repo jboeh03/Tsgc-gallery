@@ -39,7 +39,7 @@ export const WEBER_SPRINT = {
   milestone: {
     target: 30,
     baseline: 4,
-    teaseText: "Reach 30 and something fun unlocks.",
+    teaseText: "Hit 30 and we refund one customer at random — and keep an eye out for a refurbished Weber.",
   },
 } as const;
 

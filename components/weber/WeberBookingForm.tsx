@@ -17,7 +17,12 @@ const MODELS: WeberModel[] = ["Spirit", "Genesis", "Summit", "Other"];
 const input = "mt-1 w-full rounded-md border border-border bg-white px-3 py-2 text-sm focus:border-navy focus:outline-none";
 const label = "text-[11px] uppercase tracking-wider text-muted";
 
-export default function WeberBookingForm() {
+function fmtDate(d: string): string {
+  const dt = new Date(`${d}T12:00:00`);
+  return dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+export default function WeberBookingForm({ availableDates }: { availableDates: string[] }) {
   const [step, setStep] = useState<"collect" | "quote">("collect");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -174,7 +179,13 @@ export default function WeberBookingForm() {
         <label className="block"><span className={label}>Last name</span><input value={lastName} onChange={(e) => setLastName(e.target.value)} className={input} /></label>
         <label className="block"><span className={label}>Phone *</span><input value={phone} onChange={(e) => setPhone(e.target.value)} required className={input} /></label>
         <label className="block"><span className={label}>Email *</span><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={input} /></label>
-        <label className="block"><span className={label}>Preferred date *</span><input type="date" value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} required className={input} /></label>
+        <label className="block">
+          <span className={label}>Preferred date *</span>
+          <select value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} required className={input}>
+            <option value="">Pick a day</option>
+            {availableDates.map((d) => <option key={d} value={d}>{fmtDate(d)}</option>)}
+          </select>
+        </label>
         <label className="block">
           <span className={label}>Preferred time</span>
           <select value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} className={input}>
@@ -186,7 +197,7 @@ export default function WeberBookingForm() {
 
       <label className="flex items-start gap-2 rounded-lg bg-bone/60 p-3 text-sm text-ink/80">
         <input type="checkbox" checked={neighbor} onChange={(e) => setNeighbor(e.target.checked)} className="mt-0.5" />
-        <span>I&apos;m booking with a neighbor or friend nearby — <strong className="text-burgundy">30% off</strong> instead of 15%.</span>
+        <span>I&apos;m booking with a neighbor or friend within 5 miles — <strong className="text-burgundy">30% off</strong> instead of 15%.</span>
       </label>
 
       {error && <p className="text-sm text-burgundy">{error}</p>}

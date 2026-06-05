@@ -129,6 +129,47 @@ export type CalendarEvent = {
   allDay: boolean;
 };
 
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+/**
+ * Bookable dates for the Weber form: next ~21 days, weekdays only, at least 24h
+ * out, excluding any day blocked on the TSGC Schedule calendar (an all-day
+ * event, or a day already full with 3+ jobs). Returns yyyy-mm-dd strings.
+ */
+export async function getWeberAvailableDates(daysAhead = 21): Promise<string[]> {
+  const now = Date.now();
+  const events = await listCalendarEvents(new Date(now).toISOString(), new Date(now + daysAhead * 86_400_000).toISOString());
+
+  const dayInfo = new Map<string, { count: number; allDay: boolean }>();
+  for (const e of events) {
+    const d = (e.start || "").slice(0, 10);
+    if (!d) continue;
+    const cur = dayInfo.get(d) || { count: 0, allDay: false };
+    cur.count += 1;
+    if (e.allDay) cur.allDay = true;
+    dayInfo.set(d, cur);
+  }
+  const blocked = (d: string) => {
+    const info = dayInfo.get(d);
+    return Boolean(info && (info.allDay || info.count >= 3));
+  };
+
+  const minMs = now + 24 * 3_600_000;
+  const endMs = now + daysAhead * 86_400_000;
+  const out: string[] = [];
+  const cur = new Date();
+  cur.setHours(0, 0, 0, 0);
+  while (cur.getTime() <= endMs) {
+    const dow = cur.getDay(); // 0 Sun … 6 Sat
+    const iso = `${cur.getFullYear()}-${pad2(cur.getMonth() + 1)}-${pad2(cur.getDate())}`;
+    if (cur.getTime() >= minMs && dow !== 0 && dow !== 6 && !blocked(iso)) out.push(iso);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return out;
+}
+
 /** Read upcoming TSGC Schedule events (defaults to the next 14 days). */
 export async function listCalendarEvents(fromISO?: string, toISO?: string): Promise<CalendarEvent[]> {
   try {

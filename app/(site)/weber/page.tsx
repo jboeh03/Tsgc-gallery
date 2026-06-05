@@ -97,6 +97,9 @@ export default async function WeberPage() {
           </div>
           {active ? <WeberBookingForm availableDates={availableDates} /> : null}
         </div>
+        <p className="mt-8 text-center text-sm text-ink/60">
+          Not a Weber? We clean every brand — <a href="/quote" className="text-burgundy underline hover:text-burgundy-700">get a free quote for any grill →</a>
+        </p>
       </section>
 
       {/* Real Weber before/afters */}

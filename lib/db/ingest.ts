@@ -23,6 +23,7 @@ export type LeadInput = {
   phone?: string;
   email?: string;
   zip?: string;
+  serviceAddress?: string;
   services?: string[] | string;
   grillModel?: string;
   source?: string;
@@ -32,7 +33,24 @@ export type LeadInput = {
   notes?: string;
   preferredContact?: string;
   legacyLeadId?: string;
+  imageBase64?: string;
+  imageMimeType?: string;
 };
+
+/** Upload an optional quote photo to storage; returns a public URL or null. */
+async function uploadQuotePhoto(base64?: string, mime?: string): Promise<string | null> {
+  if (!base64 || !mime || !isSupabaseConfigured()) return null;
+  try {
+    const ext = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : "jpg";
+    const path = `lead-${Date.now()}-${Math.round(Math.random() * 1e6)}.${ext}`;
+    const sb = getSupabase();
+    const { error } = await sb.storage.from("weber-photos").upload(path, Buffer.from(base64, "base64"), { contentType: mime });
+    if (error) return null;
+    return sb.storage.from("weber-photos").getPublicUrl(path).data.publicUrl;
+  } catch {
+    return null;
+  }
+}
 
 const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
 
@@ -55,7 +73,8 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
     const services = Array.isArray(input.services)
       ? input.services.filter(Boolean).join(", ")
       : input.services || "";
-    const notes = [input.notes, input.promoCode ? `Promo: ${input.promoCode}` : null]
+    const photoUrl = await uploadQuotePhoto(input.imageBase64, input.imageMimeType);
+    const notes = [input.notes, input.promoCode ? `Promo: ${input.promoCode}` : null, photoUrl ? `Photo: ${photoUrl}` : null]
       .filter(Boolean)
       .join("\n") || null;
 
@@ -63,6 +82,7 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       name,
       email: input.email || null,
       zip: input.zip || null,
+      service_address: input.serviceAddress || null,
       grill_model: input.grillModel || null,
       source: input.source || "website-quote-form",
       referred_by: input.referredBy || null,
@@ -108,6 +128,7 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
         referred_by: input.referredBy || null,
         notes,
         grill_model: input.grillModel || null,
+        job_address: input.serviceAddress || null,
         legacy_lead_id: input.legacyLeadId || null,
       };
       const { data: job, error: jobErr } = await sb.from("jobs").insert(jobInsert).select("id").single();

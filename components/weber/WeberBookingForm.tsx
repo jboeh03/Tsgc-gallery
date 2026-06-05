@@ -23,7 +23,7 @@ function fmtDate(d: string): string {
 }
 
 export default function WeberBookingForm({ availableDates }: { availableDates: string[] }) {
-  const [step, setStep] = useState<"collect" | "quote">("collect");
+  const [step, setStep] = useState<"collect" | "quote" | "done">("collect");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,26 +78,41 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
     }
   }
 
-  async function pay() {
+  async function submitRequest() {
     if (!quote) return;
     setBusy(true); setError(null);
     try {
-      const res = await fetch("/api/weber/checkout", {
+      const res = await fetch("/api/weber/request", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           firstName, lastName, phone, email, serviceAddress,
           preferredDate, preferredTime, model, burners, neighbor,
           assessment: quote.assessment,
+          imageBase64: photo?.base64, imageMimeType: photo?.mime,
         }),
       });
       const d = await res.json();
-      if (!res.ok || !d.url) throw new Error(d.error || "Checkout failed.");
-      window.location.href = d.url as string;
+      if (!res.ok) throw new Error(d.error || "Could not submit your request.");
+      setStep("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout failed.");
+      setError(err instanceof Error ? err.message : "Could not submit your request.");
+    } finally {
       setBusy(false);
     }
+  }
+
+  if (step === "done") {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-8 text-center space-y-3">
+        <div className="text-4xl" aria-hidden>🔥</div>
+        <h3 className="font-display text-2xl text-navy">Request received</h3>
+        <p className="text-sm text-ink/70">
+          We&apos;ll review your Weber and text you a real-time quote with a secure payment link within the hour.
+          Pay the link to lock your spot — nothing&apos;s charged yet.
+        </p>
+      </div>
+    );
   }
 
   if (step === "quote" && quote) {
@@ -106,7 +121,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
       <div className="rounded-2xl border border-border bg-white p-6 space-y-5">
         <div>
           <p className="text-[11px] uppercase tracking-widest text-burgundy">Your Weber · {quote.tierLabel}</p>
-          <h3 className="font-display text-2xl text-navy mt-1">Here&apos;s your quote</h3>
+          <h3 className="font-display text-2xl text-navy mt-1">Here&apos;s your estimate</h3>
         </div>
 
         <div className="rounded-xl bg-bone/60 p-4 text-sm text-ink/80 space-y-2">
@@ -121,6 +136,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
 
         <div className="flex items-end justify-between">
           <div>
+            <p className="text-[11px] uppercase tracking-wider text-muted">Estimated · we&apos;ll confirm</p>
             <p className="text-sm text-muted line-through">${quote.basePrice}</p>
             <p className="font-display text-5xl text-navy leading-none">${quote.discountedPrice}</p>
           </div>
@@ -132,14 +148,14 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
         {error && <p className="text-sm text-burgundy">{error}</p>}
 
         <div className="flex items-center gap-3">
-          <button type="button" onClick={pay} disabled={busy} className="flex-1 rounded-md bg-burgundy px-5 py-3 text-sm font-semibold uppercase tracking-wider text-bone hover:bg-burgundy-700 disabled:opacity-40">
-            {busy ? "Opening checkout…" : `Pay $${quote.discountedPrice} & lock my slot →`}
+          <button type="button" onClick={submitRequest} disabled={busy} className="flex-1 rounded-md bg-burgundy px-5 py-3 text-sm font-semibold uppercase tracking-wider text-bone hover:bg-burgundy-700 disabled:opacity-40">
+            {busy ? "Submitting…" : "Submit my request →"}
           </button>
           <button type="button" onClick={() => { setStep("collect"); setError(null); }} className="text-xs uppercase tracking-wider text-muted hover:text-ink">
             Back
           </button>
         </div>
-        <p className="text-[11px] text-muted">Secure payment via Stripe. Pay in full to confirm your spot — we&apos;ll text to confirm the window.</p>
+        <p className="text-[11px] text-muted">We&apos;ll text your confirmed quote and a secure payment link within the hour. Nothing&apos;s charged yet.</p>
       </div>
     );
   }

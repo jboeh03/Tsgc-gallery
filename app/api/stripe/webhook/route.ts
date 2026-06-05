@@ -8,7 +8,7 @@
 import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import { updateJob, logEvent } from "@/lib/db/writes";
-import { fulfillWeberBooking } from "@/lib/weber/fulfill";
+import { fulfillWeberBooking, scheduleWeberJob } from "@/lib/weber/fulfill";
 import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
@@ -41,6 +41,8 @@ export async function POST(req: Request) {
           pay_method: "stripe",
         });
         await logEvent("status_change", { jobId }, { via: "stripe_webhook", event: event.type });
+        // Weber-sprint review-then-send: a paid invoice puts the job on the schedule.
+        await scheduleWeberJob(jobId);
       }
     } else if (event.type === "checkout.session.completed") {
       // Weber-sprint self-serve booking — fulfill the paid slot (idempotent).

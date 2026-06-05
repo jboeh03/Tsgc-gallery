@@ -4,6 +4,7 @@ import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import CrmEditor from "@/components/admin/CrmEditor";
 import CrmConversation from "@/components/admin/CrmConversation";
+import SendPaymentLinkButton from "@/components/admin/SendPaymentLinkButton";
 import { readJobDetail, readContactThread } from "@/lib/db/reads";
 
 export const dynamic = "force-dynamic";
@@ -36,6 +37,30 @@ export default async function CrmDetailPage({ params }: { params: { id: string }
         <Link href="/admin/leads" className="inline-block text-xs uppercase tracking-wider text-muted hover:text-burgundy">
           ← Back to CRM
         </Link>
+        {(() => {
+          const photo = detail.job.notes?.match(/Photo:\s*(https?:\/\/\S+)/)?.[1];
+          const isWeber = detail.job.source === "weber-sprint";
+          if (!photo && !isWeber) return null;
+          return (
+            <div className="max-w-3xl rounded-xl border border-burgundy/30 bg-burgundy/[0.03] p-4">
+              {isWeber && (
+                <p className="mb-2 text-[11px] uppercase tracking-wider text-burgundy">
+                  🔥 Weber Sprint request{detail.job.quote_amount != null ? ` · suggested $${detail.job.quote_amount}` : ""}
+                </p>
+              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {photo && <img src={photo} alt="Customer grill photo" className="max-h-72 rounded-md" />}
+              {isWeber && (
+                <>
+                  <p className="mt-2 text-xs text-ink/60">
+                    Confirm/adjust the quote below, then send the payment link. Paying auto-creates the appointment + calendar event.
+                  </p>
+                  <SendPaymentLinkButton jobId={detail.job.id} amount={detail.job.quote_amount} />
+                </>
+              )}
+            </div>
+          );
+        })()}
         <div className="max-w-3xl">
           <CrmConversation conversationId={thread?.conversationId ?? null} messages={thread?.messages ?? []} />
         </div>

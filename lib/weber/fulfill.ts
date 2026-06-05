@@ -27,6 +27,55 @@ function formatAssessment(a: Record<string, unknown> | null): string {
   return [severity ? `Condition: ${severity}` : "", issues ? `Issues: ${issues}` : "", rec].filter(Boolean).join("\n");
 }
 
+/**
+ * After a Weber-sprint invoice is PAID (review-then-send flow), put the job on
+ * the schedule: confirmed appointment + a TSGC Schedule calendar event from the
+ * requested date stored on the job. Best-effort, idempotent on a stored gcal id.
+ */
+export async function scheduleWeberJob(jobId: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
+  const sb = getSupabase();
+  const { data: jobRow } = await sb
+    .from("jobs")
+    .select("id, contact_id, source, date_booked, job_address, grill_model, quote_amount, notes, gcal_event_id, contact:contacts(name, phone_e164)")
+    .eq("id", jobId)
+    .maybeSingle();
+  const job = jobRow as (JobRow & { contact: { name: string | null; phone_e164: string | null } | null }) | null;
+  if (!job || job.source !== "weber-sprint" || job.gcal_event_id) return; // not ours, or already scheduled
+  const who = job.contact?.name || job.contact?.phone_e164 || "Weber clean";
+
+  const appt = await createAppointment({
+    contact_id: job.contact_id,
+    job_id: job.id,
+    status: "confirmed",
+    scheduled_date: job.date_booked,
+    service_address: job.job_address,
+    confirmed_at: new Date().toISOString(),
+  });
+
+  if (job.date_booked) {
+    try {
+      const cal = await createCalendarEvent({
+        title: `Weber clean — ${who}`,
+        date: job.date_booked,
+        location: job.job_address,
+        description: `Paid ($${job.quote_amount ?? "?"}). ${job.grill_model ?? "Weber"}.\n${job.notes ?? ""}`,
+      });
+      if (cal) {
+        await updateJob(job.id, { gcal_event_id: cal.eventId });
+        await updateAppointment(appt.id, { gcal_event_id: cal.eventId, gcal_url: cal.calendarUrl });
+      }
+    } catch { /* best-effort */ }
+  }
+
+  if (isTwilioConfigured() && job.contact?.phone_e164) {
+    try {
+      await sendSms({ to: job.contact.phone_e164, body: `Payment received — you're booked with ${SITE.name} for ${job.date_booked}. We'll text to confirm the exact window. Thank you!` });
+    } catch { /* best-effort */ }
+  }
+  await logEvent("appointment_confirmed", { contactId: job.contact_id, jobId: job.id }, { via: "weber-sprint-invoice" });
+}
+
 export async function fulfillWeberBooking(pendingId: string, sessionId: string): Promise<void> {
   if (!isSupabaseConfigured()) return;
   const sb = getSupabase();

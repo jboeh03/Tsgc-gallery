@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
 import type { Assessment } from "@/lib/preview/types";
 import type { WeberModel } from "@/lib/campaign-weber";
 
@@ -181,7 +182,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
 
       <label className="block">
         <span className={label}>Service address *</span>
-        <input value={serviceAddress} onChange={(e) => setServiceAddress(e.target.value)} required placeholder="123 Main St, Cincinnati, OH" className={input} />
+        <AddressAutocomplete value={serviceAddress} onChange={setServiceAddress} required placeholder="Start typing your address…" className={input} />
       </label>
 
       <label className="block">

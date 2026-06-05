@@ -6,6 +6,8 @@ import { jobSlug, type Job } from "@/lib/types";
 import { SITE } from "@/lib/site";
 import JobDetailClient from "@/components/gallery/JobDetailClient";
 
+export const revalidate = 30;
+
 type Params = { slug: string };
 
 async function findJob(slug: string): Promise<Job | undefined> {

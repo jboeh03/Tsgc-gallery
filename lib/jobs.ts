@@ -1,25 +1,66 @@
+import { unstable_cache } from "next/cache";
 import type { Job, GrillType } from "./types";
+import type { GalleryJobRow } from "./db/types";
+import { getSupabase, isSupabaseConfigured } from "./db/supabase";
 import data from "@/data/jobs.json";
 
 /**
- * Single entry point for job data. Today it reads the bundled JSON.
- * To switch to Google Sheets, set NEXT_PUBLIC_JOBS_SOURCE=sheet and
- * NEXT_PUBLIC_JOBS_SHEET_CSV_URL=<published CSV url>.
+ * Admin-uploaded gallery jobs from Supabase (the /admin Gallery tab), so new
+ * before/afters go live without a code change. Cached + tagged "gallery";
+ * revalidateTag("gallery") on upload refreshes it. Best-effort.
+ */
+const getDbGalleryJobs = unstable_cache(
+  async (): Promise<Job[]> => {
+    if (!isSupabaseConfigured()) return [];
+    try {
+      const { data: rows } = await getSupabase()
+        .from("gallery_jobs")
+        .select("*")
+        .eq("published", true)
+        .order("date", { ascending: false });
+      return ((rows ?? []) as GalleryJobRow[]).map((g) => ({
+        id: g.public_id,
+        neighborhood: g.neighborhood ?? "",
+        date: g.date ?? "",
+        grillType: (g.grill_type as GrillType) || "gas",
+        grillModel: g.grill_model ?? "",
+        serviceHours: g.service_hours ?? 0,
+        pairs: [{ before: g.before_url, after: g.after_url, beforeAlt: g.before_alt ?? "", afterAlt: g.after_alt ?? "" }],
+        featured: g.featured,
+        notes: g.notes ?? undefined,
+        slug: g.public_id,
+      }));
+    } catch {
+      return [];
+    }
+  },
+  ["db-gallery-jobs"],
+  { revalidate: 30, tags: ["gallery"] }
+);
+
+/**
+ * Single entry point for job data: bundled JSON (or Sheet) + admin-uploaded
+ * Supabase gallery jobs, merged and sorted newest-first.
  */
 export async function getJobs(): Promise<Job[]> {
+  let baseJobs: Job[];
   if (
     process.env.NEXT_PUBLIC_JOBS_SOURCE === "sheet" &&
     process.env.NEXT_PUBLIC_JOBS_SHEET_CSV_URL
   ) {
     try {
-      return await getJobsFromSheet(
-        process.env.NEXT_PUBLIC_JOBS_SHEET_CSV_URL
-      );
+      baseJobs = await getJobsFromSheet(process.env.NEXT_PUBLIC_JOBS_SHEET_CSV_URL);
     } catch (err) {
       console.error("[jobs] Sheet fetch failed, falling back to JSON:", err);
+      baseJobs = (data.jobs as Job[]).slice();
     }
+  } else {
+    baseJobs = (data.jobs as Job[]).slice();
   }
-  return (data.jobs as Job[]).slice().sort(byDateDesc);
+
+  const dbJobs = await getDbGalleryJobs();
+  const seen = new Set(baseJobs.map((j) => j.id));
+  return [...baseJobs, ...dbJobs.filter((j) => !seen.has(j.id))].sort(byDateDesc);
 }
 
 export function getFeaturedJob(jobs: Job[]): Job | undefined {

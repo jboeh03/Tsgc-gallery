@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { getJobs, getFeaturedJob } from "@/lib/jobs";
 import GalleryClient from "@/components/gallery/GalleryClient";
 
+// Re-read every 30s so admin-uploaded gallery jobs appear without a rebuild.
+export const revalidate = 30;
+
 export const metadata: Metadata = {
   title: "Gallery · Tri-State Grill Cleaning",
   description:

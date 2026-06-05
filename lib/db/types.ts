@@ -232,6 +232,25 @@ export type PendingBookingRow = {
   fulfilled_job_id: string | null;
 };
 
+export type GalleryJobRow = {
+  id: string;
+  created_at: string;
+  public_id: string;
+  neighborhood: string | null;
+  date: string | null;
+  grill_type: string | null;
+  grill_model: string | null;
+  service_hours: number | null;
+  before_url: string;
+  after_url: string;
+  before_alt: string | null;
+  after_alt: string | null;
+  notes: string | null;
+  featured: boolean;
+  published: boolean;
+  sort: number;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -294,6 +313,7 @@ export type Database = {
       giveaway_entries: Tbl<GiveawayEntryRow>;
       google_tokens: Tbl<GoogleTokenRow>;
       pending_bookings: Tbl<PendingBookingRow>;
+      gallery_jobs: Tbl<GalleryJobRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

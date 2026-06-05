@@ -13,7 +13,7 @@ import { getSupabase, isSupabaseConfigured } from "./supabase";
 import type {
   Lead, Job, JobRow, ContactRow, ConversationRow, MessageRow,
   ConversationSummary, ConversationThread, MessageDirection, MessageChannel,
-  CooTaskRow, CooMessageRow,
+  CooTaskRow, CooMessageRow, GalleryJobRow,
 } from "./types";
 
 type JobWithContact = JobRow & { contact: ContactRow | null };
@@ -350,6 +350,26 @@ export async function readWeberSprintCount(): Promise<number> {
     return count ?? 0;
   } catch {
     return 0;
+  }
+}
+
+// ---- gallery (admin-uploaded before/afters) --------------------------------
+
+/**
+ * All gallery_jobs rows (published + drafts) for the /admin Gallery manager.
+ * Not cached — the admin list should reflect uploads/deletes immediately.
+ */
+export async function readGalleryJobs(): Promise<GalleryJobRow[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data } = await getSupabase()
+      .from("gallery_jobs")
+      .select("*")
+      .order("date", { ascending: false })
+      .limit(500);
+    return (data ?? []) as GalleryJobRow[];
+  } catch {
+    return [];
   }
 }
 

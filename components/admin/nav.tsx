@@ -8,7 +8,8 @@
 
 export type NavKey =
   | "overview" | "inbox" | "suggestions" | "leads" | "jobs" | "marketing"
-  | "campaigns" | "traffic" | "affiliate" | "agents" | "backlog" | "settings";
+  | "campaigns" | "traffic" | "affiliate" | "agents" | "backlog" | "settings"
+  | "gallery";
 
 export type NavItem = {
   href: string;
@@ -24,6 +25,7 @@ export const NAV: NavItem[] = [
   { href: "/admin/jobs", label: "Jobs", icon: "jobs", primary: true },
   { href: "/admin/suggestions", label: "Suggestions", icon: "suggestions" },
   { href: "/admin/marketing", label: "Marketing", icon: "marketing" },
+  { href: "/admin/gallery", label: "Gallery", icon: "gallery" },
   { href: "/admin/campaigns", label: "Campaigns", icon: "campaigns" },
   { href: "/admin/traffic", label: "Traffic", icon: "traffic" },
   { href: "/admin/products", label: "Affiliate", icon: "affiliate" },
@@ -125,6 +127,14 @@ export function NavIcon({ name, className }: { name: string; className?: string 
           <path d="M9 17h6m-3-3v3" />
           <rect x="3" y="6" width="18" height="11" rx="2" />
           <path d="M3 10h18" />
+        </svg>
+      );
+    case "gallery":
+      return (
+        <svg {...props}>
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="9" cy="9" r="2" />
+          <path d="m21 15-5-5L5 21" />
         </svg>
       );
     case "settings":

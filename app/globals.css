@@ -453,6 +453,14 @@ html.lenis body {
   0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(139, 31, 47, 0.55); }
   50%      { transform: scale(1.04); box-shadow: 0 0 0 14px rgba(139, 31, 47, 0); }
 }
+@keyframes weber-smoke {
+  0%   { transform: translateY(16px) scale(0.8); opacity: 0; }
+  25%  { opacity: 0.45; }
+  100% { transform: translateY(-64px) scale(1.5); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[weber-smoke_3\.2s_ease-out_infinite\] { animation: none !important; }
+}
 @media (prefers-reduced-motion: reduce) {
   .animate-\[fadeIn_120ms_ease-out\],
   .animate-\[slideUp_180ms_cubic-bezier\(0\.16\2c 1\2c 0\.3\2c 1\)\] {

@@ -113,7 +113,7 @@ export async function fulfillWeberBooking(pendingId: string, sessionId: string):
       await sendSms({ to: NOTIFY_TO, body: `💳 Weber booked + paid: ${name ?? claimed.phone_e164} · $${claimed.amount} · ${when} · ${claimed.service_address ?? ""}`.slice(0, 320) });
     } catch { /* best-effort */ }
     try {
-      await sendSms({ to: claimed.phone_e164, body: `You're booked with ${SITE.name} for ${when} and paid in full — thank you! We'll confirm the window. Reply here with any questions. — Jeff` });
+      await sendSms({ to: claimed.phone_e164, body: `You're booked with ${SITE.name} for ${when} and paid in full — thank you! We'll confirm the window. Reply here with any questions.` });
     } catch { /* best-effort */ }
   }
 

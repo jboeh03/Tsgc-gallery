@@ -8,7 +8,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { SITE } from "@/lib/site";
 
-const BRAND = `Tri-State Grill Cleaning — veteran-founded, at-home grill deep-cleaning serving Cincinnati, Northern Kentucky & Dayton. Owner: Jeff. Free quote / text line: ${SITE.phone}. Site: tristategrillcleaning.com. Voice: warm, direct, local, zero corporate fluff, first person, no emoji spray, no ALL CAPS, honest. Soft CTA only.`;
+const BRAND = `Tri-State Grill Cleaning — veteran-founded, at-home grill deep-cleaning serving Cincinnati, Northern Kentucky & Dayton. Owner: Jeff. Free quote / text line: ${SITE.phone}. Site: tristategrillcleaning.com. Voice: warm, direct, local, zero corporate fluff, first person PLURAL (we/us — never I/me), no emoji spray, no ALL CAPS, honest. Soft CTA only.`;
 
 async function claudeText(system: string, user: string, maxTokens = 1600): Promise<string> {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY not set");

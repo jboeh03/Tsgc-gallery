@@ -4,7 +4,7 @@ import { getJobs } from "@/lib/jobs";
 import { WEBER_SPRINT, isWeberSprintActive } from "@/lib/campaign-weber";
 import { readWeberSprintCount } from "@/lib/db/reads";
 import FathersDayCountdown from "@/components/FathersDayCountdown";
-import WeberTicker from "@/components/weber/WeberTicker";
+import WeberThermometer from "@/components/weber/WeberThermometer";
 import WeberBookingForm from "@/components/weber/WeberBookingForm";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +26,7 @@ export default async function WeberPage() {
   const active = isWeberSprintActive();
   const [jobs, count] = await Promise.all([getJobs(), readWeberSprintCount()]);
   const webers = jobs.filter((j) => j.grillModel?.toLowerCase().includes("weber")).slice(0, 4);
+  const cleanedCount = WEBER_SPRINT.milestone.baseline + count;
 
   return (
     <div className="bg-bone">
@@ -54,9 +55,9 @@ export default async function WeberPage() {
             Your Weber, cooking like new again.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-bone/80">
-            Send me a photo of your Weber and I&apos;ll send back an honest quote with your discount already in it.
+            Send us a photo of your Weber and we&apos;ll send back an honest quote with your discount already in it.
             <strong className="text-bone"> 15% off solo, 30% if you split a visit with a neighbor.</strong> You pay
-            online and pick the day — I text to lock the window.
+            online and pick the day — we text to lock the window.
           </p>
           {active ? (
             <div className="mt-8 flex flex-col items-center gap-4">
@@ -75,13 +76,13 @@ export default async function WeberPage() {
       <section id="book" className="mx-auto max-w-5xl px-5 py-14 md:py-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-start">
           <div className="space-y-6">
-            <WeberTicker count={count} target={WEBER_SPRINT.milestone.target} teaseText={WEBER_SPRINT.milestone.teaseText} />
+            <WeberThermometer count={cleanedCount} target={WEBER_SPRINT.milestone.target} teaseText={WEBER_SPRINT.milestone.teaseText} />
             <div className="rounded-2xl border border-border bg-white p-6 text-sm text-ink/75 space-y-3">
               <h2 className="font-display text-lg text-navy">How it works</h2>
               <ol className="list-decimal list-inside space-y-1.5">
-                <li>Snap a photo of your Weber, and tell me the model.</li>
+                <li>Snap a photo of your Weber, and tell us the model.</li>
                 <li>Get an honest quote — real number, discount already applied, no upsell.</li>
-                <li>Pay and pick your day. I text to confirm your window.</li>
+                <li>Pay and pick your day. We text to confirm your window.</li>
               </ol>
             </div>
           </div>
@@ -93,9 +94,9 @@ export default async function WeberPage() {
       {webers.length > 0 && (
         <section className="bg-white border-y border-border">
           <div className="mx-auto max-w-5xl px-5 py-14 md:py-16">
-            <h2 className="font-display text-2xl text-navy text-center">Real Webers I&apos;ve brought back</h2>
+            <h2 className="font-display text-2xl text-navy text-center">Real Webers we&apos;ve brought back</h2>
             <p className="mx-auto mt-2 max-w-xl text-center text-sm text-ink/60">
-              Every one is a real local job — photographed before I touched it and after I finished.
+              Every one is a real local job — photographed before we touched it and after we finished.
             </p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
               {webers.map((j) => {
@@ -127,13 +128,13 @@ export default async function WeberPage() {
 
       {/* Founder note */}
       <section className="mx-auto max-w-3xl px-5 py-14 text-center">
-        <p className="text-[11px] uppercase tracking-widest text-burgundy">From Jeff</p>
+        <p className="text-[11px] uppercase tracking-widest text-burgundy">From the crew</p>
         <p className="mt-3 text-ink/80">
-          Weber builds a grill worth keeping for 15+ years — but only if it&apos;s cared for. This sprint is my push to
-          get as many local Webers cooking like new again before summer hits full swing. Book yours, grab a neighbor,
-          and let&apos;s get them clean.
+          Weber builds a grill worth keeping for 15+ years — but only if it&apos;s cared for. For the next two weeks
+          we&apos;re on a mission to get as many local Webers cooking like new again before summer hits full swing.
+          Book yours, grab a neighbor, and let&apos;s get them clean.
         </p>
-        <p className="mt-3 font-display text-lg text-navy">— Jeff, Tri-State Grill Cleaning</p>
+        <p className="mt-3 font-display text-lg text-navy">— Tri-State Grill Cleaning</p>
       </section>
     </div>
   );

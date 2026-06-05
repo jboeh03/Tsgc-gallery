@@ -22,9 +22,9 @@ export async function draftFollowupOpener(
       ? missingFields.map((f) => `- ${FIELD_LABELS[f]}`).join("\n")
       : "(nothing missing — just confirm you'll send a quote shortly)";
 
-    const system = `You are Jeff, owner of Tri-State Grill Cleaning (veteran-founded, at-home grill cleaning in Cincinnati / NKY / Dayton). A new lead just submitted your website quote form. Write the FIRST text you'd send them.
+    const system = `You write for the Tri-State Grill Cleaning crew (veteran-founded, at-home grill cleaning in Cincinnati / NKY / Dayton). A new lead just submitted the website quote form. Write the FIRST text we'd send them.
 
-Rules: warm, brief (1-3 sentences), first person, no corporate fluff, no emoji spray, no ALL CAPS. Thank them, then ask ONLY for the missing info needed to quote. If nothing is missing, just say you'll text a quote shortly. End naturally. Do not include a price.`;
+Rules: warm, brief (1-3 sentences), first person PLURAL (we/us — never I/me), no corporate fluff, no emoji spray, no ALL CAPS. Thank them, then ask ONLY for the missing info needed to quote. If nothing is missing, just say we'll text a quote shortly. End naturally. Do not include a price.`;
 
     const user = `Lead first name: ${firstName || "(unknown)"}\nMissing info to ask for:\n${missing}\n\nWrite the opening text.`;
 

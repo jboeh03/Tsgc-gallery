@@ -34,10 +34,12 @@ export const WEBER_SPRINT = {
     { id: "weber-5p", minBurners: 5, maxBurners: 99, basePrice: 425, label: "5+ burner Weber" },
   ],
 
-  // Live ticker milestone. EDIT target + tease.
+  // Live "Webers cleaned" thermometer. `baseline` seeds the gauge (grills
+  // already cleaned this week) on top of the live paid-booking count.
   milestone: {
-    target: 50,
-    teaseText: "Hit the goal and we unlock something special — stay tuned.",
+    target: 30,
+    baseline: 4,
+    teaseText: "Reach 30 and something fun unlocks.",
   },
 } as const;
 

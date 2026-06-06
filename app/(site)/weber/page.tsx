@@ -17,6 +17,9 @@ const CAPTIONS: Record<string, string> = {
   "tsg-014": "Big 4-burner with a Sear Station — the more grill there is, the bigger the before-and-after.",
 };
 
+// Jobs whose "before" was already clean — show the after on its own as a showcase.
+const AFTER_ONLY = new Set<string>(["tsg-015"]);
+
 export const metadata: Metadata = {
   title: "Weber Sprint — 15% off your Weber deep clean | Tri-State Grill Cleaning",
   description: "Two weeks only: book a Weber deep clean, 15% off (30% with a neighbor). Instant photo quote, pay online, pick your day.",
@@ -114,18 +117,26 @@ export default async function WeberPage() {
               {webers.map((j) => {
                 const pair = j.pairs[0];
                 if (!pair) return null;
+                const afterOnly = AFTER_ONLY.has(j.id);
                 return (
                   <div key={j.id} className="overflow-hidden rounded-xl border border-border">
-                    <div className="grid grid-cols-2">
-                      <div className="relative aspect-[4/3]">
-                        <Image src={pair.before} alt={pair.beforeAlt || "Before"} fill className="object-cover" sizes="(max-width:640px) 50vw, 25vw" />
-                        <span className="absolute left-2 top-2 rounded bg-black/70 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white">Before</span>
+                    {afterOnly ? (
+                      <div className="relative aspect-[8/3]">
+                        <Image src={pair.after} alt={pair.afterAlt || "Clean Weber grill"} fill className="object-cover" sizes="(max-width:640px) 100vw, 50vw" />
+                        <span className="absolute left-2 top-2 rounded bg-burgundy px-2 py-0.5 text-[10px] uppercase tracking-wider text-bone">Showroom clean</span>
                       </div>
-                      <div className="relative aspect-[4/3]">
-                        <Image src={pair.after} alt={pair.afterAlt || "After"} fill className="object-cover" sizes="(max-width:640px) 50vw, 25vw" />
-                        <span className="absolute left-2 top-2 rounded bg-burgundy px-2 py-0.5 text-[10px] uppercase tracking-wider text-bone">After</span>
+                    ) : (
+                      <div className="grid grid-cols-2">
+                        <div className="relative aspect-[4/3]">
+                          <Image src={pair.before} alt={pair.beforeAlt || "Before"} fill className="object-cover" sizes="(max-width:640px) 50vw, 25vw" />
+                          <span className="absolute left-2 top-2 rounded bg-black/70 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white">Before</span>
+                        </div>
+                        <div className="relative aspect-[4/3]">
+                          <Image src={pair.after} alt={pair.afterAlt || "After"} fill className="object-cover" sizes="(max-width:640px) 50vw, 25vw" />
+                          <span className="absolute left-2 top-2 rounded bg-burgundy px-2 py-0.5 text-[10px] uppercase tracking-wider text-bone">After</span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="px-4 py-3 text-sm">
                       <p className="font-medium text-navy">{j.grillModel} · {j.neighborhood}</p>
                       {CAPTIONS[j.id] && <p className="mt-0.5 text-ink/60">{CAPTIONS[j.id]}</p>}

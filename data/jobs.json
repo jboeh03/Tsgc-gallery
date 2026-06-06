@@ -26,8 +26,8 @@
       "serviceHours": 3,
       "pairs": [
         {
-          "before": "/gallery/tsg-016-before.webp",
-          "after": "/gallery/tsg-016-after.webp",
+          "before": "/gallery/tsg-016-after.webp",
+          "after": "/gallery/tsg-016-before.webp",
           "beforeAlt": "Before: Weber Genesis gas grill with Sear Station, lid open on a Mt. Lookout deck — discolored hood interior, soot-stained cookbox, and grease-darkened grates before service",
           "afterAlt": "After: the same Weber Genesis with Sear Station — clean grates reinstalled, a brightened cookbox, and a wiped-down hood interior"
         },

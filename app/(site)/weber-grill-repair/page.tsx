@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 import { isWeberSprintActive, WEBER_SPRINT } from "@/lib/campaign-weber";
+import { WEBER_REPAIR_GUIDES } from "@/lib/weber-repair-guides";
 
 /**
  * Evergreen, INDEXABLE SEO page targeting Weber repair / parts searches
@@ -161,6 +162,28 @@ export default function WeberRepairPage() {
               <p className="mt-2 text-ink/80 leading-relaxed">{r.p}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Specific fix guides (cluster spokes) */}
+      <section className="bg-white border-y border-border">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="font-display text-3xl text-navy">Common Weber fixes</h2>
+          <p className="mt-3 max-w-2xl text-ink/80">
+            Searching a specific problem? Start here — then send a photo for a free quote.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {WEBER_REPAIR_GUIDES.map((g) => (
+              <Link
+                key={g.slug}
+                href={`/weber-grill-repair/${g.slug}`}
+                className="rounded-xl border border-border bg-bone/40 p-5 hover:border-burgundy"
+              >
+                <p className="font-display text-lg text-navy">{g.model}</p>
+                <p className="mt-1 text-sm text-burgundy font-semibold">{g.topic}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

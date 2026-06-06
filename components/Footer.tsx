@@ -97,8 +97,8 @@ export default function Footer() {
               <li key={s}>{s}</li>
             ))}
             <li>
-              <Link href="/weber-grill-repair" className="text-bone/85 hover:text-burgundy-400">
-                Weber Grill Repair
+              <Link href="/grill-repair" className="text-bone/85 hover:text-burgundy-400">
+                Grill Repair
               </Link>
             </li>
           </ul>

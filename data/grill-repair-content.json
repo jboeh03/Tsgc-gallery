@@ -1,0 +1,681 @@
+{
+  "intros": [
+    {
+      "slug": "napoleon",
+      "blurb": "Napoleon's JETFIRE ignition and stainless tube burners are usually worth saving — we fix them at your door.",
+      "intro": "We repair and deep-clean Napoleon grills across Greater Cincinnati, Northern Kentucky, and Dayton — in one visit, at your home. Napoleon builds a serious grill, so most problems we see (a JETFIRE or SafetyGlow igniter that won't spark, a stainless tube burner that's clogged or burning uneven, warped WAVE cooking grids, or sear plates eaten up by grease and rust) are a repair, not a reason to replace a grill that still has years left. We'll give you the honest call either way — if your Napoleon is worth saving we'll tell you, and if it's truly done we'll say that too. If you're searching for Napoleon grill repair or burner replacement near you, send us a few photos for a free quote and we'll tell you exactly what it needs."
+    },
+    {
+      "slug": "traeger",
+      "blurb": "Traeger pellet grills are worth saving — we fix hot rods, augers, RTD probes & WiFire, then deep-clean.",
+      "intro": "A Traeger that won't ignite, throws a LEr or low-temp error, or just won't hold heat usually has a fixable cause — a worn hot rod igniter, a jammed or burned-out auger motor, a failing RTD temp probe, a weak induction fan, or a flaky WiFire controller. We come to your home across Greater Cincinnati, Northern Kentucky, and Dayton, diagnose the real problem, repair it, and deep-clean the grill in the same visit. We'll give you a straight repair-or-replace answer too: a solid Traeger is almost always worth saving over buying new, and we'll tell you honestly if yours isn't. Send a few photos for a free quote and we'll let you know what it needs."
+    },
+    {
+      "slug": "blaze",
+      "blurb": "Cast stainless H-burners, igniters, and flame tamers rebuilt and deep-cleaned on-site.",
+      "intro": "Blaze built-in grills are heavy-duty hardware — cast stainless H-burners, hot-surface and spark igniters with their electrodes, and stainless heat plates (flame tamers) that take real abuse over the years — and when one stops lighting evenly or a burner rusts out, a Blaze is almost always worth saving rather than ripping out of your outdoor kitchen. We come to your home across Greater Cincinnati, Northern Kentucky, and the Dayton, Ohio area to repair the grill and deep-clean it in the same visit, whether you're searching \"Blaze grill won't ignite,\" \"Blaze burner replacement,\" \"flame tamer rusted out,\" or a regulator that's starving the burners on a built-in. We'll give you the honest repair-vs-replace call up front — and on a Blaze, repair usually wins. Text us a few photos for a free photo quote, no obligation."
+    }
+  ],
+  "guides": [
+    {
+      "brand": "napoleon",
+      "slug": "wont-ignite",
+      "model": "Napoleon",
+      "topic": "Won't ignite / JETFIRE ignition",
+      "title": "Napoleon Grill Won't Ignite? JETFIRE Fix | Cincinnati",
+      "metaDescription": "Napoleon grill won't light or JETFIRE ignition clicking with no spark? We diagnose and repair it on-site in Cincinnati, NKY & Dayton. Free photo quote.",
+      "h1": "Napoleon Grill Won't Ignite? JETFIRE Ignition Troubleshooting & Repair",
+      "intro": "If your Napoleon won't light — no click, a click with no spark, or that SafetyGlow ignition button glowing while the burners stay cold — you're in the right place. Most Napoleon ignition problems are a fixable part, not a dead grill, and on a Prestige or Rogue the build quality usually makes the repair well worth it. Below we walk through what's actually failing and when it's smart to fix versus replace.",
+      "symptoms": [
+        {
+          "h": "JETFIRE clicks but no spark reaches the burner",
+          "p": "Napoleon's JETFIRE system fires a spark from an electrode tucked into the burner tube. If you hear rapid clicking but never see or smell ignition, the usual culprits are a fouled or grease-coated electrode, a cracked ceramic insulator, or a corroded electrode wire that's bleeding spark before it gets to the tube. Carbon and grease bridging the electrode gap is the single most common cause we find."
+        },
+        {
+          "h": "SafetyGlow button glows but nothing lights",
+          "p": "On grills with the SafetyGlow ignition, the button glows red when the system is energized. A glowing button with no light tells us power is reaching the module but the spark isn't crossing — typically a bad electrode, a broken wire under the control panel, or burners so gummed up the gas can't reach the spark point. It's a useful clue that the battery and module are alive."
+        },
+        {
+          "h": "No click at all when you press the igniter",
+          "p": "Silence usually means the electronic ignition module isn't firing. Start with the AA battery in the module behind the control knob — Napoleon's electronic igniters are battery-powered and a dead or corroded battery kills the whole system. If a fresh battery doesn't bring back the click, the module, button, or wiring harness is the next suspect."
+        },
+        {
+          "h": "Some burners light, others won't catch",
+          "p": "When one or two burners fire but the rest stay cold, the problem is rarely the igniter — it's gas flow. Napoleon's stainless tube burners and the crossover/carryover channel between them clog with grease, spiders, and debris. A blocked tube or carryover tube means the flame can't travel across, so only the burner nearest the igniter lights. This is a cleaning-and-clearing job, and it's one we fix in the same visit."
+        },
+        {
+          "h": "It lights but flames are weak, yellow, or uneven",
+          "p": "Weak, lazy, or yellow flames on a Napoleon point to partially blocked stainless tube burner ports, a clogged venturi, or a regulator stuck in bypass after the tank valve was opened too fast. Grease dripping down through the sear plates onto the burners accelerates the clogging. Left alone it gets worse and can warp the burner — catching it early is the cheap fix."
+        }
+      ],
+      "diagnosis": "When we come out, we start by isolating ignition from gas flow — we confirm the JETFIRE or SafetyGlow module is firing (battery, button, electrode gap and spark), then verify the stainless tube burners, carryover tubes, and venturis are actually clear so gas reaches the spark. From there we know whether you need a part (electrode, wire, igniter module, or button) or simply a thorough clearing. Because we repair and deep-clean in the same visit, we pull the WAVE cooking grids and sear plates, degrease the burners and cook box, and clear the carryover channel that grease loves to clog — so the fix lasts instead of failing again next month. We'll always give you a straight repair-versus-replace answer: a Prestige, Prestige PRO, or Rogue is a heavy, well-built grill that's almost always worth saving, while we'll tell you honestly if a rusted-through firebox on a much older unit has reached the end. We don't invent prices — send photos and we'll quote the real work.",
+      "faqs": [
+        {
+          "q": "Does the Napoleon JETFIRE igniter use a battery?",
+          "a": "Most do. Napoleon's electronic ignition modules run off a single AA battery housed behind the control panel. A dead or corroded battery is the number one reason a Napoleon suddenly stops clicking — always swap it before assuming the igniter has failed."
+        },
+        {
+          "q": "Why does my JETFIRE click but the burner won't light?",
+          "a": "The spark usually isn't reaching the burner. Grease or carbon coating the electrode, a cracked ceramic insulator, or a corroded electrode wire will all let the system click without producing a usable spark. Burners clogged with grease can also keep gas from reaching the spark point. We clean the electrode, check the gap and wire, and clear the burner in one visit."
+        },
+        {
+          "q": "Is it worth repairing a Napoleon grill or should I replace it?",
+          "a": "Napoleon builds heavy, mostly stainless grills, so on a Prestige, Prestige PRO, or Rogue the repair is almost always worth it — these are grills people keep for a decade or more. The honest exception is an older unit with a rusted-through firebox or cracked cook box, where replacement makes more sense. We'll tell you which one you have before you spend a dime."
+        },
+        {
+          "q": "Do you fix Napoleon grills at my home in Cincinnati or Northern Kentucky?",
+          "a": "Yes. We come to you across Greater Cincinnati, Northern Kentucky, and the Dayton area. We diagnose the ignition, make the repair, and deep-clean the grill in the same visit — no hauling it anywhere or dropping it off."
+        },
+        {
+          "q": "How do I get a price for my Napoleon ignition repair?",
+          "a": "Send us a few photos through our free photo quote — the control panel, the burners, and the overall grill. We'll give you a real, no-pressure estimate for the repair and same-visit cleaning based on what we actually see."
+        }
+      ]
+    },
+    {
+      "brand": "napoleon",
+      "slug": "burner-replacement",
+      "model": "Napoleon",
+      "topic": "Burner / tube replacement & uneven flame",
+      "title": "Napoleon Burner & Uneven Flame Repair | Cincinnati",
+      "metaDescription": "Napoleon grill burning uneven or won't sear right? We repair or replace tube burners and fix flame issues. Free photo quote across Cincinnati, NKY & Dayton.",
+      "h1": "Napoleon Grill Burner Replacement & Uneven Flame Repair",
+      "intro": "If your Napoleon used to sear like a steakhouse and now one zone runs cold, throws yellow flame, or barely lights, you're not imagining it — these are classic stainless tube burner symptoms, not a grill that's done. The good news: a Napoleon is built to be rebuilt, and most of these jobs are a repair, not a replacement. Here's how we tell which is which.",
+      "symptoms": [
+        {
+          "h": "One zone runs cold or the flame is lopsided across the WAVE grids",
+          "p": "Uneven flame down the length of a burner almost always means clogged or corroded ports on the stainless tube. Grease and food debris plug the holes, so gas only fires where it can escape — usually nearest the venturi. On a Napoleon you'll see it as a hot front and a dead back (or vice versa) under the WAVE cooking grids. Often a deep clean and port-clearing fixes it; a tube that's rusted thin or split needs replacing."
+        },
+        {
+          "h": "Yellow, lazy, or floppy flame instead of tight blue cones",
+          "p": "Blue means clean combustion; yellow or orange means the air-to-gas mix is off. The usual Napoleon culprits are spiders or debris in the venturi tubes, a burner that's shifted off its valve orifice, or a partially blocked tube. Yellow flame also soots up your sear plates and stainless, so it tends to snowball. We clear the venturis, reseat the burner, and confirm a clean blue flame before we leave."
+        },
+        {
+          "h": "JETFIRE igniter clicks but the burner won't catch — or SafetyGlow won't glow",
+          "p": "Napoleon's JETFIRE crossover lights each burner off a tiny jet of gas, and many models use SafetyGlow knobs that glow red when gas is flowing. If JETFIRE sparks but won't light, it's usually a fouled crossover channel, a corroded electrode, a dead battery, or a clogged burner port near the ignition point. If SafetyGlow won't glow, gas isn't reaching the burner the way it should — a good diagnostic clue before we even pull a part."
+        },
+        {
+          "h": "Rust flakes, holes, or a burner that crumbles when you lift the grates",
+          "p": "Even Napoleon's stainless tube burners give out eventually, especially the entry-tier 304-vs-441 stainless on older or heavily-used grills. Once a tube has rust-through holes, enlarged ports, or it flexes and flakes, cleaning won't bring it back — that's a replacement. The upside is Napoleon burners are widely available by model number, so a swap is straightforward."
+        },
+        {
+          "h": "Weak heat everywhere and your sear plates aren't searing",
+          "p": "If every burner is weak, look upstream: a tripped regulator (the bypass that kicks in after the lid's opened with gas flowing), a kinked hose, or LP tank issues. Napoleon sear plates sit over the burners to vaporize drippings and spread heat — when they're caked or warped they rob you of that even, high-temp sear. We reset the regulator, check supply, and clean or assess the sear plates as part of the same visit."
+        }
+      ],
+      "diagnosis": "When we come out, we start with a real diagnosis instead of guessing at parts: we light each burner and read the flame zone by zone, check the JETFIRE crossover and SafetyGlow ignition, inspect the venturi tubes for spiders and blockage, and pull the WAVE grids and sear plates to look at every tube burner up close. A lot of \"uneven flame\" Napoleons just need the burner ports cleared, the venturis cleaned, and a regulator reset — and we handle that on the spot. If a tube is rusted through, split, or has blown-out ports, we'll tell you straight and match the correct Napoleon burner by your model number. Either way, we deep-clean the grill the same visit — grates, sear plates, burners, and firebox — so you get back an even, blue-flame grill that sears like new. And we'll give you an honest repair-vs-replace call: a Napoleon Prestige, Rogue, or built-in is almost always worth saving, while a small entry grill that's rusting from the firebox out may be better replaced — we won't sell you a repair that doesn't pay off.",
+      "faqs": [
+        {
+          "q": "Can you just clean my Napoleon's burners, or do they need replacing?",
+          "a": "Most of the time, cleaning wins. Clogged ports and dirty venturis cause the majority of uneven-flame complaints, and clearing them restores an even blue flame. We only recommend replacement when a tube burner is rusted through, split, or has enlarged ports that can't be cleaned back to spec — and we'll show you why before you spend a dollar."
+        },
+        {
+          "q": "My JETFIRE igniter clicks but won't light the burner. Is that an expensive fix?",
+          "a": "Usually not. A JETFIRE that sparks but won't catch is most often a fouled crossover channel, a corroded electrode, a dead AA battery, or a clogged port right at the ignition point — all of which we clean or sort out on site. We only get into part replacement if the electrode or igniter module itself has failed, and we'll confirm that first."
+        },
+        {
+          "q": "Do you carry Napoleon burner tubes, or do I have to order them?",
+          "a": "Napoleon publishes parts by model number, so once we read your model and serial we match the exact tube burner, sear plate, or igniter your grill takes. On the photo quote we'll tell you whether it's a same-visit fix or a part we need to source first, so there are no surprises."
+        },
+        {
+          "q": "Is it worth repairing an older Napoleon Prestige or Rogue?",
+          "a": "Almost always yes. Napoleon's mid and high-end grills — Prestige, Prestige PRO, and the better Rogue models — are heavy stainless builds worth far more than the cost of new burners or grids. Replacing wear parts on one of those is a fraction of buying a comparable grill, and you keep a unit that's already broken in."
+        },
+        {
+          "q": "What areas do you cover, and how do I get a price?",
+          "a": "We serve Greater Cincinnati, Northern Kentucky, and Dayton, Ohio, coming to your home to repair and deep-clean in the same visit. The fastest way to a real number is a free photo quote — send us a few pictures of your Napoleon and the flame issue and we'll tell you what it needs."
+        }
+      ]
+    },
+    {
+      "brand": "napoleon",
+      "slug": "sear-plates-grids",
+      "model": "Napoleon",
+      "topic": "Sear plates & WAVE cooking grids",
+      "title": "Napoleon Sear Plate & WAVE Grid Repair | Cincinnati",
+      "metaDescription": "Napoleon sear plates rusting or WAVE grids flaking? We repair and deep-clean in one visit across Cincinnati, NKY & Dayton. Free photo quote — text us a few pics.",
+      "h1": "Napoleon Sear Plates & WAVE Cooking Grids: Repair or Replace?",
+      "intro": "If your Napoleon is flaring up, leaving cold spots, or the cooking grids look chalky and pitted, you're not imagining it — the sear plates and WAVE grids are usually the first parts to go. The good news is that a Napoleon is a serious grill, and on most of them these are bolt-in parts worth fixing rather than tossing the whole unit. Here's how we tell the difference, and how we put one back to searing condition.",
+      "symptoms": [
+        {
+          "h": "Rusty, flaking sear plates with flare-ups",
+          "p": "Napoleon's sear plates (the angled covers over the burners) take the brunt of the grease and heat. When the porcelain or stainless coating breaks down, they rust through, warp, and stop deflecting drippings evenly — so you get flare-ups in some zones and cold spots in others. If yours have orange scaling or holes, that's the classic first failure on a Prestige, Rogue, or Phantom."
+        },
+        {
+          "h": "WAVE cooking grids looking chalky, pitted, or flaking",
+          "p": "The iconic WAVE grids give those wide sear marks, but the cast-iron versions lose their porcelain coat over time and start to pit and rust, and the stainless versions can discolor and stick. Once the coating flakes, food grabs and the bars corrode from the inside. We can usually deep-clean and re-season grids that still have structure, or swap them for genuine WAVE replacements if they're past saving."
+        },
+        {
+          "h": "JETFIRE ignition clicks but won't light",
+          "p": "Napoleon's JETFIRE crossover ignition shoots a jet of flame burner-to-burner. When it stops working it's usually a corroded electrode, a cracked ceramic, a clogged crossover tube, or a dead battery — not a dead grill. If your SafetyGlow knobs aren't glowing red when lit, that's a related signal worth checking."
+        },
+        {
+          "h": "Uneven heat or one burner not catching",
+          "p": "Napoleon's stainless tube burners can clog with grease and spider webs at the venturi, or rust at the ports. That shows up as a weak flame on one side, yellow lazy flames, or a burner that won't carry over from its neighbor. We clear and inspect the burners and check for burn-through while we're in there."
+        },
+        {
+          "h": "Grease backed up under the sear plates",
+          "p": "When the sear plates corrode and the grease tray below cakes over, drippings pool where they shouldn't — feeding flare-ups and accelerating rust on every part underneath. By the time the grids and plates look bad, the firebox usually needs a real deep-clean, not just a scrape."
+        }
+      ],
+      "diagnosis": "When we come out, we pull the WAVE grids and sear plates first and read what's underneath — that tells us whether we're looking at a clean-and-restore or a parts job. We test the JETFIRE/SafetyGlow ignition end to end (electrodes, crossover, battery), pull and inspect the stainless tube burners for clogs and burn-through, and check the sear plates for warp and rust-through. Then we give you a straight repair-vs-replace answer: on most Napoleon Prestige, Rogue, and Phantom grills the firebox is stainless and built to last, so re-coating or swapping a few burner-zone parts is far cheaper than a new grill — but if the burners are perforated and the plates are gone, we'll tell you honestly when you're throwing money at it. Whatever we repair, we deep-clean the grids, plates, burners, and firebox in the same visit, so you leave with a grill that lights on the first click and sears like it did new.",
+      "faqs": [
+        {
+          "q": "Are Napoleon sear plates and WAVE grids worth replacing, or should I buy a new grill?",
+          "a": "On most Napoleon grills, replacing them is well worth it. The firebox and frame on a Prestige, Rogue, or Phantom are built to last, so swapping out burner-zone parts and deep-cleaning costs a fraction of a new grill. We'll only steer you toward replacement if the burners are perforated and the body is failing — and we'll say so plainly. Text us a few photos for a free quote."
+        },
+        {
+          "q": "Do you use genuine Napoleon WAVE replacement grids?",
+          "a": "When grids are too far gone to restore, yes — we source genuine Napoleon WAVE grids and sear plates so the fit and the sear marks are exactly what the grill was designed for. If yours can still be saved, we deep-clean and re-season them instead, which is the cheaper route when it's an option."
+        },
+        {
+          "q": "My JETFIRE ignition won't light — is that an expensive fix?",
+          "a": "Usually not. JETFIRE failures are most often a corroded electrode, a clogged crossover tube, or a dead battery rather than anything major. We test the whole ignition path and the SafetyGlow knobs and fix what's actually broken instead of replacing the lot. We'll quote it before we touch anything."
+        },
+        {
+          "q": "Can you repair and clean my Napoleon in the same visit?",
+          "a": "That's how we work. We come to your home in the Cincinnati, Northern Kentucky, or Dayton area, repair the grill — burners, ignition, sear plates, grids — and deep-clean the firebox in one visit, so you're not waiting on a second trip."
+        },
+        {
+          "q": "How do I get a price?",
+          "a": "Send us a few photos of your Napoleon — the grids, the sear plates, and the inside of the lid — through our free photo quote. We'll give you an honest read on repair vs. replace and a price before we ever show up."
+        }
+      ]
+    },
+    {
+      "brand": "napoleon",
+      "slug": "low-flame-regulator",
+      "model": "Napoleon",
+      "topic": "Low flame / regulator reset — won't get hot",
+      "title": "Napoleon Grill Won't Get Hot? Low-Flame Fix | Cincinnati",
+      "metaDescription": "Napoleon grill stuck on low flame or won't get hot? We diagnose the regulator bypass, burners, and JETFIRE ignition. Free photo quote in Cincinnati, NKY & Dayton.",
+      "h1": "Napoleon Grill Low Flame or Won't Get Hot? Here's the Real Fix",
+      "intro": "If your Napoleon barely reaches 300 degrees, has lazy orange flames, or feels like it lost half its power overnight, you're almost certainly dealing with a tripped regulator (bypass mode) or burner issues — not a dead grill. Napoleons are well-built stainless units that are usually very worth saving, and we'll give you an honest repair-or-replace call. We repair AND deep-clean in the same visit across Greater Cincinnati, Northern Kentucky, and Dayton.",
+      "symptoms": [
+        {
+          "h": "All burners are low, even on HIGH",
+          "p": "This is the classic Napoleon regulator bypass. The safety valve in the LP regulator tripped — usually after opening the propane tank too fast with the burner valves already on, or after a tank swap. Flames stay weak and lazy no matter where you set the knobs because the regulator is choking gas flow on purpose. The fix is a reset, not a new grill."
+        },
+        {
+          "h": "Won't get above 300-350 degrees",
+          "p": "On a Napoleon, low max temp points to one of three things: a partial regulator bypass, clogged stainless tube burners, or grease-caked sear plates and WAVE cooking grids trapping and reflecting away heat. We see this constantly on grills that have gone a season or two without a deep clean — the burners and venturi tubes get blocked by carbon, spiders, and drippings."
+        },
+        {
+          "h": "One side or one burner runs weak",
+          "p": "If it's isolated to a single burner, the regulator is probably fine. We're looking at a clogged or corroded stainless tube burner, a partially blocked venturi/orifice, or burner ports rusted shut. Napoleon's tube burners are replaceable, and a single weak burner is a cheap, fast repair — not a reason to replace the grill."
+        },
+        {
+          "h": "Yellow or orange flames instead of blue",
+          "p": "Lazy yellow flames mean poor gas-to-air mixing — typically blocked burner ports, spider webs in the venturi tubes, or grease buildup. This wastes fuel, soots up your food and the SafetyGlow/JETFIRE ignition electrodes, and keeps temps down. A burner clean-out and air-shutter check usually restores a crisp blue flame."
+        },
+        {
+          "h": "Won't light, or JETFIRE won't spark",
+          "p": "If the burners won't catch but you have gas, the JETFIRE ignition module, battery, or SafetyGlow electrodes may be fouled by grease or corrosion. Low flame plus no reliable ignition often share a root cause: a grill overdue for service. We test the ignition, clean the electrodes, and confirm every burner lights on the first click."
+        }
+      ],
+      "diagnosis": "When we arrive, we start by ruling out the regulator: we close the burner valves, shut the tank, disconnect, wait, then reopen the propane slowly so the Napoleon regulator resets out of bypass mode — the single most common cause of a low-flame Napoleon. If power is still down, we pull the WAVE grids and sear plates and inspect the stainless tube burners for blocked ports, spider nests in the venturi tubes, corrosion, and clogged orifices, and we test the JETFIRE/SafetyGlow ignition and electrodes. We tell you honestly whether it's a five-minute reset, a burner or igniter replacement, or — rarely, on a badly corroded firebox — a case where replacement makes more sense; on most Napoleon stainless models the repair is well worth it. Whatever we fix, we deep-clean the grids, sear plates, burners, and grease tray in the same visit so you leave with a grill that lights on the first click and runs hot and blue again.",
+      "faqs": [
+        {
+          "q": "Why is my Napoleon grill only getting to low heat on every burner?",
+          "a": "That's almost always the regulator safety bypass. It trips when the propane tank is opened too quickly with the burner valves on. Turn everything off, shut the tank, disconnect the line, wait about a minute, reconnect, open the tank slowly first, then light the burners. If a reset doesn't restore full flame, the burners or regulator may need service — send us a photo for a free quote."
+        },
+        {
+          "q": "Are Napoleon grills worth repairing?",
+          "a": "Usually yes. Napoleon builds quality stainless grills with replaceable tube burners, sear plates, and ignition parts, so most low-flame and ignition problems are straightforward, affordable repairs. We'll always give you an honest repair-vs-replace take — and a corroded firebox is about the only thing that tips us toward replacement."
+        },
+        {
+          "q": "How do I reset the regulator on my Napoleon grill?",
+          "a": "With all burner knobs OFF, turn off the propane tank, disconnect the hose from the tank, and wait 30-60 seconds. Reconnect, then slowly open the tank valve fully before turning on any burners. Opening the tank slowly is the key step that keeps the regulator from re-tripping into bypass mode."
+        },
+        {
+          "q": "Can a dirty grill cause low flame?",
+          "a": "Absolutely. Grease and carbon caked on the burners, sear plates, and WAVE grids block gas ports and trap heat, dropping your max temp and causing yellow flames. That's why we repair and deep-clean in the same visit — clearing the burners is often half the fix."
+        },
+        {
+          "q": "Do you service Napoleon grills near me?",
+          "a": "Yes. We come to your home across Greater Cincinnati, Northern Kentucky, and Dayton, Ohio. Text or upload a few photos of your Napoleon and we'll send a free quote — then repair and deep-clean it on site in one visit."
+        }
+      ]
+    },
+    {
+      "brand": "traeger",
+      "slug": "wont-ignite",
+      "model": "Traeger",
+      "topic": "Won't ignite / hot rod igniter",
+      "title": "Traeger Won't Ignite? Hot Rod Igniter Fix | Cincinnati",
+      "metaDescription": "Traeger won't ignite or showing LEr error? We diagnose hot rod, auger & RTD probe issues and repair on-site across Cincinnati, NKY & Dayton. Free photo quote.",
+      "h1": "Traeger Won't Ignite? Here's What's Really Going On With Your Hot Rod Igniter",
+      "intro": "If you've loaded pellets, hit start, and your Traeger just sits there cold — or the fire pot fills with pellets but never catches — you're not crazy, and you're usually not looking at a dead grill. On a Traeger, \"won't ignite\" almost always traces back to one of a few specific parts, and most of them are repairable. Below we walk through what's actually failing and when it's worth fixing versus replacing.",
+      "symptoms": [
+        {
+          "h": "Pellets pile up in the fire pot but never light",
+          "p": "This is the classic dead or weak hot rod igniter. The auger is feeding pellets fine, the induction fan is blowing, but the hot rod isn't glowing hot enough to ignite them — so you get a fire pot full of unburned pellets and no fire. Hot rods are a known wear item on Traegers (especially older Pro 575/780 and Tailgater models); they corrode and burn out over time. The good news: the hot rod is a discrete, replaceable cartridge, not a sealed assembly."
+        },
+        {
+          "h": "You hear the fan and auger, but no glow and no smoke",
+          "p": "If the induction fan spins and you can hear the auger motor turning but the grill never produces smoke or heat, the igniter circuit is the prime suspect — either the hot rod itself, a corroded igniter wire connection at the controller, or the controller's igniter relay no longer firing. We test the hot rod's resistance and the controller output to tell which one it is, rather than guessing and swapping parts."
+        },
+        {
+          "h": "Grill throws an LEr or low-temp error and shuts down",
+          "p": "LEr (low error) means the RTD temperature probe read below roughly 125°F during a cook — usually because ignition failed, the fire went out, or the RTD probe itself is reading wrong. On Traegers this often shows up alongside a failed ignition cycle. We check whether it's a true ignition failure, a fouled or drifting RTD probe, or pellets that bridged and starved the fire pot."
+        },
+        {
+          "h": "Auger isn't feeding pellets at all",
+          "p": "No pellets reaching the fire pot means there's nothing for the hot rod to light. On Traegers the auger motor can fail, or — more commonly — the auger jams on a hard pellet, a screw, or pellet dust/sawdust that swelled from humidity. A jammed auger can also burn out the motor over time. We clear the jam, inspect the auger motor and shear, and check that the hopper is feeding cleanly."
+        },
+        {
+          "h": "WiFire / controller won't start a cook or freezes",
+          "p": "Sometimes the parts are fine and the brain isn't. A failed or water-damaged WiFire controller, a tripped GFCI, or a low-voltage power supply can stop an ignition cycle before it starts. We verify the grill is getting clean power and that the controller is actually commanding the igniter, fan, and auger before we condemn any of those components."
+        }
+      ],
+      "diagnosis": "When we come out, we work the Traeger ignition chain in order rather than throwing parts at it: we confirm clean power to the controller, watch the auger feed pellets into the fire pot, test the hot rod igniter's resistance and the controller's igniter output, and check the RTD probe and induction fan so an LEr or low-temp error doesn't come right back. Most of the time the fix is a new hot rod igniter, a cleared auger jam, or a fresh RTD probe — parts we carry and install on-site — and we deep-clean the fire pot, burn grate, and grease management system in the same visit so the grill runs clean afterward. We'll always give you the honest call: a Traeger is a well-built grill with cheap, available parts, so a won't-ignite Traeger is almost always worth repairing rather than replacing — but if we open it up and find a cracked auger tube, a rotted-out fire pot, and a dead controller all at once on an old unit, we'll tell you straight that your money is better spent elsewhere.",
+      "faqs": [
+        {
+          "q": "How do I know if it's my hot rod igniter or something else?",
+          "a": "The tell-tale sign of a bad hot rod is a fire pot full of unburned pellets after a failed start — the auger fed them, but nothing lit them. But weak ignition can also come from a corroded igniter wire, a controller that isn't firing the igniter relay, or a clogged fire pot. We test the hot rod's resistance and the controller output directly so we replace the part that's actually failing, not the easiest one to reach."
+        },
+        {
+          "q": "Is it worth repairing a Traeger that won't ignite, or should I just buy a new one?",
+          "a": "In most cases, repair. Traeger ignition parts — hot rods, RTD probes, auger motors, controllers — are inexpensive and readily available, and the grill bodies are built to last. A won't-ignite Traeger is usually a one-part fix. We'll only steer you toward replacement if we find multiple major failures on an older unit at once, and we'll tell you that honestly before you spend a dime."
+        },
+        {
+          "q": "What does the LEr (low-temp) error on my Traeger actually mean?",
+          "a": "LEr means the RTD temperature probe sensed the grill dropped below about 125°F mid-cook — most often because ignition failed, the fire went out, or pellets bridged in the hopper and starved the fire pot. Sometimes the RTD probe itself is reading wrong. We diagnose which it is on-site so the error doesn't return on your next cook."
+        },
+        {
+          "q": "Can a jammed auger keep my Traeger from lighting?",
+          "a": "Yes. If the auger is jammed on a hard pellet, debris, or humidity-swollen pellet dust, no fuel reaches the fire pot and there's nothing for the hot rod to ignite. A chronic jam can also burn out the auger motor. We clear the jam, inspect the motor, and check your pellets, since damp pellets are a common root cause in our Cincinnati and NKY humidity."
+        },
+        {
+          "q": "Do you repair Traegers on-site in Cincinnati, Northern Kentucky, and Dayton?",
+          "a": "We do — we come to your home across Greater Cincinnati, Northern Kentucky, and the Dayton area, diagnose and repair the grill, and deep-clean it in the same visit. The fastest way to start is to send us a few photos of your Traeger and the issue through our free photo quote, and we'll tell you what we're seeing before we ever roll out."
+        }
+      ]
+    },
+    {
+      "brand": "traeger",
+      "slug": "auger-not-feeding",
+      "model": "Traeger",
+      "topic": "Auger jam / not feeding pellets",
+      "title": "Traeger Auger Jam & Won't Feed Pellets — Cincinnati",
+      "metaDescription": "Traeger not feeding pellets or auger jammed? We diagnose and fix it, then deep-clean the same visit across Cincinnati, NKY & Dayton. Free photo quote.",
+      "h1": "Traeger Auger Jam: Why Your Pellet Grill Stopped Feeding Pellets",
+      "intro": "If your Traeger fired up fine and then died mid-cook, or it never got hot because pellets stopped dropping into the firepot, you're dealing with one of the most common Traeger failures: an auger that's jammed, stalled, or starved. The good news is most of these are repairable, and a Traeger is almost always worth saving. We come to your home across Greater Cincinnati, NKY and Dayton, find out exactly why the auger quit, fix it, and deep-clean the grill in the same visit.",
+      "symptoms": [
+        {
+          "h": "Auger turns but no pellets drop",
+          "p": "This is usually a clog in the auger tube or a bridged hopper. Damp or swelled pellets pack together and the auger spins against a solid plug, or the pellets 'bridge' over the auger like an arch and never fall in. You'll hear the motor working but the firepot stays empty and the temp slides toward an LEr (low-temp error)."
+        },
+        {
+          "h": "Auger is completely stuck and the motor strains",
+          "p": "A foreign object, a screw, or a pellet jammed sideways can lock the auger so the motor can't turn it. You may hear a low hum or clicking from the auger motor as it stalls. Forcing it risks shearing the auger or burning out the motor, so this one wants a careful teardown rather than guesswork."
+        },
+        {
+          "h": "Won't ignite — hot rod glows but no fire",
+          "p": "If pellets ARE feeding but you never get flame, the hot rod igniter may be weak, ash-fouled, or the firepot is choked with old ash and unburned pellets so fresh ones can't catch. A tired hot rod takes too long to light, the grill never reaches temp, and it trips an LEr."
+        },
+        {
+          "h": "Pellets feed, lights, then dies and throws LEr",
+          "p": "A grill that lights and then quits is often a feed-rate or airflow problem: a failing induction fan that can't keep the firepot burning, a clogged firepot, or pellets that ran out and left an air gap the auger now has to refill. The RTD temp probe sees the drop and the controller flashes LEr to protect you."
+        },
+        {
+          "h": "Temp swings wildly or reads wrong",
+          "p": "If feeding seems fine but temps are erratic, the RTD probe or the WiFire controller may be misreading. A bad RTD tells the controller to over- or under-feed pellets, which looks like an auger problem but is really a sensor or controller fault. We test the probe and controller before condemning the auger."
+        }
+      ],
+      "diagnosis": "When we come out, we start by emptying the hopper and checking the pellets themselves — swelled or dusty pellets are the single most common cause of a Traeger that won't feed, and no part swap fixes bad fuel. From there we pull the auger and inspect the tube for a clog or a bridged plug, test the auger motor for a stall or a seized bearing, and check the firepot, hot rod igniter, and induction fan, since a grill that \"won't feed\" is often really a grill that won't light or won't stay lit. We confirm the RTD probe and WiFire controller are reading and commanding correctly so we're fixing the real fault, not a symptom. Whatever we find, we'll give you a straight repair-vs-replace answer: a Traeger Pro, Ironwood or Timberline is built to last and a jammed auger, weak hot rod, or tired fan is usually a fraction of the cost of a new grill, so we'll only tell you to replace it if the cost genuinely doesn't make sense. Every repair visit ends with a full deep clean — hopper, auger tube, firepot, grease tray and drip system — so the grill that caused you trouble leaves running and looking like new.",
+      "faqs": [
+        {
+          "q": "Why is my Traeger auger jammed and not feeding pellets?",
+          "a": "The usual culprits are damp or swelled pellets clogging the auger tube, pellet dust packing the bottom of the hopper, or a small foreign object wedged against the auger. Less often it's a failing auger motor. We diagnose which it is on-site, clear or repair it, and check the firepot and hot rod while we're in there."
+        },
+        {
+          "q": "Can a clogged auger be fixed, or do I need a new Traeger?",
+          "a": "Almost always fixed. Clearing a jammed auger tube, replacing an auger motor, or swapping a worn hot rod igniter costs far less than a new grill, and Traegers are built to run for many years. We'll only tell you to replace it if the damage genuinely isn't worth repairing — and we'll be honest about that."
+        },
+        {
+          "q": "My Traeger keeps throwing an LEr (low-temp) error — is that the auger?",
+          "a": "Sometimes. An LEr means the RTD probe saw the temperature fall too far. That can come from the auger not feeding, but also from a choked firepot, a weak induction fan, a tired hot rod, or a bad RTD probe. We test all of them so we fix the actual cause instead of just clearing the code."
+        },
+        {
+          "q": "Do you clean the grill when you repair the auger?",
+          "a": "Yes — that's our specialty. Every Traeger repair includes a deep clean of the hopper, auger tube, firepot, grease tray and grates in the same visit, so it leaves working right and looking like new."
+        },
+        {
+          "q": "What areas do you cover for Traeger repair?",
+          "a": "We service Traeger and other pellet grills across Greater Cincinnati, Northern Kentucky and Dayton, Ohio. We come to you, so there's no hauling the grill anywhere. Send us a photo and we'll give you a free, honest quote."
+        }
+      ]
+    },
+    {
+      "brand": "traeger",
+      "slug": "temperature-swings",
+      "model": "Traeger",
+      "topic": "Temp swings / controller / RTD probe",
+      "title": "Traeger Temp Swings & Controller Repair | Cincinnati",
+      "metaDescription": "Traeger running hot, cold, or throwing LEr? We diagnose RTD probes, controllers, and auger jams in Cincinnati, NKY & Dayton. Free photo quote — repair or replace.",
+      "h1": "Traeger Temp Swings, LEr Errors & Controller Problems — Fixed at Your Home",
+      "intro": "If your Traeger is spiking to 500, dropping to nothing, or flashing LEr right in the middle of a brisket, you're not imagining it — and you're not stuck buying a new grill. Most temp-swing problems on a Traeger come down to a handful of known parts (the RTD probe, the controller, the auger, or the hot rod), and we'll tell you honestly which one it is. We come to your home across Greater Cincinnati, Northern Kentucky, and Dayton, diagnose it on the spot, and deep-clean the grill in the same visit.",
+      "symptoms": [
+        {
+          "h": "LEr (or LErr / Low Temp) error code",
+          "p": "The classic Traeger error. LEr means the controller saw the grill temp drop too low for too long — usually because the fire went out. The cause is almost always one of three things: pellets ran out or bridged over the auger in the hopper, the RTD probe is reading wrong, or the hot rod igniter has weakened and isn't relighting after a temp dip. We trace it back to the actual cause instead of just clearing the code."
+        },
+        {
+          "h": "Wild temperature swings — 150° one minute, 400° the next",
+          "p": "Big overshoots and crashes point at the RTD temp probe (the thin metal sensor sticking into the cook chamber) or the controller's PID logic. A bent, greasy, or failing RTD feeds bad numbers to the controller, so it over-corrects — dumping in pellets, then starving the fire. We test the probe's resistance and the controller's response before deciding which one to replace."
+        },
+        {
+          "h": "Auger jams, grinding, or no pellets feeding",
+          "p": "If you hear the auger motor running but no pellets reach the firepot, you've got a jam — often from pellets that swelled with moisture and bridged, or a buildup choking the auger tube. A stalled or burned-out auger motor will also starve the fire and trip LEr. We clear the jam, check the motor and the feed, and tell you if the motor itself is on its way out."
+        },
+        {
+          "h": "Grill won't ignite or takes forever to light",
+          "p": "The hot rod igniter is a wear part — it glows to light the first pellets, and it weakens with every startup. A tired hot rod lights slowly, lights inconsistently, or won't catch at all, which reads as LEr or 'no fire.' We check the hot rod, the induction fan that feeds it air, and the firepot for ash packing that smothers ignition."
+        },
+        {
+          "h": "WiFire / controller dropping out or readings frozen",
+          "p": "If the temp on the display or the WiFire app is frozen, jumping, or the controller won't hold a setpoint, the controller board itself may be failing — heat, moisture, and age all take a toll. We confirm whether it's truly the controller (a pricier part) or a cheaper sensor feeding it junk, so you're not replacing a $150 board when a probe was the real problem."
+        }
+      ],
+      "diagnosis": "We start where the grill is telling us to look — we read the error, watch a real startup cycle, and test the parts in order from cheapest to most likely: RTD probe resistance, hot rod draw, auger feed and motor, induction fan, then the controller itself. That order matters because a bad RTD or a packed firepot will mimic a dead controller, and we're not going to sell you a board you don't need. Whatever the fix, we deep-clean the grill in the same visit — we pull the grates, vacuum the firepot and ash, clear the auger tube, and degrease the chamber, because caked grease and ash are what kill hot rods and clog augers in the first place. And we'll give you a straight repair-vs-replace answer: a Traeger Ironwood, Timberline, or a well-kept Pro series is almost always worth saving since a controller or probe is a fraction of a new grill's price, but if you've got an older entry-level unit with a rusted-through firepot and multiple failing parts at once, we'll tell you it's time to replace instead of pouring money into it.",
+      "faqs": [
+        {
+          "q": "What does LEr mean on my Traeger, and can you fix it?",
+          "a": "LEr is a low-temperature error — the controller detected the grill got too cold, usually because the fire went out. We find the real cause (out of pellets, a pellet bridge in the hopper, a weak hot rod igniter, a jammed auger, or a misreading RTD probe) and fix it in one visit rather than just resetting the code so it comes back next cook."
+        },
+        {
+          "q": "Is it worth repairing my Traeger or should I just buy a new one?",
+          "a": "Usually worth repairing. The most common failures — RTD probe, hot rod igniter, auger motor — are individually inexpensive parts, and even a controller replacement costs far less than a new grill. We'll give you an honest call: a mid- or high-end Traeger (Pro, Ironwood, Timberline) is almost always worth saving, while an old entry-level unit with a rusted firepot and several dying parts may not be. Send us photos for a free read."
+        },
+        {
+          "q": "Do you come to my house, or do I have to haul the grill somewhere?",
+          "a": "We come to you. We diagnose, repair, and deep-clean your Traeger right at your home anywhere in Greater Cincinnati, Northern Kentucky, and Dayton — no hauling, no drop-off, no waiting on a shop."
+        },
+        {
+          "q": "My Traeger keeps swinging hot and cold even though pellets are feeding. What's wrong?",
+          "a": "That pattern usually points at the RTD temp probe or the controller over-correcting on bad readings. A greasy, bent, or failing RTD feeds wrong numbers, so the controller overshoots then starves the fire. We test the probe and the controller's response to pin down which one before replacing anything."
+        },
+        {
+          "q": "How do I get a quote?",
+          "a": "Snap a few photos of your Traeger — the model, the hopper, and the inside if you can — and send them through our free photo quote. We'll tell you what we think is going on and what it'll take to fix, no obligation."
+        }
+      ]
+    },
+    {
+      "brand": "traeger",
+      "slug": "wont-heat-shuts-off",
+      "model": "Traeger",
+      "topic": "Won't heat / shuts off / LEr error",
+      "title": "Traeger Won't Heat or LEr Error? Cincinnati Repair",
+      "metaDescription": "Traeger won't heat up, shuts off, or throws an LEr error? We diagnose, repair, and deep-clean in one visit across Cincinnati, NKY & Dayton. Free photo quote.",
+      "h1": "Traeger Won't Heat, Shuts Off, or Showing an LEr Error? Here's What's Actually Going On",
+      "intro": "If your Traeger won't come up to temp, drops out mid-cook, or flashes \"LEr\" on the controller, you're not alone — it's the most common pellet-grill call we get, and it's almost always fixable. A Traeger is worth saving: the failures are usually a worn hot rod, a clogged auger, or a tired RTD probe, not a dead grill. Below we'll walk through what's likely wrong, what you can check yourself, and an honest take on repair vs. replace.",
+      "symptoms": [
+        {
+          "h": "LEr (Low Error) on the controller",
+          "p": "LEr means the RTD temp probe read below about 125°F for too long — the grill thinks the fire went out. On a Traeger it's usually a burned-out hot rod igniter that never lit the pellets, an empty or jammed auger that starved the firepot, or a temp probe that's drifted out of spec. It's a symptom, not a death sentence."
+        },
+        {
+          "h": "Won't ignite or come up to temp",
+          "p": "If the auger turns and pellets drop but nothing catches, the hot rod igniter is the usual culprit — they wear out and stop glowing after a few seasons. A firepot packed with ash or unburned pellets from past shutdowns will choke the flame the same way."
+        },
+        {
+          "h": "Shuts off or temp swings wildly mid-cook",
+          "p": "Big temp swings and unexpected shutdowns point to an auger that's feeding pellets unevenly, a failing induction fan that can't keep the fire steady, or moisture-swollen pellets bridging in the hopper so the auger spins on an empty pocket."
+        },
+        {
+          "h": "Auger grinding, stalling, or jammed",
+          "p": "A clunking or stalled auger is often a jam — a screw, a chunk of fused pellets, or sawdust packed tight after the grill sat. Left alone, a jam burns out the auger motor, turning a cleanout into a parts job."
+        },
+        {
+          "h": "Controller blank, erratic, or WiFire won't connect",
+          "p": "A dead or glitchy controller, scrambled readings, or a WiFire that won't pair can stem from a failed controller board, a corroded RTD or meat-probe connection, or a loose harness. Sometimes it's the controller; sometimes it's just a probe feeding it bad data."
+        }
+      ],
+      "diagnosis": "When we come out, we work the fire chain in order: we pull and inspect the firepot and clear ash and unburned pellets, test the hot rod igniter to confirm it's still glowing, check the auger motor and clear any jam in the auger tube and hopper, then verify the RTD temp probe is reading accurately and the induction fan is spinning freely — because an LEr is almost always one of those four, not a new grill. We'll check the controller and WiFire connections and the probe harness while we're in there, since bad probe data fakes a lot of \"dead controller\" calls. Most of the time it's a hot rod replacement, an auger cleanout, or an RTD swap — affordable parts on a grill that's very much worth keeping. And here's what most repair outfits skip: we deep-clean the whole cooker in the same visit — firepot, drip tray, grease channel, and grates — because caked grease and ash are what kill hot rods and jam augers in the first place. We'll always give you the honest call, and on a Traeger, repair almost always beats replace.",
+      "faqs": [
+        {
+          "q": "What does the LEr error on my Traeger actually mean?",
+          "a": "LEr stands for \"Low Error\" — the temp probe read below roughly 125°F for too long, so the controller assumes the fire went out and shuts down to be safe. On a Traeger it's usually a burned-out hot rod that never lit the pellets, an auger that ran empty or jammed, or an RTD probe that's drifted. It's one of the most common and most fixable Traeger problems we see. Send us a photo of the firepot and hopper and we'll tell you which it likely is."
+        },
+        {
+          "q": "Is my Traeger worth repairing, or should I just replace it?",
+          "a": "Almost always worth repairing. The parts that fail — hot rod igniter, auger motor, RTD probe, induction fan, controller — are all replaceable, and swapping one plus a deep clean costs a fraction of a new pellet grill of the same quality. If the body or hopper is rusted through we'll tell you straight, but on most Traegers that's rare and a repair is the smart call."
+        },
+        {
+          "q": "Can you fix the hot rod or auger and clean the grill in one trip?",
+          "a": "Yes — that's how we work. We come to your home, diagnose the no-heat or LEr issue, replace the hot rod, clear or replace the auger, or swap the RTD probe as needed, and deep-clean the firepot, drip tray, and grates in the same visit. One stop and you're smoking again."
+        },
+        {
+          "q": "Why does my Traeger keep throwing LEr in cold weather?",
+          "a": "Cold and wind make it worse: the grill works harder to hold temp, a marginal hot rod or fan can't keep the fire steady, and moisture swells the pellets so the auger feeds unevenly and the firepot can go cold — which trips the LEr. Dry pellets and a clean firepot help, but if it's recurring, the hot rod or fan is usually on its way out and worth replacing before peak season."
+        },
+        {
+          "q": "What areas do you serve?",
+          "a": "We're a veteran-founded local company covering Greater Cincinnati, Northern Kentucky, and the Dayton, Ohio area. We come to you — driveway, deck, or patio — repair the grill, and deep-clean it in the same visit."
+        }
+      ]
+    },
+    {
+      "brand": "blaze",
+      "slug": "wont-ignite",
+      "model": "Blaze",
+      "topic": "Won’t ignite / igniter & electrodes",
+      "title": "Blaze Grill Won't Ignite? Igniter Repair | Cincinnati",
+      "metaDescription": "Blaze grill won't light? We diagnose dead igniters, electrodes & spark issues in Cincinnati, NKY & Dayton. Repair and deep-clean in one visit. Free photo quote.",
+      "h1": "Blaze Grill Won't Ignite: Igniter & Electrode Repair in Cincinnati, NKY & Dayton",
+      "intro": "If your Blaze burners light with a match but won't catch from the igniter button, you're not looking at a dead grill — you're looking at a fixable ignition problem. Blaze built-ins use a serviceable spark-igniter-and-electrode setup, so a no-spark or weak-spark issue is almost always a repair, not a replacement. Below we walk through what's actually failing and how we fix it on-site.",
+      "symptoms": [
+        {
+          "h": "You hear the click but get no spark",
+          "p": "The igniter button clicks but no spark jumps at the burner — on a Blaze this usually points to the electrode itself: a cracked ceramic tip, a corroded electrode, or a spark gap that's drifted too wide after grease buildup and heat cycling. The clicking module is fine; the spark just isn't reaching the gas."
+        },
+        {
+          "h": "One burner won't light but the rest do",
+          "p": "Blaze runs an individual electrode at each cast-stainless H-burner, so a single dead burner almost always means one bad electrode or a loose, burned, or rodent-chewed wire to that one position — not a whole-grill failure. The neighboring burners lighting proves the gas and regulator are working."
+        },
+        {
+          "h": "No click at all when you press the button",
+          "p": "A completely silent igniter on a Blaze typically means a dead battery (on battery-spark models), a failed push-button or spark module, or a broken ground. We test the module, the battery, and the ground path so we replace the part that's actually dead instead of guessing."
+        },
+        {
+          "h": "Sluggish, delayed, or 'whoomp' lighting",
+          "p": "If a Blaze burner finally catches after several seconds with a gas-puff boom, the spark is weak or mistimed — often a fouled electrode tip, carbon bridging the gap, or heat plates and flame tamers so clogged that gas pools before it ignites. Cleaning and re-gapping usually restores a crisp, instant light."
+        },
+        {
+          "h": "Lights cold but won't relight when hot",
+          "p": "A Blaze that fires fine cold but refuses to relight hot points to an electrode or wire breaking down under heat, or a regulator on the built-in going into a safety lockout. We test both cold and hot so an intermittent fault doesn't get misdiagnosed."
+        }
+      ],
+      "diagnosis": "When we come out, we start by isolating where the ignition chain is breaking on your Blaze — battery or module, the push-button, the wire run, the ground, and the electrode and spark gap at each H-burner — rather than throwing parts at it. We pull and inspect the heat plates and flame tamers, because baked-on grease and carbon bridging the electrode gap is one of the most common reasons a perfectly good Blaze igniter stops sparking, and we confirm the built-in regulator isn't in lockout. Once we've found the real fault, we replace what's failed — electrode, wire, battery, or spark module — re-gap the spark, and verify a clean instant light on every burner. Then, in the same visit, we deep-clean the grill: burners, flame tamers, grates, and cookbox come out, get scrubbed down to bright metal, and go back in. We'll always give you an honest repair-versus-replace call, and with a Blaze that's a quality stainless built-in, the answer is almost always worth repairing — the body and burners outlast a cheap ignition part many times over. The only time we'd steer you toward replacement is if the cast-stainless H-burners are split or burned through, which is rare.",
+      "faqs": [
+        {
+          "q": "Why does my Blaze grill click but not light?",
+          "a": "On a Blaze, a clicking button with no flame almost always means the spark isn't jumping at the electrode — a cracked ceramic tip, a corroded or loose wire, or grease bridging the spark gap. The gas and regulator are usually fine. It's a quick electrode or wire repair, not a new grill. Send us a few photos for a free quote and we'll tell you what it needs."
+        },
+        {
+          "q": "Can a dirty grill keep my Blaze from igniting?",
+          "a": "Yes — more often than people think. Carbon and grease building up on the flame tamers and across the electrode gap can absorb or short the spark so it never reaches the gas. That's why we repair and deep-clean in the same visit: clearing the buildup and re-gapping the electrode frequently brings the ignition back on its own."
+        },
+        {
+          "q": "Is it worth repairing a Blaze grill that won't ignite, or should I replace it?",
+          "a": "Almost always worth repairing. Blaze built-ins use quality cast-stainless H-burners and a stainless body that far outlast a worn electrode, battery, or spark module — the parts that actually fail. We'd only point you toward replacement if the burners themselves are split or burned through, which is uncommon. We'll give you the honest call on-site."
+        },
+        {
+          "q": "Do you service built-in Blaze grills in Cincinnati and Northern Kentucky?",
+          "a": "We do — we come to your home across Greater Cincinnati, Northern Kentucky, and Dayton, repair the Blaze in your built-in island, and deep-clean it in the same visit. No need to pull the grill out of the counter. Send photos through our free quote page to get started."
+        },
+        {
+          "q": "How do I get a price for fixing my Blaze igniter?",
+          "a": "Text or upload a few photos of your Blaze — the control panel, the burners with the grates off, and the model if you have it — through our free photo quote. We'll give you a real diagnosis and an honest repair-or-replace recommendation before we ever roll a truck."
+        }
+      ]
+    },
+    {
+      "brand": "blaze",
+      "slug": "burner-heat-plate",
+      "model": "Blaze",
+      "topic": "Burner & heat plate replacement",
+      "title": "Blaze Burner & Heat Plate Replacement | Cincinnati Repair",
+      "metaDescription": "Blaze burner or heat plate burned through? We repair built-in Blaze grills across Cincinnati, NKY & Dayton and deep-clean same visit. Free photo quote.",
+      "h1": "Blaze Burner & Heat Plate Replacement — Built-In Repair in Cincinnati, NKY & Dayton",
+      "intro": "If your Blaze has a burner that won't stay lit, a section that runs cold, or heat plates that have rusted or warped through, you're not imagining it — those are the parts that wear first on a built-in Blaze. The good news: a Blaze is worth fixing, and we'll give you an honest repair-or-replace call before you spend a dime on a new grill.",
+      "symptoms": [
+        {
+          "h": "One burner won't light or keeps going out",
+          "p": "On a Blaze, each cast stainless H-burner has its own spark electrode and igniter feed. When a single zone won't catch — but the others do — it's almost always a fouled or cracked electrode, a bent igniter wire, or a clogged burner port, not the whole control system. We isolate which it is so you're not replacing parts you don't need."
+        },
+        {
+          "h": "Cold spots and uneven heat across the grates",
+          "p": "Blaze H-burners are built to throw even heat corner to corner. When you start getting cool zones, hot spots, or weak flames on one side, the burner ports are usually carboned over or the burner has corroded thin. Searching 'Blaze burner replacement' usually starts right here."
+        },
+        {
+          "h": "Heat plates rusted, warped, or burned through",
+          "p": "The stainless heat plates (flame tamers) sit directly over the burners and take the worst of the grease and heat. On Blaze grills they eventually warp, flake, or rust through — which dumps grease straight onto the burner below and feeds flare-ups. New flame tamers restore even heat and protect the burners underneath."
+        },
+        {
+          "h": "Igniter clicks but won't spark — or no click at all",
+          "p": "Blaze uses hot-surface and spark igniters depending on the model. A dead battery, corroded electrode tip, or a moisture-shorted wire will leave you clicking with no flame. We test the electrode gap, the ground, and the igniter module to find the real culprit."
+        },
+        {
+          "h": "Yellow, lazy, or lifting flames",
+          "p": "Soft yellow flames or flames that lift off the burner usually mean clogged ports, spider-web blockage in the venturi, or a regulator that isn't delivering full pressure to the built-in. It looks like a burner problem but the fix can be much cheaper — which is exactly why we diagnose before we quote."
+        }
+      ],
+      "diagnosis": "When we come out, we pull the Blaze grates and heat plates and inspect each cast stainless H-burner individually — checking the ports, the venturi inlets, the spark electrodes, and the igniter feed — and we leak-check and pressure-check the regulator on the built-in supply so a low-flame complaint doesn't get misdiagnosed as a dead burner. If a burner is genuinely corroded through or a heat plate has warped or rusted past saving, we replace it with the right Blaze-fit part and confirm even ignition across every zone before we leave. We're honest about repair versus replace: a built-in Blaze is a serious grill that's almost always worth saving, but if the cookbox itself is compromised we'll tell you straight rather than sell you parts. And because we clean as we repair, every Blaze we open up gets a full deep-clean in the same visit — burners, flame tamers, cookbox, and drip system back to safe, working metal before you fire it up again.",
+      "faqs": [
+        {
+          "q": "Is it worth replacing the burners and heat plates on a Blaze instead of buying a new grill?",
+          "a": "Almost always yes. Blaze burners and heat plates are wear parts on an otherwise heavy-duty built-in — replacing them costs a fraction of a new grill or a built-in tear-out. We'll only steer you toward replacement if the cookbox or gas train itself is compromised, and we'll tell you that honestly."
+        },
+        {
+          "q": "Do you replace Blaze H-burners, igniters, and flame tamers?",
+          "a": "Yes. We replace Blaze cast stainless H-burners, spark electrodes and hot-surface igniters, and the stainless heat plates (flame tamers), then deep-clean the whole grill in the same visit so it both works and looks right."
+        },
+        {
+          "q": "My Blaze burner lights but the flame is weak — is that the burner or the regulator?",
+          "a": "It can be either, which is why we don't guess. Weak or yellow flames are often a clogged burner port or a venturi blockage, but on a built-in they can also trace back to the gas regulator not delivering full pressure. We pressure-check the supply and inspect the burners so you only pay to fix what's actually wrong."
+        },
+        {
+          "q": "Can you work on a built-in Blaze in an outdoor kitchen?",
+          "a": "Yes — built-in Blaze grills set into outdoor kitchens are our wheelhouse. We service them in place at your home, so there's no pulling the unit out of the island or hauling anything anywhere."
+        },
+        {
+          "q": "What areas do you serve?",
+          "a": "We repair and deep-clean Blaze grills across Greater Cincinnati, Northern Kentucky, and Dayton, Ohio. We come to you. Send us a few photos through our free photo quote and we'll give you an honest assessment."
+        }
+      ]
+    },
+    {
+      "brand": "blaze",
+      "slug": "low-flame-regulator",
+      "model": "Blaze",
+      "topic": "Low flame / regulator reset",
+      "title": "Blaze Grill Low Flame Fix & Regulator Reset | TSG",
+      "metaDescription": "Blaze grill stuck on low flame? We diagnose tripped regulators, gas-train and H-burner issues, then deep-clean in one visit. Free photo quote — Cincinnati, NKY, Dayton.",
+      "h1": "Blaze Grill Low Flame? Here's How to Reset the Regulator and Get Full Heat Back",
+      "intro": "If your Blaze fires up but can't get past a weak, lazy flame — or it won't break 300°F no matter how high you crank it — you're almost certainly looking at a tripped regulator or a restriction in the gas train, not a dead grill. Blaze builds a serious cast stainless grill, and nine times out of ten this is a repairable fix rather than a replacement.",
+      "symptoms": [
+        {
+          "h": "Flames stuck low across every burner",
+          "p": "When all of your Blaze H-burners are weak at the same time, the problem is upstream — at the regulator or hose, not the burners themselves. The most common cause is a tripped safety regulator (the bypass) that's choking gas flow down to a trickle. On a built-in Blaze this regulator sits on the manifold rather than at the tank, which is why a simple tank-side reset doesn't always clear it."
+        },
+        {
+          "h": "Grill won't pass 250–300°F",
+          "p": "A Blaze that lights fine but tops out far below its normal temp is the classic tripped-regulator signature. The safety bypass thinks it sensed a leak — usually from opening the lid valve too fast or turning burners on before the tank — and locks flow into a low-output safety mode until it's reset."
+        },
+        {
+          "h": "One burner low, the rest fine",
+          "p": "If a single Blaze cast stainless H-burner runs weak while its neighbors are full, that points to a clogged burner port, a partially blocked venturi (often a spider or wasp nest in the burner tube), or a heat plate / flame tamer sitting out of position. This is a burner-level fix, not a regulator issue."
+        },
+        {
+          "h": "Yellow or orange lazy flames instead of blue",
+          "p": "Tall yellow flames and soot on the heat plates mean the burner isn't getting enough air, usually from grease-clogged ports or a misaligned venturi. On Blaze grills, years of drippings baking onto the H-burners and flame tamers will slowly starve them — a deep clean often restores the proper tight blue flame on its own."
+        },
+        {
+          "h": "Igniter clicks or glows but flame stays weak",
+          "p": "Blaze uses both spark electrodes and hot-surface igniters depending on the model. If it's lighting but staying low, the igniter is doing its job — the restriction is in gas delivery. A truly dead igniter is a separate, cheaper fix involving the electrode, wire, or hot-surface element, and we check both while we're there."
+        }
+      ],
+      "diagnosis": "We start at the source and work in: with the grill cool, we close the lid valve, shut every burner knob, then reopen the gas slowly to give the safety regulator a clean reset before relighting one burner at a time — the proper Blaze regulator-reset sequence that clears most tripped-bypass cases on the spot. If full heat doesn't return, we leak-check every fitting on the manifold and hose, inspect the regulator itself for failure, and pull each cast stainless H-burner to clear blocked ports and venturi nests. We confirm the heat plates and flame tamers are seated right so heat spreads evenly, and we verify the spark electrodes and hot-surface igniters are firing. Then, in the same visit, we deep-clean the cookbox, burners, and flame tamers — because baked-on grease is often what's choking the flame in the first place. We'll always give you the honest call: a Blaze is a high-end grill genuinely worth saving, and we'll tell you plainly if a regulator reset, a burner swap, or a full clean is all yours needs — or, in the rare case, if it isn't worth the repair.",
+      "faqs": [
+        {
+          "q": "How do I reset the regulator on my Blaze grill?",
+          "a": "Turn off all burner knobs and the gas supply, then disconnect the source — on a portable tank that's the tank valve; on a built-in it's the manifold shutoff. Wait about 30 seconds, then slowly reopen the gas with all burners still off. Open the lid, turn one burner to high, and light it. Doing it slowly is the key — opening gas with burners already on is what trips the safety bypass into low-flame mode in the first place. If full heat still doesn't return after a couple of tries, the regulator or gas train likely needs service."
+        },
+        {
+          "q": "Is a low flame on my Blaze dangerous?",
+          "a": "A tripped regulator itself is a safety feature doing its job, so a low flame from that isn't dangerous — just frustrating. But low yellow flames from grease-clogged burners mean buildup in the cookbox, and that carbon and grease is a real flare-up and fire risk. That's why we pair every repair with a deep clean in the same visit."
+        },
+        {
+          "q": "Is it worth repairing my Blaze instead of replacing it?",
+          "a": "Almost always yes. Blaze builds a heavy cast stainless grill meant to last, and a low-flame problem is usually a regulator reset, a burner clean, or a part swap — a small fraction of replacement cost. We'll give you a straight answer on whether yours is worth saving before you spend a dime."
+        },
+        {
+          "q": "Do you work on built-in Blaze grills?",
+          "a": "Yes. Built-in Blaze grills put the regulator on the manifold, which makes the reset and gas-train diagnosis different from a portable unit. We service built-in and freestanding Blaze grills across Greater Cincinnati, Northern Kentucky, and Dayton — we come to you, no removal needed."
+        },
+        {
+          "q": "How much will the repair cost?",
+          "a": "It depends on whether it's a simple regulator reset, a clogged burner, or a part replacement — and we don't quote blind. Send us a photo of your Blaze through our free photo quote and we'll give you an honest price, often with a full deep clean included for far less than a new grill."
+        }
+      ]
+    },
+    {
+      "brand": "blaze",
+      "slug": "grates-flame-tamers",
+      "model": "Blaze",
+      "topic": "Cooking grates & flame tamers",
+      "title": "Blaze Grill Grate & Flame Tamer Repair | Cincinnati",
+      "metaDescription": "Blaze cooking grates rusting or flame tamers warped? We repair and deep-clean built-in Blaze grills across Cincinnati, NKY & Dayton. Free photo quote — send a pic.",
+      "h1": "Blaze Cooking Grates & Flame Tamers — Repair, Replace & Deep Clean",
+      "intro": "If your Blaze's heavy stainless grates are rusting at the welds or your flame tamers have warped and gone uneven, you're not imagining it — those are the two parts that take the most abuse on a built-in Blaze. The good news: on a grill this well-built, it's almost always a repair, not a replacement. Send us a photo and we'll tell you straight whether your Blaze needs new grates and tamers or just a deep clean to get back to even, edge-to-edge heat.",
+      "symptoms": [
+        {
+          "h": "Cooking grates rusting, pitting or flaking at the welds",
+          "p": "Blaze ships thick 304 stainless cooking grates, but even good stainless surface-rusts where grease and salt sit in the channels — especially at the welds and contact points on an outdoor built-in. If your grates are flaking, sticking, or leaving orange marks on food, we scrub them back to bare metal, re-season them, and replace any grate that's pitted through rather than just discolored."
+        },
+        {
+          "h": "Flame tamers warped, sagging or burned through",
+          "p": "Blaze heat plates (flame tamers) sit directly over the H-burners and catch every drop of grease, so they're the first thing to warp, sag, and eventually burn through. Warped tamers create hot spots and cold spots — the classic 'one zone scorches, the other won't sear' complaint. We straighten what we can, replace what's burned through, and clear the slots so flames spread evenly across each burner again."
+        },
+        {
+          "h": "Uneven heat and flare-ups across the cooking surface",
+          "p": "When tamers are caked or warped, grease drips straight onto the cast stainless H-burners instead of vaporizing across the plate — that's what's behind the sudden flare-ups and the dead, cool corners. Restoring or replacing the flame tamers usually fixes both problems in one visit."
+        },
+        {
+          "h": "Heavy grease and carbon buildup under the grates",
+          "p": "Built-in Blaze grills run hot and get used hard, and the zone under the grates and tamers collects baked-on grease that's both a flavor problem and a fire risk. Our deep clean strips the cookbox, grates, tamers and burner channels back to safe, working metal — same visit as the repair."
+        },
+        {
+          "h": "Igniter won't light the burner under a bad tamer",
+          "p": "Blaze hot-surface and spark igniters fire through the burner, but a grease-clogged or warped flame tamer above it can smother the flame so it seems like the igniter failed. We check the electrode, the igniter, and the tamer together so we fix the real cause, not just the symptom."
+        }
+      ],
+      "diagnosis": "When we come out, we pull your Blaze grates and flame tamers and read the whole cooking system together — because on these grills the grates, tamers, and cast stainless H-burners all affect each other. We check the tamers for warp and burn-through, inspect the grates for true pitting versus surface rust, confirm the spark or hot-surface igniters and electrodes are firing clean, and on built-in models we verify the regulator is delivering full flow so we're not blaming a part when it's actually gas pressure. Whatever we find, we deep-clean the cookbox, grates, and tamer channels back to bare metal in the same visit, so you're not left with a clean diagnosis and a dirty grill. We'll always give you the honest repair-versus-replace call: a Blaze is a premium, mostly-stainless grill built to last, so a set of fresh tamers and reconditioned grates is usually a fraction of a new build-in — and we'll tell you plainly on the rare occasion a grill isn't worth saving.",
+      "faqs": [
+        {
+          "q": "Are my rusty Blaze grates worth saving or should I replace them?",
+          "a": "Usually worth saving. Blaze uses thick 304 stainless grates that surface-rust long before they fail structurally — most of the time we scrub them back to bare metal and re-season them rather than replace. We only recommend new grates when they're truly pitted through, and we'll show you the difference so you can decide. Either way it's a fraction of a new Blaze."
+        },
+        {
+          "q": "Why are my Blaze flame tamers warped, and can you fix them?",
+          "a": "Flame tamers sit right over the H-burners and absorb constant heat and grease, so warping and eventual burn-through is normal wear, not a defect. We straighten tamers that are only bowed and replace any that have burned through or sagged badly — then clear the slots so flames spread evenly again. New tamers are an inexpensive part and they fix most uneven-heat complaints on a Blaze."
+        },
+        {
+          "q": "Do you work on built-in Blaze grills, not just freestanding ones?",
+          "a": "Yes — we come to your home and service built-in Blaze grills right in the island. We replace grates and flame tamers, check the cast stainless H-burners, igniters and electrodes, and verify the regulator on built-in models, then deep-clean everything in the same visit. No need to pull the grill out of the island or haul it anywhere."
+        },
+        {
+          "q": "How much does Blaze grate and flame tamer repair cost in Cincinnati?",
+          "a": "It depends on which parts are warped or pitted and how much buildup we're clearing, so we won't guess. Send us a photo through our free quote and we'll give you an honest number — usually the repair plus a full deep clean costs far less than replacing a premium Blaze."
+        },
+        {
+          "q": "What areas do you serve?",
+          "a": "We service Blaze grills across Greater Cincinnati, Northern Kentucky and Dayton, Ohio. We come to you, repair the grill, and deep-clean it in the same visit. Start with a free photo quote."
+        }
+      ]
+    }
+  ]
+}

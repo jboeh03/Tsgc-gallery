@@ -5,11 +5,12 @@ import SmoothScroll from "@/components/motion/SmoothScroll";
 import Cursor from "@/components/motion/Cursor";
 import { isPreviewVisible } from "@/lib/preview-flag";
 import { isCampaignActive } from "@/lib/campaign";
+import { isWeberSprintActive } from "@/lib/campaign-weber";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  // Giveaway banner is hidden for now (per request). PromoBanner still falls
-  // back to the discount campaign when one is active.
-  const bannerActive = isCampaignActive();
+  // Banner shows while the Weber sprint is live (top priority in PromoBanner),
+  // and otherwise falls back to the discount campaign. Giveaway is hidden for now.
+  const bannerActive = isWeberSprintActive() || isCampaignActive();
 
   return (
     <SmoothScroll>

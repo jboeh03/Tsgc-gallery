@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeGrillPhoto } from "@/lib/preview/claude";
-import { priceQuote, isWeberSprintActive } from "@/lib/campaign-weber";
+import { priceQuote, priceRange, isWeberSprintActive } from "@/lib/campaign-weber";
 import { publicFormAllowed, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
@@ -59,10 +59,13 @@ export async function POST(req: NextRequest) {
       "Claude"
     );
     const q = priceQuote({ burners, neighbor: Boolean(body.neighbor) });
+    const r = priceRange({ burners, neighbor: Boolean(body.neighbor) });
     return NextResponse.json({
       assessment,
       basePrice: q.basePrice,
       discountedPrice: q.discountedPrice,
+      rangeLow: r.low,
+      rangeHigh: r.high,
       discountPercent: q.discountPercent,
       tierLabel: q.tier.label,
     });

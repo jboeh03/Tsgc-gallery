@@ -74,3 +74,18 @@ export function priceQuote(input: { burners: number; neighbor: boolean }): {
   const discountedPrice = Math.round(tier.basePrice * (1 - pct / 100));
   return { tier, basePrice: tier.basePrice, discountPercent: pct, discountedPrice };
 }
+
+/**
+ * Customer-facing estimate RANGE around the (exact) discounted price. Shown
+ * instead of a single number so the on-photo estimate doesn't over-commit
+ * before we confirm the grill — the final amount is set on the payment link.
+ * Rounded to clean $5s.
+ */
+export function priceRange(input: { burners: number; neighbor: boolean }): {
+  low: number;
+  high: number;
+} {
+  const { discountedPrice } = priceQuote(input);
+  const round5 = (n: number) => Math.round(n / 5) * 5;
+  return { low: round5(discountedPrice * 0.9), high: round5(discountedPrice * 1.12) };
+}

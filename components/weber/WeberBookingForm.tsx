@@ -10,6 +10,8 @@ type Quote = {
   assessment: Assessment;
   basePrice: number;
   discountedPrice: number;
+  rangeLow: number;
+  rangeHigh: number;
   discountPercent: number;
   tierLabel: string;
 };
@@ -137,9 +139,9 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
 
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-muted">Estimated · we&apos;ll confirm</p>
-            <p className="text-sm text-muted line-through">${quote.basePrice}</p>
-            <p className="font-display text-5xl text-navy leading-none">${quote.discountedPrice}</p>
+            <p className="text-[11px] uppercase tracking-wider text-muted">Estimated range · we&apos;ll confirm</p>
+            <p className="text-sm text-muted line-through">reg. ${quote.basePrice}</p>
+            <p className="font-display text-4xl text-navy leading-none">${quote.rangeLow}–${quote.rangeHigh}</p>
           </div>
           <span className="rounded-full bg-burgundy/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-burgundy">
             {quote.discountPercent}% off{neighbor ? " · neighbor rate" : ""}

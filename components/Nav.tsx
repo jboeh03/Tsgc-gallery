@@ -5,8 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
+import { isWeberSprintActive } from "@/lib/campaign-weber";
 
-const BASE_LINKS = [
+type NavLink = { href: string; label: string; highlight?: boolean };
+
+const BASE_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
@@ -14,7 +17,8 @@ const BASE_LINKS = [
   { href: "/quote", label: "Contact" },
 ];
 
-const PREVIEW_LINK = { href: "/preview", label: "AI Preview" };
+const PREVIEW_LINK: NavLink = { href: "/preview", label: "AI Preview" };
+const WEBER_LINK: NavLink = { href: "/weber", label: "Weber Deal", highlight: true };
 
 export default function Nav({
   showPreview = false,
@@ -43,9 +47,11 @@ export default function Nav({
     return () => window.removeEventListener("scroll", onScroll);
   }, [overlay]);
 
-  const LINKS = showPreview
-    ? [...BASE_LINKS.slice(0, 4), PREVIEW_LINK, BASE_LINKS[4]]
-    : BASE_LINKS;
+  // Build the link list: optionally inject the AI Preview link, and — while
+  // the Weber sprint is live — a highlighted "Weber Deal" link before Contact.
+  const LINKS: NavLink[] = [...BASE_LINKS];
+  if (showPreview) LINKS.splice(4, 0, PREVIEW_LINK);
+  if (isWeberSprintActive()) LINKS.splice(LINKS.length - 1, 0, WEBER_LINK);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);
@@ -86,11 +92,13 @@ export default function Nav({
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className={`hover:text-burgundy-400 ${
-                    isActive(l.href) ? "text-burgundy-400" : ""
-                  }`}
+                  className={
+                    l.highlight
+                      ? "text-amber-300 font-semibold hover:text-amber-200"
+                      : `hover:text-burgundy-400 ${isActive(l.href) ? "text-burgundy-400" : ""}`
+                  }
                 >
-                  {l.label}
+                  {l.highlight ? `🔥 ${l.label}` : l.label}
                 </Link>
               </li>
             ))}
@@ -157,11 +165,13 @@ export default function Nav({
               <Link
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`block py-3 hover:text-burgundy-400 ${
-                  isActive(l.href) ? "text-burgundy-400" : ""
-                }`}
+                className={
+                  l.highlight
+                    ? "block py-3 text-amber-300 font-semibold hover:text-amber-200"
+                    : `block py-3 hover:text-burgundy-400 ${isActive(l.href) ? "text-burgundy-400" : ""}`
+                }
               >
-                {l.label}
+                {l.highlight ? `🔥 ${l.label}` : l.label}
               </Link>
             </li>
           ))}

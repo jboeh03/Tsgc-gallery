@@ -87,5 +87,7 @@ export function priceRange(input: { burners: number; neighbor: boolean }): {
 } {
   const { discountedPrice } = priceQuote(input);
   const round5 = (n: number) => Math.round(n / 5) * 5;
-  return { low: round5(discountedPrice * 0.9), high: round5(discountedPrice * 1.12) };
+  // A tight band that hugs the real discounted price (≈ −5% / +8%) — close
+  // enough to set the right expectation, not an exact commitment.
+  return { low: round5(discountedPrice * 0.95), high: round5(discountedPrice * 1.08) };
 }

@@ -20,7 +20,7 @@ export default function BacklogList({ items }: { items: BacklogRow[] }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
 
-  async function act(id: string, action: "done" | "dismiss") {
+  async function act(id: string, action: "approve" | "run" | "dismiss") {
     setBusy(id);
     try {
       await fetch("/api/admin/backlog", {
@@ -63,11 +63,21 @@ export default function BacklogList({ items }: { items: BacklogRow[] }) {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => act(it.id, "done")}
+                onClick={() => act(it.id, "run")}
                 disabled={busy === it.id}
+                title="Push straight to in-progress for Claude (the dev) to build"
+                className="rounded-md bg-burgundy px-3 py-1.5 text-xs uppercase tracking-wider text-bone hover:bg-burgundy-700 disabled:opacity-40"
+              >
+                {busy === it.id ? "…" : "Run"}
+              </button>
+              <button
+                type="button"
+                onClick={() => act(it.id, "approve")}
+                disabled={busy === it.id}
+                title="Greenlight as a proposed task for the team to scope"
                 className="rounded-md bg-navy px-3 py-1.5 text-xs uppercase tracking-wider text-bone hover:bg-navy/90 disabled:opacity-40"
               >
-                Done
+                Approve
               </button>
               <button
                 type="button"

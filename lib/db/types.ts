@@ -80,6 +80,10 @@ export type JobRow = {
   review_notes: string | null;
   legacy_lead_id: string | null;
   gcal_event_id: string | null;
+  /** AI photo estimate captured at intake, for the quote-calibration loop. */
+  ai_estimate_low: number | null;
+  ai_estimate_high: number | null;
+  ai_estimate_at: string | null;
 };
 
 export type ConversationRow = {

@@ -12,6 +12,7 @@ import { getSupabase, isSupabaseConfigured } from "./supabase";
 import { upsertContactByPhone, logEvent, getOrCreateConversation, setSuggestedDraft } from "./writes";
 import { computeMissingFields } from "@/lib/comms/missingFields";
 import { draftFollowupOpener } from "@/lib/comms/followup";
+import { analyzeGrillPhoto } from "@/lib/preview/claude";
 import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 import { sendPush } from "@/lib/imessage/notify";
 import { SITE } from "@/lib/site";
@@ -53,6 +54,45 @@ async function uploadQuotePhoto(base64?: string, mime?: string): Promise<string 
 }
 
 const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
+
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([p, new Promise<T>((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
+}
+
+/**
+ * Auto-estimate the lead from its photo, Weber-form style (but not shown to the
+ * customer on the main form yet). Runs Claude vision best-effort with a timeout
+ * and returns a rundown note + the detected grill fields to enrich the job.
+ */
+async function photoRundown(
+  base64: string,
+  mime: string
+): Promise<{ note: string; grillBrand: string | null; burnerCount: number | null; grillType: string | null; estLow: number; estHigh: number } | null> {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+  try {
+    const a = await withTimeout(
+      analyzeGrillPhoto({ imageBase64: base64, imageMimeType: mime as "image/jpeg" | "image/png" | "image/webp" }),
+      25_000
+    );
+    const note = [
+      "📋 AI rundown (from photo):",
+      `Condition: ${a.conditionSeverity}${a.brandDetected ? ` · ${a.brandDetected}` : ""}${a.burnerCount ? ` · ${a.burnerCount}-burner` : ""}`,
+      a.conditionIssues?.length ? `Issues: ${a.conditionIssues.join("; ")}` : "",
+      a.recommendation ? `Rec: ${a.recommendation}` : "",
+      `Estimated: $${a.estimatedPriceLow}–$${a.estimatedPriceHigh} (${a.estimatedServiceHours}h)`,
+    ].filter(Boolean).join("\n");
+    return {
+      note,
+      grillBrand: a.brandDetected,
+      burnerCount: a.burnerCount,
+      grillType: a.grillTypeDetected !== "unknown" ? a.grillTypeDetected : null,
+      estLow: a.estimatedPriceLow,
+      estHigh: a.estimatedPriceHigh,
+    };
+  } catch {
+    return null;
+  }
+}
 
 /** Best-effort US E.164 normalization. Returns null if it can't form 10/11 digits. */
 export function normalizeE164(raw?: string): string | null {
@@ -134,6 +174,26 @@ export async function ingestLead(input: LeadInput): Promise<{ contactId: string;
       const { data: job, error: jobErr } = await sb.from("jobs").insert(jobInsert).select("id").single();
       if (jobErr) throw new Error(jobErr.message);
       jobId = (job as { id: string }).id;
+    }
+
+    // Auto-estimate from a photo (best-effort) on genuinely-new jobs — appends
+    // the AI rundown to notes and enriches the detected grill fields.
+    if (isNewJob && input.imageBase64 && input.imageMimeType) {
+      const r = await photoRundown(input.imageBase64, input.imageMimeType);
+      if (r) {
+        // Capture the AI estimate so the calibration loop can later compare it
+        // to the price we actually finalize (jobs.quote_amount/invoice_amount).
+        const upd: Partial<JobRow> = {
+          notes: [notes, r.note].filter(Boolean).join("\n\n"),
+          ai_estimate_low: r.estLow,
+          ai_estimate_high: r.estHigh,
+          ai_estimate_at: new Date().toISOString(),
+        };
+        if (r.grillBrand) upd.grill_brand = r.grillBrand;
+        if (r.burnerCount != null) upd.burner_count = r.burnerCount;
+        if (r.grillType) upd.grill_type = r.grillType;
+        await sb.from("jobs").update(upd).eq("id", jobId);
+      }
     }
 
     await logEvent("lead_created", { contactId, jobId }, {

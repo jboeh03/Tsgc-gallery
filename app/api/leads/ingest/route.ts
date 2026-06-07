@@ -9,6 +9,7 @@ import { ingestLead, type LeadInput } from "@/lib/db/ingest";
 import { publicFormAllowed, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
+export const maxDuration = 60; // photo leads run a Claude vision rundown (best-effort)
 
 export async function POST(req: Request) {
   let body: LeadInput;

@@ -12,7 +12,7 @@ import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 
 export const runtime = "nodejs";
 
-export function smsSendEnabled(): boolean {
+function smsSendEnabled(): boolean {
   return process.env.SMS_SEND_ENABLED === "true";
 }
 

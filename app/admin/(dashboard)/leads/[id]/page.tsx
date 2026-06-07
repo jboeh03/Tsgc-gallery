@@ -4,8 +4,10 @@ import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import CrmEditor from "@/components/admin/CrmEditor";
 import CrmConversation from "@/components/admin/CrmConversation";
+import LeadSmsComposer from "@/components/admin/LeadSmsComposer";
 import SendPaymentLinkButton from "@/components/admin/SendPaymentLinkButton";
 import { readJobDetail, readContactThread } from "@/lib/db/reads";
+import { getSupabase } from "@/lib/db/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +31,18 @@ export default async function CrmDetailPage({ params }: { params: { id: string }
 
   const title = detail.contact?.name || detail.contact?.phone_e164 || "CRM record";
   const thread = detail.contact ? await readContactThread(detail.contact.id) : null;
+
+  // Prefill the SMS composer with the AI-suggested draft (if one is waiting).
+  let initialDraft = "";
+  if (thread?.conversationId) {
+    const { data } = await getSupabase()
+      .from("drafts")
+      .select("body")
+      .eq("conversation_id", thread.conversationId)
+      .eq("status", "suggested")
+      .maybeSingle();
+    initialDraft = (data as { body: string | null } | null)?.body ?? "";
+  }
 
   return (
     <>
@@ -64,6 +78,16 @@ export default async function CrmDetailPage({ params }: { params: { id: string }
         <div className="max-w-3xl">
           <CrmConversation conversationId={thread?.conversationId ?? null} messages={thread?.messages ?? []} />
         </div>
+        {detail.contact?.phone_e164 && (
+          <div className="max-w-3xl">
+            <LeadSmsComposer
+              contactId={detail.contact.id}
+              phone={detail.contact.phone_e164}
+              initialDraft={initialDraft}
+              sendEnabled={process.env.SMS_SEND_ENABLED === "true"}
+            />
+          </div>
+        )}
         <CrmEditor job={detail.job} contact={detail.contact} />
       </div>
     </>

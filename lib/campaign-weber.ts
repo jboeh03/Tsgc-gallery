@@ -38,7 +38,7 @@ export const WEBER_SPRINT = {
   // already cleaned this week) on top of the live paid-booking count.
   milestone: {
     target: 30,
-    baseline: 7,
+    baseline: 8,
     teaseText: "Hit 30 and we refund one customer at random — and keep an eye out for a refurbished Weber.",
   },
 } as const;

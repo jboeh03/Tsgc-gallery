@@ -4,6 +4,8 @@ import Header from "@/components/admin/Header";
 import EmptyState from "@/components/admin/EmptyState";
 import { readCrmRows, type CrmRow } from "@/lib/db/reads";
 import { checkDbHealth } from "@/lib/db/supabase";
+import { tierBadgeColor } from "@/lib/leads/qualify";
+import type { LeadTier } from "@/lib/leads/types";
 import { format, formatDistanceToNow } from "date-fns";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +50,7 @@ export default async function CrmPage({
     .filter((r) => (filter === "all" ? true : filter === "closed" ? CLOSED.has(r.status) : !CLOSED.has(r.status)))
     .filter((r) => {
       if (!q) return true;
-      const hay = `${r.name} ${r.phone} ${r.email} ${r.zip} ${r.service} ${r.source} ${r.status}`.toLowerCase();
+      const hay = `${r.name} ${r.phone} ${r.email} ${r.zip} ${r.service} ${r.source} ${r.status} ${r.grill} ${r.serviceAddress}`.toLowerCase();
       return hay.includes(q);
     });
 
@@ -118,6 +120,7 @@ export default async function CrmPage({
                     <th className="px-4 py-3 font-semibold">Phone</th>
                     <th className="px-4 py-3 font-semibold">ZIP</th>
                     <th className="px-4 py-3 font-semibold">Service</th>
+                    <th className="px-4 py-3 font-semibold">Score</th>
                     <th className="px-4 py-3 font-semibold">Quote</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
                     <th className="px-4 py-3 font-semibold">Last activity</th>
@@ -156,12 +159,28 @@ function CrmCard({ r }: { r: CrmRow }) {
               {r.phone || "no phone"}
               {r.zip ? ` · ${r.zip}` : ""}
             </p>
+            {(r.grill || r.serviceAddress) && (
+              <p className="text-xs text-ink/55 truncate">
+                {[r.grill, r.serviceAddress].filter(Boolean).join(" · ")}
+              </p>
+            )}
           </div>
-          <StatusChip s={r.status} />
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <StatusChip s={r.status} />
+            <TierBadge tier={r.tier} score={r.score} />
+          </div>
         </div>
         <div className="mt-2 flex items-center justify-between gap-3 text-sm">
           <span className="text-ink/70 truncate">{r.service || "—"}</span>
-          <span className="text-ink/70 whitespace-nowrap">{r.quoteAmount != null ? `$${r.quoteAmount}` : ""}</span>
+          <span className="text-ink/70 whitespace-nowrap">
+            {r.quoteAmount != null ? (
+              `$${r.quoteAmount}`
+            ) : r.estLow != null && r.estHigh != null ? (
+              <span className="text-muted">est ${r.estLow}–${r.estHigh}</span>
+            ) : (
+              ""
+            )}
+          </span>
         </div>
         {r.lastActivity && (
           <p className="mt-2 text-xs text-ink/55 truncate border-t border-border pt-2">
@@ -191,6 +210,11 @@ function Row({ r }: { r: CrmRow }) {
         <Link href={`/admin/leads/${r.jobId}`} className="block hover:text-burgundy">
           {r.name || "—"}
         </Link>
+        {(r.grill || r.serviceAddress) && (
+          <span className="block text-[11px] font-normal text-ink/55 truncate max-w-[16rem]">
+            {[r.grill, r.serviceAddress].filter(Boolean).join(" · ")}
+          </span>
+        )}
       </td>
       <td className="px-4 py-3 text-ink/75">
         <Link href={`/admin/leads/${r.jobId}`} className="block">{r.phone || "—"}</Link>
@@ -201,9 +225,18 @@ function Row({ r }: { r: CrmRow }) {
       <td className="px-4 py-3 text-ink/75">
         <Link href={`/admin/leads/${r.jobId}`} className="block">{r.service || "—"}</Link>
       </td>
-      <td className="px-4 py-3 text-ink/75">
+      <td className="px-4 py-3">
+        <Link href={`/admin/leads/${r.jobId}`} className="block"><TierBadge tier={r.tier} score={r.score} /></Link>
+      </td>
+      <td className="px-4 py-3 text-ink/75 whitespace-nowrap">
         <Link href={`/admin/leads/${r.jobId}`} className="block">
-          {r.quoteAmount != null ? `$${r.quoteAmount}` : "—"}
+          {r.quoteAmount != null ? (
+            `$${r.quoteAmount}`
+          ) : r.estLow != null && r.estHigh != null ? (
+            <span className="text-muted">est ${r.estLow}–${r.estHigh}</span>
+          ) : (
+            "—"
+          )}
         </Link>
       </td>
       <td className="px-4 py-3">
@@ -237,6 +270,16 @@ function Row({ r }: { r: CrmRow }) {
         </Link>
       </td>
     </tr>
+  );
+}
+
+function TierBadge({ tier, score }: { tier: LeadTier; score: number }) {
+  const c = tierBadgeColor(tier);
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${c.bg} ${c.text}`}>
+      {c.label}
+      <span className="opacity-70">{score}</span>
+    </span>
   );
 }
 

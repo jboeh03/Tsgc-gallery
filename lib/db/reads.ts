@@ -10,6 +10,8 @@
 
 import { unstable_cache } from "next/cache";
 import { getSupabase, isSupabaseConfigured } from "./supabase";
+import { qualifyLeadSync } from "@/lib/leads/qualify";
+import type { LeadTier } from "@/lib/leads/types";
 import type {
   Lead, Job, JobRow, ContactRow, ConversationRow, MessageRow,
   ConversationSummary, ConversationThread, MessageDirection, MessageChannel,
@@ -149,7 +151,16 @@ export type CrmRow = {
   source: string;
   status: string;
   grillModel: string;
+  /** Brand + model combined for display, e.g. "Weber Genesis II". */
+  grill: string;
+  serviceAddress: string;
   quoteAmount: number | null;
+  /** Lead score 0-100 + tier, computed on the fly from the row. */
+  score: number;
+  tier: LeadTier;
+  /** Suggested job-value range inferred from the grill (when no quote set). */
+  estLow: number | null;
+  estHigh: number | null;
   createdAt: string;
   // Most-recent interaction (SMS today; email once Gmail sync lands).
   lastActivityAt: string | null;
@@ -211,12 +222,12 @@ export async function readCrmRows(): Promise<CrmRow[]> {
   if (!isSupabaseConfigured()) return [];
   const { data, error } = await getSupabase()
     .from("jobs")
-    .select("id, status, service, source, grill_model, quote_amount, created_at, contact_id, contact:contacts(name, phone_e164, email, zip, grill_model)")
+    .select("id, status, service, source, grill_model, grill_brand, job_address, quote_amount, created_at, contact_id, contact:contacts(name, phone_e164, email, zip, grill_model, grill_brand, service_address)")
     .order("created_at", { ascending: false })
     .limit(500);
   if (error) throw new Error(error.message);
   const jobs = (data ?? []) as unknown as (JobRow & {
-    contact: { name: string | null; phone_e164: string | null; email: string | null; zip: string | null; grill_model: string | null } | null;
+    contact: { name: string | null; phone_e164: string | null; email: string | null; zip: string | null; grill_model: string | null; grill_brand: string | null; service_address: string | null } | null;
   })[];
 
   const contactIds = [...new Set(jobs.map((j) => j.contact_id).filter((id): id is string => Boolean(id)))];
@@ -225,6 +236,25 @@ export async function readCrmRows(): Promise<CrmRow[]> {
   return jobs.map((row) => {
     const c = row.contact;
     const act = row.contact_id ? activity.get(row.contact_id) : undefined;
+    const grill = [row.grill_brand ?? c?.grill_brand, row.grill_model ?? c?.grill_model]
+      .filter(Boolean).join(" ").trim();
+    const serviceAddress = row.job_address ?? c?.service_address ?? "";
+    const q = qualifyLeadSync(
+      {
+        name: c?.name ?? null,
+        phone: c?.phone_e164 ?? null,
+        email: c?.email ?? null,
+        zip: c?.zip ?? null,
+        address: serviceAddress || null,
+        grillDescription: grill || null,
+        services: row.service ?? null,
+        notes: null,
+        agreedPriceUsd: row.quote_amount ?? null,
+        estimatedPriceLow: null,
+        estimatedPriceHigh: null,
+      },
+      "unknown"
+    );
     return {
       jobId: row.id,
       contactId: row.contact_id,
@@ -236,7 +266,13 @@ export async function readCrmRows(): Promise<CrmRow[]> {
       source: row.source ?? "",
       status: row.status ?? "",
       grillModel: row.grill_model ?? c?.grill_model ?? "",
+      grill,
+      serviceAddress,
       quoteAmount: row.quote_amount,
+      score: q.score,
+      tier: q.tier,
+      estLow: q.breakdown.value.estimatedJobUsdLow,
+      estHigh: q.breakdown.value.estimatedJobUsdHigh,
       createdAt: row.created_at ?? "",
       lastActivityAt: act?.at ?? null,
       lastActivity: act?.body ?? null,

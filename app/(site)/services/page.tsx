@@ -162,7 +162,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Pricing — quote-based with a "from" anchor (premium, just-under-Bar-B-Clean
-          position). $269 floor is modeled off competitor pricing; confirm against a
+          position). $179 floor is modeled off competitor pricing; confirm against a
           real Bar-B-Clean quote + actual job costs before deploy. We deliberately do
           NOT post a full grid — at this price point a visible cheaper competitor
           ($149) would win the side-by-side before we can sell our value. */}
@@ -178,7 +178,7 @@ export default function ServicesPage() {
             <span className="text-xs font-semibold uppercase tracking-widest text-bone/60">
               Starting at
             </span>
-            <span className="font-display text-6xl leading-none">$269</span>
+            <span className="font-display text-6xl leading-none">$179</span>
           </div>
           <p className="mt-6 text-bone/85 max-w-xl mx-auto">
             Every grill is different — size, condition, and how long it&apos;s

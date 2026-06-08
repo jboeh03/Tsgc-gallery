@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
 import { compressImage } from "@/lib/image-compress";
+import { trackQuoteConversion } from "@/lib/ads";
 import type { Assessment } from "@/lib/preview/types";
 import type { WeberModel } from "@/lib/campaign-weber";
 
@@ -98,6 +99,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "Could not submit your request.");
       setStep("done");
+      trackQuoteConversion();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not submit your request.");
     } finally {

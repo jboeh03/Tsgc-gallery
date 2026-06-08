@@ -6,6 +6,7 @@ import { SITE } from "@/lib/site";
 import { tierByCode } from "@/lib/campaign";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
 import { compressImage } from "@/lib/image-compress";
+import { trackQuoteConversion } from "@/lib/ads";
 
 const MEMBERSHIP = "🚨 Annual Membership *Limited Time Offer";
 
@@ -109,6 +110,7 @@ export default function QuoteForm() {
         body: JSON.stringify(data),
       });
       setStatus("success");
+      trackQuoteConversion();
       form.reset();
       setAddress(""); setServiceType(""); setRepairDesc(""); setBrand(""); setSize(""); setExactModel(""); setPhoto(null);
     } catch {

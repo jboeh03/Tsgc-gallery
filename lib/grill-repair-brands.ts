@@ -51,6 +51,16 @@ const BRAND_META: { slug: string; name: string; group: BrandGroup }[] = [
   { slug: "napoleon", name: "Napoleon", group: "gas" },
   { slug: "traeger", name: "Traeger", group: "pellet" },
   { slug: "blaze", name: "Blaze", group: "built-in" },
+  { slug: "lynx", name: "Lynx", group: "built-in" },
+  { slug: "dcs", name: "DCS", group: "built-in" },
+  { slug: "twin-eagles", name: "Twin Eagles", group: "built-in" },
+  { slug: "broil-king", name: "Broil King", group: "gas" },
+  { slug: "wolf", name: "Wolf", group: "built-in" },
+  { slug: "coyote", name: "Coyote", group: "built-in" },
+  { slug: "alfresco", name: "Alfresco", group: "built-in" },
+  { slug: "bull", name: "Bull", group: "built-in" },
+  { slug: "yoder", name: "Yoder", group: "pellet" },
+  { slug: "green-mountain", name: "Green Mountain", group: "pellet" },
 ];
 
 export const GRILL_BRANDS: RepairBrand[] = BRAND_META.map((m) => {

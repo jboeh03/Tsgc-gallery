@@ -27,8 +27,7 @@ export const SITE = {
   social: {
     facebook: "https://www.facebook.com/share/1ECnm2S6Ju/",
     instagram: "https://www.instagram.com/cincygrillcleaning/",
-    googleReview:
-      "https://www.google.com/maps?cid=306553952702723641&action=write-review",
+    googleReview: "https://g.page/r/CTl2Vh8yGUEEEBM/review",
   },
   // Google Apps Script endpoint that ingests leads into Jeff's CRM sheet
   // and emails him + a customer auto-reply. Source in /integrations.

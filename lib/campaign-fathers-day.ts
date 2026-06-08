@@ -21,10 +21,10 @@ export const FATHERS_DAY = {
   tiers: [
     {
       id: "single",
-      code: "DADS15",
-      percent: 15,
+      code: "DADS20",
+      percent: 20,
       label: "For Dad",
-      headline: "15% off any cleaning",
+      headline: "20% off any cleaning",
       blurb:
         "Any single grill, any model. The easy way to hand Dad back a grill that looks — and cooks — like new.",
       featured: false,
@@ -32,9 +32,9 @@ export const FATHERS_DAY = {
     {
       id: "bundle",
       code: "DADSBUNDLE",
-      percent: 25,
+      percent: 30,
       label: "The Bundle",
-      headline: "25% off clean + repair",
+      headline: "30% off clean + repair",
       blurb:
         "A clean paired with a repair — or two grills at one address. One visit, both grills handled, real savings for the household.",
       featured: true,
@@ -44,9 +44,9 @@ export const FATHERS_DAY = {
       code: "DADSGIFT",
       percent: 0,
       label: "Gift It",
-      headline: "Gift a clean + free grate scrub",
+      headline: "Gift card + a bonus brush",
       blurb:
-        "Buy a cleaning as a gift for Dad and we add a free deep grate scrub — the dirtiest job, on the house. The gift he'll actually use this summer.",
+        "Give Dad a Tri-State gift card for a deep clean — and we tuck in one of our favorite grill brushes so he's set for summer. The gift he'll actually use.",
       featured: false,
     },
   ],

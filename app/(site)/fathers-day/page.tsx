@@ -8,7 +8,7 @@ import FathersDayCountdown from "@/components/FathersDayCountdown";
 export const metadata: Metadata = {
   title: `Father's Day 2026 — Treat Dad to a Spotless Grill | ${SITE.name}`,
   description:
-    "Give Dad the grill he forgot he had. Three Father's Day offers from veteran-founded Tri-State Grill Cleaning — 15% off any cleaning, 25% off clean + repair, or gift a clean with a free deep grate scrub. Book by June 21.",
+    "Give Dad the grill he forgot he had. Three Father's Day offers from veteran-founded Tri-State Grill Cleaning — 20% off any cleaning, 30% off clean + repair, or a gift card with a bonus grill brush. Book by June 21.",
   robots: { index: false, follow: false },
   openGraph: {
     title: "Father's Day 2026 — Treat Dad to a spotless grill",
@@ -168,7 +168,7 @@ export default function FathersDayPage() {
               <ul className="mt-6 space-y-4">
                 <Reason
                   title="Veteran-founded, locally run"
-                  body="Jeff served, then built this with his own hands. You deal with the owner, not a call center."
+                  body="Jason served, then built this with his own hands. Jeff runs the day-to-day now — you still deal with the owners, not a call center."
                 />
                 <Reason
                   title="We come to you"
@@ -201,7 +201,7 @@ export default function FathersDayPage() {
             <p className="mt-4 text-base leading-relaxed text-ink md:text-lg">
               Thanks for trusting us with it.
             </p>
-            <p className="mt-6 font-display text-lg text-navy">— Jeff</p>
+            <p className="mt-6 font-display text-lg text-navy">— Jason, founder</p>
             <p className="text-sm text-muted">
               {SITE.name} · Veteran-Founded · Cincinnati · NKY · Dayton
             </p>
@@ -257,9 +257,9 @@ function OfferCard({
 
       {isGift ? (
         <div className="mt-4 font-display text-3xl leading-tight text-navy md:text-[2rem]">
-          Free
+          Gift card
           <span className="ml-1 align-top text-lg text-burgundy md:text-xl">
-            grate scrub
+            + a brush
           </span>
         </div>
       ) : (

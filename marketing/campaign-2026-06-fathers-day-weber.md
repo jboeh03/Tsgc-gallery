@@ -2,7 +2,7 @@
 
 Two campaigns running in parallel, scheduled near-daily:
 - **Father's Day** (ends Sun June 21) — two offers: **25% off any cleaning** · **buy one, get the 2nd grill 50% off (from $299 for two)**. Book **and pay** by June 21.
-- **Weber Sprint** (ends Wed June 17) — tally now **12 of 30**. Mix of repair-content + before/afters (before/afters slot in as Jeff sends "after" photos).
+- **Weber Sprint** (ends Wed June 17) — tally now **16 of 30**. Mix of repair-content + before/afters (before/afters slot in as Jeff sends "after" photos).
 
 **Scheduling:** load images + captions into **Meta Business Suite Planner** (schedules FB + IG together). **Google Business** posts pushed via Zapier after Jeff approves copy.
 **Voice:** we/us, veteran-founded, we come to you (Cincinnati · NKY · Dayton). Never I/me in customer copy.
@@ -14,7 +14,7 @@ Two campaigns running in parallel, scheduled near-daily:
 
 | Date | Campaign | Post | Asset |
 |---|---|---|---|
-| Wed 6/10 | Weber | W1 — Tally: 12 of 30 | `weber-tally-12.png` |
+| Wed 6/10 | Weber | W1 — Tally: 16 of 30 | `weber-tally-16.png` |
 | Wed 6/10 | Father's Day | FD1 — Launch (both offers) | `fd-launch.png` |
 | Thu 6/11 | Father's Day | FD2 — 25% off any cleaning | `fd-25off.png` |
 | Fri 6/12 | Weber | W2 — "We don't just clean, we fix" (repair) | `weber-repair-spotlight.png` |
@@ -96,9 +96,9 @@ Veteran-founded, and we come to you across Cincinnati, NKY & Dayton. Book *and* 
 
 ## WEBER SPRINT POSTS
 
-### W1 — Tally 12 of 30 (Wed 6/10) · asset: `weber-tally-12.png`
-**FB:** 🔥 **12 down, 18 to go.** The Weber Sprint is rolling — we've deep-cleaned 12 Webers and we're racing to 30. Hit 30 and one customer gets their cleaning refunded at random (and keep an eye out for a refurbished Weber 👀). Got a Weber that's seen better days? Jump in before June 17 👉 tristategrillcleaning.com/weber
-**IG:** 12 of 30 Webers cleaned. 🔥 We hit 30, someone gets refunded at random. Got a Weber? Book before 6/17 — link in bio.
+### W1 — Tally 16 of 30 (Wed 6/10) · asset: `weber-tally-16.png`
+**FB:** 🔥 **16 down, 14 to go.** The Weber Sprint is rolling — we've deep-cleaned 16 Webers and we're racing to 30. Hit 30 and one customer gets their cleaning refunded at random (and keep an eye out for a refurbished Weber 👀). Got a Weber that's seen better days? Jump in before June 17 👉 tristategrillcleaning.com/weber
+**IG:** 16 of 30 Webers cleaned. 🔥 We hit 30, someone gets refunded at random. Got a Weber? Book before 6/17 — link in bio.
 `#Weber #WeberGrill #GrillCleaning #Cincinnati #BBQ #WeberNation`
 
 ### W2 — "We don't just clean, we fix" (Fri 6/12) · asset: `weber-repair-spotlight.png`
@@ -128,19 +128,19 @@ Still nothing? That's what we're here for — we'll diagnose and fix it on the s
 ---
 
 ## WEBER "AFTER" ASSETS (from Jeff's 5 photos · marketing/campaign-assets/weber/)
-- `weber-sprint-reel.mp4` — 15s vertical 9:16 crossfade reel (intro "12 of 30" → 5 afters → "Book your Weber" outro). Muted-autoplay ready.
+- `weber-sprint-reel.mp4` — 15s vertical 9:16 crossfade reel (intro "16 of 30" → 5 afters → "Book your Weber" outro). Muted-autoplay ready.
 - `weber-after-{1,3}-framed.png` · `weber-after-{2,4}-cinematic.png` — branded 1080×1350 stills, two styles.
 - `weber-after-{1..5}-upright.jpg` — clean EXIF-corrected exports (raw, for reuse).
 
-**Reel caption (IG Reels/FB/Stories):** 12 Webers down, 18 to go. 🔥 Swipe through a week of real Weber rescues — deep-cleaned, dialed in, back in business. Hit 30 and one customer gets refunded at random. Got a Weber that's seen better days? Book before June 17 → link in bio. `#Weber #WeberGrill #GrillCleaning #Cincinnati #BBQ #WeberNation #SatisfyingClean`
-**Cinematic still (FB):** Another Weber, back to life. 🔥 Came in tired, left showroom-fresh. Weber Sprint standard — 12 of 30. In before June 17 (15% off, 30% with a neighbor). 👉 /weber
-**Framed still (IG):** Real job, real results. 🔥 Weber Genesis, deep-cleaned top to bottom. 12/30 and counting. Link in bio. `#Weber #GrillCleaning #BeforeYouReplaceIt #Cincinnati #BBQ`
+**Reel caption (IG Reels/FB/Stories):** 16 Webers down, 14 to go. 🔥 Swipe through a week of real Weber rescues — deep-cleaned, dialed in, back in business. Hit 30 and one customer gets refunded at random. Got a Weber that's seen better days? Book before June 17 → link in bio. `#Weber #WeberGrill #GrillCleaning #Cincinnati #BBQ #WeberNation #SatisfyingClean`
+**Cinematic still (FB):** Another Weber, back to life. 🔥 Came in tired, left showroom-fresh. Weber Sprint standard — 16 of 30. In before June 17 (15% off, 30% with a neighbor). 👉 /weber
+**Framed still (IG):** Real job, real results. 🔥 Weber Genesis, deep-cleaned top to bottom. 16/30 and counting. Link in bio. `#Weber #GrillCleaning #BeforeYouReplaceIt #Cincinnati #BBQ`
 
 ## GOOGLE BUSINESS POSTS (push via Zapier after approval)
 
 **G1 — Father's Day (What's New, run 6/10):** Treat Dad to a spotless grill this Father's Day. 25% off any cleaning, or buy one get the 2nd grill 50% off (from $299 for two). Veteran-founded, we come to you across Cincinnati, NKY & Dayton. Book & pay by June 21. — Button: "Book online" → /fathers-day
 
-**G2 — Weber Sprint (Offer, run 6/10, ends 6/17):** Weber Sprint: 15% off your Weber deep clean (30% if you book with a neighbor). We're at 12 of 30 — hit 30 and one customer gets refunded at random. — Button: "Learn more" → /weber
+**G2 — Weber Sprint (Offer, run 6/10, ends 6/17):** Weber Sprint: 15% off your Weber deep clean (30% if you book with a neighbor). We're at 16 of 30 — hit 30 and one customer gets refunded at random. — Button: "Learn more" → /weber
 
 **G3 — Grill repair (What's New, run 6/13):** We don't just clean grills — we repair them. Dead igniters, burners, regulators, rusted grates — diagnosed and fixed on-site, same visit. Cincinnati · NKY · Dayton. — Button: "Get a quote" → /quote
 
@@ -156,7 +156,7 @@ Still nothing? That's what we're here for — we'll diagnose and fix it on the s
 - `fd-veteran.png` — veteran-founded, subtle flag/badge, family-business warmth.
 - `fd-deadline.png` — countdown/urgency, clock + flame, "48 HOURS."
 - `fd-happy.png` — "Happy Father's Day" celebratory cookout.
-- `weber-tally-12.png` — thermometer/ticker "12 of 30," Weber-red accent.
+- `weber-tally-16.png` — thermometer/ticker "16 of 30," Weber-red accent.
 - `weber-repair-spotlight.png` — tools + grill parts, "we fix grills," repair mood.
 - `weber-tip-ignite.png` — clean educational/tip card layout, igniter/burner imagery.
 - (Optional) short MP4/GIF — before→after wipe reveal for FD7 / Weber.

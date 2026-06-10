@@ -8,12 +8,12 @@ import FathersDayCountdown from "@/components/FathersDayCountdown";
 export const metadata: Metadata = {
   title: `Father's Day 2026 — Treat Dad to a Spotless Grill | ${SITE.name}`,
   description:
-    "Give Dad the grill he forgot he had. Three Father's Day offers from veteran-founded Tri-State Grill Cleaning — 20% off any cleaning, 30% off clean + repair, or a gift card with a bonus grill brush. Book by June 21.",
+    "Give Dad the grill he forgot he had. Two Father's Day offers from veteran-founded Tri-State Grill Cleaning — 25% off any cleaning, or buy one get the 2nd grill 50% off (from $299 for two). Book & pay by June 21.",
   robots: { index: false, follow: false },
   openGraph: {
     title: "Father's Day 2026 — Treat Dad to a spotless grill",
     description:
-      "Veteran-founded crew, three ways to gift Dad a like-new grill this Father's Day.",
+      "Veteran-founded crew, two ways to gift Dad a like-new grill this Father's Day.",
     type: "website",
   },
 };
@@ -90,7 +90,7 @@ export default function FathersDayPage() {
                   href="#offers"
                   className="inline-flex items-center justify-center rounded-md px-5 py-3.5 text-sm font-semibold uppercase tracking-widest text-bone/90 underline underline-offset-4 transition hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                 >
-                  See all three offers
+                  See both offers
                 </a>
               </div>
             </>
@@ -116,16 +116,16 @@ export default function FathersDayPage() {
             every weekend until fall.
           </p>
           <p className="mt-4 text-base leading-relaxed text-ink/90 md:text-lg">
-            Through {FATHERS_DAY.shortDeadline}, here are three ways to make it
+            Through {FATHERS_DAY.shortDeadline}, here are two ways to make it
             happen.
           </p>
         </div>
       </section>
 
-      {/* ── THREE OFFER TIERS ─────────────────────────────────────────────── */}
+      {/* ── OFFER TIERS ───────────────────────────────────────────────────── */}
       <section id="offers" className="scroll-mt-8 bg-bone">
-        <div className="mx-auto max-w-6xl px-5 py-14 md:py-16">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mx-auto max-w-4xl px-5 py-14 md:py-16">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {tiers.map((t) => (
               <OfferCard key={t.id} tier={t} active={active} />
             ))}
@@ -237,7 +237,7 @@ function OfferCard({
   active: boolean;
 }) {
   const featured = tier.featured;
-  const isGift = tier.percent === 0;
+  const isBogo = tier.kind === "bogo";
   return (
     <div
       className={`relative flex flex-col rounded-xl bg-white p-7 shadow-sm transition ${
@@ -255,13 +255,18 @@ function OfferCard({
         {tier.label}
       </div>
 
-      {isGift ? (
-        <div className="mt-4 font-display text-3xl leading-tight text-navy md:text-[2rem]">
-          Gift card
-          <span className="ml-1 align-top text-lg text-burgundy md:text-xl">
-            + a brush
-          </span>
-        </div>
+      {isBogo ? (
+        <>
+          <div className="mt-4 font-display text-4xl leading-none text-navy md:text-5xl">
+            2nd grill
+            <span className="ml-2 align-baseline text-burgundy">½ off</span>
+          </div>
+          {"priceFrom" in tier && tier.priceFrom ? (
+            <div className="mt-2 text-sm font-semibold uppercase tracking-wide text-muted">
+              From ${tier.priceFrom} for two
+            </div>
+          ) : null}
+        </>
       ) : (
         <div className="mt-4 font-display text-5xl leading-none text-navy md:text-6xl">
           {tier.percent}%
@@ -291,7 +296,7 @@ function OfferCard({
               : "bg-navy text-bone hover:bg-navy-700"
           }`}
         >
-          {isGift ? "Gift This" : "Book This Deal"} &rarr;
+          {isBogo ? "Book the Bundle" : "Book This Deal"} &rarr;
         </Link>
       ) : (
         <div className="mt-5 rounded-md bg-gray-100 px-5 py-3 text-center text-sm text-muted">

@@ -12,3 +12,5 @@ tsconfig.tsbuildinfo
 .vscode/
 marketing/all-photos-raw/.outputs/
 marketing/composites/
+
+marketing/campaign-assets/

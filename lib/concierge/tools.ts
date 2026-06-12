@@ -150,7 +150,8 @@ export async function runConciergeTool(
           partNumber: p.partNumber,
           oem: p.oemPartNumber,
           price: p.retailPrice,
-          link: `/parts?q=${encodeURIComponent(p.partNumber)}`,
+          viewLink: `/parts?q=${encodeURIComponent(p.partNumber)}`,
+          addToCartLink: `/parts?add=${encodeURIComponent(p.id)}`,
         })),
       });
     }

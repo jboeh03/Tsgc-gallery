@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 import {
+  PARTS,
   partsByBrand,
   groupPartsByBrand,
   searchParts,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/parts/catalog";
 import { CartProvider } from "@/components/parts/CartProvider";
 import CartDrawer from "@/components/parts/CartDrawer";
+import CartAutoAdd from "@/components/parts/CartAutoAdd";
 import AddToCartButton from "@/components/parts/AddToCartButton";
 import PartsSearch from "@/components/parts/PartsSearch";
 
@@ -155,6 +157,7 @@ export default function PartsPage({ searchParams }: { searchParams: { canceled?:
         </div>
       </section>
 
+      <CartAutoAdd parts={PARTS} />
       <CartDrawer shippingFee={SHIPPING_FEE} />
     </CartProvider>
   );

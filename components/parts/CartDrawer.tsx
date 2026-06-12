@@ -7,7 +7,7 @@
  * customer/fulfillment fields — never prices.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "./CartProvider";
 
 type Fulfillment = "ship" | "install";
@@ -15,6 +15,13 @@ type Fulfillment = "ship" | "install";
 export default function CartDrawer({ shippingFee }: { shippingFee: number }) {
   const { items, count, subtotal, remove, setQty, ready } = useCart();
   const [open, setOpen] = useState(false);
+
+  // Open when something (e.g. the concierge add-to-cart link) asks us to.
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("tsgc:open-cart", onOpen);
+    return () => window.removeEventListener("tsgc:open-cart", onOpen);
+  }, []);
   const [fulfillment, setFulfillment] = useState<Fulfillment>("ship");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

@@ -53,6 +53,8 @@ export type Part = {
   dimensions?: string;
   /** Retail price in whole USD — already round(dealer * MARKUP). No dealer field. */
   retailPrice: number;
+  /** Product photo (public/parts/<id>.png), extracted from the dealer sheet. */
+  image?: string;
   featured?: boolean;
 };
 
@@ -148,6 +150,8 @@ const RAW: RawPart[] = [
 export const PARTS: Part[] = RAW.map(({ dealer, ...rest }) => ({
   ...rest,
   retailPrice: retailFromDealer(dealer),
+  // Product photo extracted from the dealer sheet (public/parts/<id>.png).
+  image: rest.image ?? `/parts/${rest.id}.png`,
 }));
 
 export function getPartById(id: string): Part | undefined {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 import {
@@ -176,6 +177,22 @@ const CATEGORY_ICONS: Record<PartCategory, JSX.Element> = {
 };
 
 function PartMedia({ part }: { part: Part }) {
+  if (part.image) {
+    return (
+      <div className="relative aspect-[4/3] bg-white overflow-hidden">
+        <Image
+          src={part.image}
+          alt={`${part.brand} ${part.name} (#${part.partNumber})`}
+          fill
+          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+          className="object-contain p-3"
+        />
+        <span className="absolute bottom-3 left-3 inline-flex items-center rounded-full bg-navy/85 text-bone px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider">
+          {part.brand}
+        </span>
+      </div>
+    );
+  }
   return (
     <div className="relative aspect-[4/3] bg-gradient-to-br from-navy-900 via-navy to-navy-700 flex items-center justify-center overflow-hidden">
       <div

@@ -9,6 +9,7 @@ import {
   searchParts,
   PART_CATEGORY_LABELS,
   SHIPPING_FEE,
+  SALES_TAX_RATE,
   type Part,
   type PartCategory,
 } from "@/lib/parts/catalog";
@@ -158,7 +159,7 @@ export default function PartsPage({ searchParams }: { searchParams: { canceled?:
       </section>
 
       <CartAutoAdd parts={PARTS} />
-      <CartDrawer shippingFee={SHIPPING_FEE} />
+      <CartDrawer shippingFee={SHIPPING_FEE} taxRate={SALES_TAX_RATE} />
     </CartProvider>
   );
 }

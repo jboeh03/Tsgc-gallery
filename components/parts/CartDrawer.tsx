@@ -12,7 +12,7 @@ import { useCart } from "./CartProvider";
 
 type Fulfillment = "ship" | "install";
 
-export default function CartDrawer({ shippingFee }: { shippingFee: number }) {
+export default function CartDrawer({ shippingFee, taxRate }: { shippingFee: number; taxRate: number }) {
   const { items, count, subtotal, remove, setQty, ready } = useCart();
   const [open, setOpen] = useState(false);
 
@@ -35,7 +35,8 @@ export default function CartDrawer({ shippingFee }: { shippingFee: number }) {
   const [error, setError] = useState<string | null>(null);
 
   const shipping = fulfillment === "ship" ? shippingFee : 0;
-  const total = subtotal + shipping;
+  const tax = Math.round((subtotal + shipping) * taxRate * 100) / 100;
+  const total = subtotal + shipping + tax;
 
   async function checkout() {
     setError(null);
@@ -197,12 +198,12 @@ export default function CartDrawer({ shippingFee }: { shippingFee: number }) {
                   <span>{shipping > 0 ? `$${shipping}` : "Free"}</span>
                 </div>
                 <div className="flex justify-between text-sm text-ink/75">
-                  <span>Sales tax</span>
-                  <span className="text-muted">calculated at checkout</span>
+                  <span>Sales tax ({(taxRate * 100).toFixed(1)}%)</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-navy">
-                  <span>Subtotal</span>
-                  <span>${total}</span>
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
                 {error && <p className="text-sm text-burgundy">{error}</p>}
                 <button

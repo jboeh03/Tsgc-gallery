@@ -17,6 +17,8 @@ import "server-only";
 export const MARKUP = 1.5;
 /** Flat shipping fee (USD) for ship-to-me orders. Install orders ship free. */
 export const SHIPPING_FEE = 24;
+/** Flat sales-tax rate applied at checkout (Hamilton County, OH). */
+export const SALES_TAX_RATE = 0.078;
 
 export type PartBrand =
   | "Alfresco"

@@ -236,6 +236,41 @@ export type PendingBookingRow = {
   fulfilled_job_id: string | null;
 };
 
+export type PartsFulfillment = "ship" | "install";
+
+export type PartsOrderLineItem = {
+  partId: string;
+  partNumber: string;
+  name: string;
+  brand: string;
+  qty: number;
+  unitPrice: number; // retail dollars, re-derived server-side from the catalog
+  lineTotal: number;
+};
+
+export type PartsOrderRow = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  status: string; // pending | fulfilling | fulfilled
+  stripe_session_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  phone_e164: string | null;
+  email: string | null;
+  fulfillment: PartsFulfillment;
+  ship_address: string | null; // ship only
+  service_address: string | null; // install only
+  preferred_date: string | null; // install only
+  preferred_time: string | null; // install only
+  line_items: PartsOrderLineItem[];
+  subtotal: number | null;
+  shipping_fee: number;
+  amount: number | null;
+  fulfilled_at: string | null;
+  fulfilled_job_id: string | null;
+};
+
 export type GalleryJobRow = {
   id: string;
   created_at: string;
@@ -317,6 +352,7 @@ export type Database = {
       giveaway_entries: Tbl<GiveawayEntryRow>;
       google_tokens: Tbl<GoogleTokenRow>;
       pending_bookings: Tbl<PendingBookingRow>;
+      parts_orders: Tbl<PartsOrderRow>;
       gallery_jobs: Tbl<GalleryJobRow>;
     };
     Views: { [_ in never]: never };

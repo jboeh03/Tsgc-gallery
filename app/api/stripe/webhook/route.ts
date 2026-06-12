@@ -9,6 +9,7 @@ import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import { updateJob, logEvent } from "@/lib/db/writes";
 import { fulfillWeberBooking, scheduleWeberJob } from "@/lib/weber/fulfill";
+import { fulfillPartsOrder } from "@/lib/parts/fulfill";
 import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
@@ -45,11 +46,16 @@ export async function POST(req: Request) {
         await scheduleWeberJob(jobId);
       }
     } else if (event.type === "checkout.session.completed") {
-      // Weber-sprint self-serve booking — fulfill the paid slot (idempotent).
+      // Self-serve checkout — fulfill the paid order (idempotent). Branch on
+      // the order kind so the parts storefront and the Weber sprint don't cross.
       const session = event.data.object as Stripe.Checkout.Session;
       const pendingId = session.metadata?.tsgc_pending_id;
       if (pendingId && session.payment_status === "paid") {
-        await fulfillWeberBooking(pendingId, session.id);
+        if (session.metadata?.tsgc_order_kind === "parts") {
+          await fulfillPartsOrder(pendingId, session.id);
+        } else {
+          await fulfillWeberBooking(pendingId, session.id);
+        }
       }
     }
   } catch (err) {

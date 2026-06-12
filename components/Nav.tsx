@@ -14,6 +14,7 @@ const BASE_LINKS: NavLink[] = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/parts", label: "Parts" },
   { href: "/quote", label: "Contact" },
 ];
 

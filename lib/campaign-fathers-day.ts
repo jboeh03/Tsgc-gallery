@@ -117,10 +117,12 @@ function etWeekday(d: Date): number {
 
 /**
  * Candidate booking dates (yyyy-mm-dd, ET): Monday–Thursday only, at least
- * FD_LEAD_HOURS out, looking `daysAhead` days forward. Capacity (slot already
- * taken) is layered on separately in lib/fathers-day/availability.ts.
+ * FD_LEAD_HOURS out, looking `daysAhead` days forward. The cleaning itself can
+ * be scheduled for any such day — it does NOT have to fall before Father's Day;
+ * the June 21 deadline only governs booking + payment (isFathersDayActive).
+ * Capacity (slot already taken) is layered on in lib/fathers-day/availability.ts.
  */
-export function fathersDayCandidateDates(now: Date = new Date(), daysAhead = 21): string[] {
+export function fathersDayCandidateDates(now: Date = new Date(), daysAhead = 49): string[] {
   const earliest = etYmd(new Date(now.getTime() + FD_LEAD_HOURS * 3_600_000));
   const out: string[] = [];
   const seen = new Set<string>();

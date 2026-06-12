@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
-import { isWeberSprintActive } from "@/lib/campaign-weber";
+import { isFathersDayActive } from "@/lib/campaign-fathers-day";
 
-type NavLink = { href: string; label: string; highlight?: boolean };
+type NavLink = { href: string; label: string; highlight?: boolean; emoji?: string };
 
 const BASE_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
@@ -19,7 +19,7 @@ const BASE_LINKS: NavLink[] = [
 ];
 
 const PREVIEW_LINK: NavLink = { href: "/preview", label: "AI Preview" };
-const WEBER_LINK: NavLink = { href: "/weber", label: "Weber Deal", highlight: true };
+const FATHERS_DAY_LINK: NavLink = { href: "/fathers-day", label: "Father's Day", highlight: true, emoji: "🎁" };
 
 export default function Nav({
   showPreview = false,
@@ -49,10 +49,10 @@ export default function Nav({
   }, [overlay]);
 
   // Build the link list: optionally inject the AI Preview link, and — while
-  // the Weber sprint is live — a highlighted "Weber Deal" link before Contact.
+  // the Father's Day promo is live — a highlighted "Father's Day" link before Contact.
   const LINKS: NavLink[] = [...BASE_LINKS];
   if (showPreview) LINKS.splice(4, 0, PREVIEW_LINK);
-  if (isWeberSprintActive()) LINKS.splice(LINKS.length - 1, 0, WEBER_LINK);
+  if (isFathersDayActive()) LINKS.splice(LINKS.length - 1, 0, FATHERS_DAY_LINK);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);
@@ -99,7 +99,7 @@ export default function Nav({
                       : `hover:text-burgundy-400 ${isActive(l.href) ? "text-burgundy-400" : ""}`
                   }
                 >
-                  {l.highlight ? `🔥 ${l.label}` : l.label}
+                  {l.highlight ? `${l.emoji ?? "🔥"} ${l.label}` : l.label}
                 </Link>
               </li>
             ))}
@@ -172,7 +172,7 @@ export default function Nav({
                     : `block py-3 hover:text-burgundy-400 ${isActive(l.href) ? "text-burgundy-400" : ""}`
                 }
               >
-                {l.highlight ? `🔥 ${l.label}` : l.label}
+                {l.highlight ? `${l.emoji ?? "🔥"} ${l.label}` : l.label}
               </Link>
             </li>
           ))}

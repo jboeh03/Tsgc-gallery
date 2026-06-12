@@ -81,7 +81,7 @@ export default function FathersDayPage() {
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Link
-                  href={`/quote?promo=${featured.code}`}
+                  href={`/fathers-day/book?deal=${featured.id === "bogo" ? "bundle" : "single"}`}
                   className="inline-flex items-center justify-center rounded-md bg-burgundy px-7 py-3.5 text-sm font-semibold uppercase tracking-widest text-bone shadow transition hover:bg-burgundy-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                 >
                   Treat Dad &rarr;
@@ -217,7 +217,7 @@ export default function FathersDayPage() {
               Offers end {FATHERS_DAY.longDeadline}
             </span>
             <Link
-              href={`/quote?promo=${featured.code}`}
+              href={`/fathers-day/book?deal=${featured.id === "bogo" ? "bundle" : "single"}`}
               className="text-xs font-semibold uppercase tracking-widest underline underline-offset-4 transition hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 sm:text-sm"
             >
               Treat Dad &rarr;
@@ -289,7 +289,7 @@ function OfferCard({
 
       {active ? (
         <Link
-          href={`/quote?promo=${tier.code}`}
+          href={`/fathers-day/book?deal=${tier.id === "bogo" ? "bundle" : "single"}`}
           className={`mt-5 inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-semibold uppercase tracking-widest transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
             featured
               ? "bg-burgundy text-bone shadow hover:bg-burgundy-400"

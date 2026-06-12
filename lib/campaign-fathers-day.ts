@@ -64,3 +64,73 @@ export function tierByCode(
   const upper = code.toUpperCase();
   return FATHERS_DAY.tiers.find((t) => t.code === upper);
 }
+
+// ───────────────────────── Booking flow (DADS25 "book + pay") ──────────────
+//
+// The standard 25%-off deal lets a customer book, schedule, and pay a flat
+// $299 now. $299 is the full (discounted) price for most grills; for a larger
+// / premium grill it's a minimum deposit applied as a credit toward the full
+// price, which we confirm within 24–48h. Scheduling rules: two slots a day,
+// Monday–Thursday only, nothing within 72h of booking. All times Eastern.
+
+/** Flat charge to book + schedule + confirm a standard-deal cleaning. */
+export const FD_BOOKING_DEPOSIT = 299;
+
+/** Minimum notice before a bookable day (hours). */
+export const FD_LEAD_HOURS = 72;
+
+/** The two daily windows. `start` (HH:mm, ET) drives the calendar event. */
+export const FD_SLOTS = [
+  { id: "am", label: "10am – 1pm", start: "10:00" },
+  { id: "pm", label: "2pm – 5pm", start: "14:00" },
+] as const;
+
+export type FdSlot = (typeof FD_SLOTS)[number];
+export type FdSlotId = FdSlot["id"];
+
+export function fdSlotById(id: string | null | undefined): FdSlot | undefined {
+  return FD_SLOTS.find((s) => s.id === id);
+}
+
+export function fdSlotByStart(start: string | null | undefined): FdSlot | undefined {
+  return FD_SLOTS.find((s) => s.start === start);
+}
+
+const ET_TZ = "America/New_York";
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** yyyy-mm-dd for a Date, evaluated in Eastern time. */
+function etYmd(d: Date): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: ET_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+/** 0=Sun … 6=Sat for a Date, evaluated in Eastern time. */
+function etWeekday(d: Date): number {
+  const wd = new Intl.DateTimeFormat("en-US", { timeZone: ET_TZ, weekday: "short" }).format(d);
+  return WEEKDAYS.indexOf(wd);
+}
+
+/**
+ * Candidate booking dates (yyyy-mm-dd, ET): Monday–Thursday only, at least
+ * FD_LEAD_HOURS out, looking `daysAhead` days forward. Capacity (slot already
+ * taken) is layered on separately in lib/fathers-day/availability.ts.
+ */
+export function fathersDayCandidateDates(now: Date = new Date(), daysAhead = 21): string[] {
+  const earliest = etYmd(new Date(now.getTime() + FD_LEAD_HOURS * 3_600_000));
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (let i = 0; i <= daysAhead; i++) {
+    const d = new Date(now.getTime() + i * 86_400_000);
+    const ymd = etYmd(d);
+    if (seen.has(ymd)) continue;
+    seen.add(ymd);
+    const wd = etWeekday(d);
+    if (wd >= 1 && wd <= 4 && ymd >= earliest) out.push(ymd);
+  }
+  return out;
+}

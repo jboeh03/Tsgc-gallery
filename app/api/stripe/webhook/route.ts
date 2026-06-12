@@ -10,6 +10,7 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe/client";
 import { updateJob, logEvent } from "@/lib/db/writes";
 import { fulfillWeberBooking, scheduleWeberJob } from "@/lib/weber/fulfill";
 import { fulfillPartsOrder } from "@/lib/parts/fulfill";
+import { fulfillFathersDayBooking } from "@/lib/fathers-day/fulfill";
 import { logError } from "@/lib/observability";
 
 export const runtime = "nodejs";
@@ -53,6 +54,8 @@ export async function POST(req: Request) {
       if (pendingId && session.payment_status === "paid") {
         if (session.metadata?.tsgc_order_kind === "parts") {
           await fulfillPartsOrder(pendingId, session.id);
+        } else if (session.metadata?.tsgc_campaign === "fathers-day") {
+          await fulfillFathersDayBooking(pendingId, session.id);
         } else {
           await fulfillWeberBooking(pendingId, session.id);
         }

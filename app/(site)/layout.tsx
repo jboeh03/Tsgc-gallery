@@ -4,6 +4,7 @@ import PromoBanner from "@/components/PromoBanner";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Cursor from "@/components/motion/Cursor";
 import GoogleAdsTag from "@/components/GoogleAdsTag";
+import ConciergeWidget from "@/components/ConciergeWidget";
 import { isPreviewVisible } from "@/lib/preview-flag";
 import { isCampaignActive } from "@/lib/campaign";
 import { isWeberSprintActive } from "@/lib/campaign-weber";
@@ -21,6 +22,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <Nav showPreview={isPreviewVisible()} bannerActive={bannerActive} />
       <main className="flex-1">{children}</main>
       <Footer />
+      <ConciergeWidget />
     </SmoothScroll>
   );
 }

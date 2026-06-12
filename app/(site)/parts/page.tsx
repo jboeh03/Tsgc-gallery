@@ -4,6 +4,8 @@ import Link from "next/link";
 import { SITE } from "@/lib/site";
 import {
   partsByBrand,
+  groupPartsByBrand,
+  searchParts,
   PART_CATEGORY_LABELS,
   SHIPPING_FEE,
   type Part,
@@ -12,6 +14,7 @@ import {
 import { CartProvider } from "@/components/parts/CartProvider";
 import CartDrawer from "@/components/parts/CartDrawer";
 import AddToCartButton from "@/components/parts/AddToCartButton";
+import PartsSearch from "@/components/parts/PartsSearch";
 
 export const metadata: Metadata = {
   title: "Premium Grill Parts | Tri-State Grill Cleaning",
@@ -20,8 +23,10 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE.canonicalUrl}/parts` },
 };
 
-export default function PartsPage({ searchParams }: { searchParams: { canceled?: string } }) {
-  const brands = partsByBrand();
+export default function PartsPage({ searchParams }: { searchParams: { canceled?: string; q?: string } }) {
+  const query = (searchParams?.q ?? "").trim();
+  const matches = query ? searchParts(query) : null;
+  const brands = matches ? groupPartsByBrand(matches) : partsByBrand();
   const canceled = searchParams?.canceled === "1";
 
   return (
@@ -45,17 +50,34 @@ export default function PartsPage({ searchParams }: { searchParams: { canceled?:
               Checkout canceled — your cart is still here whenever you&apos;re ready.
             </p>
           )}
-          <p className="text-xs text-ink/60 italic">
-            Not sure which part fits? Text us a photo of your grill&apos;s rating plate and the part you need —
-            we&apos;ll confirm the exact fit before you buy.
-          </p>
+          <PartsSearch initial={query} />
+          {query ? (
+            <p className="mt-3 text-sm text-ink/70">
+              {brands.length === 0
+                ? `No parts match “${query}”.`
+                : `Showing parts matching “${query}”.`}{" "}
+              <Link href="/parts" className="text-burgundy underline">Show all parts</Link>
+            </p>
+          ) : (
+            <p className="mt-3 text-xs text-ink/60 italic">
+              Not sure which part fits? Search a part or OEM number above, or text us a photo of your grill&apos;s
+              rating plate and we&apos;ll confirm the exact fit before you buy.
+            </p>
+          )}
         </div>
 
         <div className="mx-auto max-w-6xl px-5 py-12 space-y-16">
           {brands.length === 0 && (
-            <p className="text-center text-ink/60 py-12">
-              Parts catalog coming soon — give us a call and we&apos;ll source what you need.
-            </p>
+            <div className="text-center text-ink/60 py-12">
+              {query ? (
+                <p>
+                  We don&apos;t list that one yet — but we can likely source it.{" "}
+                  <a href={SITE.smsHref} className="text-burgundy underline">Text us the part number</a> and we&apos;ll track it down.
+                </p>
+              ) : (
+                <p>Parts catalog coming soon — give us a call and we&apos;ll source what you need.</p>
+              )}
+            </div>
           )}
 
           {brands.map((brand) => (
@@ -69,7 +91,8 @@ export default function PartsPage({ searchParams }: { searchParams: { canceled?:
                 {brand.items.map((p) => (
                   <li
                     key={p.id}
-                    className="flex flex-col rounded-xl border border-border bg-white shadow-sm transition hover:shadow-md hover:border-burgundy/40 overflow-hidden"
+                    id={p.id}
+                    className="flex flex-col scroll-mt-24 rounded-xl border border-border bg-white shadow-sm transition hover:shadow-md hover:border-burgundy/40 overflow-hidden"
                   >
                     <PartMedia part={p} />
 

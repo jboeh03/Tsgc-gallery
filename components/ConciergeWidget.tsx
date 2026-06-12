@@ -10,6 +10,33 @@ import { useEffect, useRef, useState } from "react";
  */
 type Msg = { role: "user" | "assistant"; content: string };
 
+/** Turn full URLs and site /parts links in assistant replies into clickable anchors. */
+function linkify(text: string): React.ReactNode[] {
+  const re = /(https?:\/\/[^\s)]+|\/parts(?:\?[^\s)]*)?)/g;
+  const out: React.ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    const href = m[0];
+    const external = href.startsWith("http");
+    out.push(
+      <a
+        key={m.index}
+        href={href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        className="font-medium text-burgundy underline"
+      >
+        {href}
+      </a>,
+    );
+    last = m.index + href.length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
 const GREETING =
   "Hi! 👋 I'm the Tri-State Grill Cleaning concierge. I can answer questions, ballpark a price for your grill, and get you on the schedule. What can I help with?";
 
@@ -103,7 +130,7 @@ export default function ConciergeWidget() {
                       : "bg-white text-ink ring-1 ring-border"
                   }`}
                 >
-                  {m.content}
+                  {m.role === "assistant" ? linkify(m.content) : m.content}
                 </div>
               </div>
             ))}

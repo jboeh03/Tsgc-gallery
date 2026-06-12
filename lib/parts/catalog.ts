@@ -158,12 +158,35 @@ export function getPartById(id: string): Part | undefined {
   return PARTS.find((p) => p.id === id);
 }
 
-/** Group parts by brand, preserving PART_BRANDS order; drops empty brands. */
-export function partsByBrand(): { id: PartBrand; label: string; blurb: string; items: Part[] }[] {
+/** Group an arbitrary list of parts by brand, preserving PART_BRANDS order. */
+export function groupPartsByBrand(parts: Part[]): { id: PartBrand; label: string; blurb: string; items: Part[] }[] {
   return PART_BRANDS.map((b) => ({
     ...b,
-    items: PARTS.filter((p) => p.brand === b.id).sort(
-      (a, z) => Number(z.featured ?? false) - Number(a.featured ?? false)
-    ),
+    items: parts
+      .filter((p) => p.brand === b.id)
+      .sort((a, z) => Number(z.featured ?? false) - Number(a.featured ?? false)),
   })).filter((b) => b.items.length > 0);
+}
+
+/** Group the full catalog by brand (drops empty brands). */
+export function partsByBrand() {
+  return groupPartsByBrand(PARTS);
+}
+
+/**
+ * Search the catalog by part number, OEM number, brand, item name, category,
+ * or model fitment. Part-number matching ignores spaces/hyphens, so "lx-4704",
+ * "LX4704", and "34704" all find the same grate. Empty query returns everything.
+ */
+export function searchParts(query: string): Part[] {
+  const raw = query.trim().toLowerCase();
+  if (!raw) return PARTS;
+  const norm = raw.replace(/[^a-z0-9]/g, "");
+  return PARTS.filter((p) => {
+    const hay = [p.partNumber, p.oemPartNumber, p.brand, p.name, p.category, ...p.modelsFit]
+      .join(" ")
+      .toLowerCase();
+    if (hay.includes(raw)) return true;
+    return norm.length >= 2 && hay.replace(/[^a-z0-9]/g, "").includes(norm);
+  });
 }

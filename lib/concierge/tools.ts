@@ -8,6 +8,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { classifyValueFromDescription } from "@/lib/leads/valueEstimator";
 import { ingestLead } from "@/lib/db/ingest";
+import { searchParts } from "@/lib/parts/catalog";
 
 export const CONCIERGE_TOOLS: Anthropic.Tool[] = [
   {
@@ -49,6 +50,22 @@ export const CONCIERGE_TOOLS: Anthropic.Tool[] = [
         notes: { type: "string", description: "Anything else useful for the crew" },
       },
       required: ["name"],
+    },
+  },
+  {
+    name: "find_part",
+    description:
+      "Look up replacement parts we sell for premium built-in grills (Alfresco, American Outdoor Grills, Artisan, DCS, Delta Heat, Lynx, Sedona, Twin Eagles, Viking, Wolf) — burners, cooking grates, electrodes, igniters, heat shields, flash tubes, microswitches. Call this whenever someone gives a part number, OEM number, brand, or grill model and wants a part. Returns matching parts with retail price and a direct link to share.",
+    input_schema: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        query: {
+          type: "string",
+          description: "A part number, OEM number, brand, or grill model (e.g. 'LX4704', '34704', 'Lynx grate', 'Twin Eagles 36').",
+        },
+      },
+      required: ["query"],
     },
   },
 ];
@@ -114,6 +131,28 @@ export async function runConciergeTool(
       });
       if (!res) return JSON.stringify({ ok: false, error: "Couldn't save right now — tell them to call/text us." });
       return JSON.stringify({ ok: true });
+    }
+
+    if (name === "find_part") {
+      const matches = searchParts(s(input.query) ?? "").slice(0, 6);
+      if (!matches.length) {
+        return JSON.stringify({
+          ok: true,
+          count: 0,
+          note: "No catalog match. Offer to source it — capture the lead with the part/OEM number and grill model.",
+        });
+      }
+      return JSON.stringify({
+        ok: true,
+        count: matches.length,
+        parts: matches.map((p) => ({
+          name: `${p.brand} ${p.name}`,
+          partNumber: p.partNumber,
+          oem: p.oemPartNumber,
+          price: p.retailPrice,
+          link: `/parts?q=${encodeURIComponent(p.partNumber)}`,
+        })),
+      });
     }
 
     return `Unknown tool: ${name}`;

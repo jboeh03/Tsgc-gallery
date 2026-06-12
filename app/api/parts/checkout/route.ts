@@ -123,12 +123,16 @@ export async function POST(req: NextRequest) {
     if (error || !pending) throw new Error(error?.message ?? "could not start order");
     const pendingId = (pending as { id: string }).id;
 
+    // Tax codes: general tangible goods for parts, shipping for the delivery
+    // line. Stripe Tax (automatic_tax below) computes the destination rate from
+    // the address Checkout collects, so OH/KY/IN county rates are all correct.
     const stripeLines = lineItems.map((l) => ({
       quantity: l.qty,
       price_data: {
         currency: "usd",
         unit_amount: l.unitPrice * 100,
-        product_data: { name: `${l.brand} ${l.name} (#${l.partNumber})` },
+        tax_behavior: "exclusive" as const,
+        product_data: { name: `${l.brand} ${l.name} (#${l.partNumber})`, tax_code: "txcd_99999999" },
       },
     }));
     if (shippingFee > 0) {
@@ -137,7 +141,8 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "usd",
           unit_amount: shippingFee * 100,
-          product_data: { name: "Shipping" },
+          tax_behavior: "exclusive" as const,
+          product_data: { name: "Shipping", tax_code: "txcd_92010001" },
         },
       });
     }
@@ -148,6 +153,8 @@ export async function POST(req: NextRequest) {
       customer_email: email,
       client_reference_id: pendingId,
       line_items: stripeLines,
+      // Sales tax added on top, computed from the address Checkout collects.
+      automatic_tax: { enabled: true },
       metadata: { tsgc_pending_id: pendingId, tsgc_order_kind: "parts" },
       payment_intent_data: { metadata: { tsgc_pending_id: pendingId, tsgc_order_kind: "parts" } },
       success_url: `${origin}/parts/success?session_id={CHECKOUT_SESSION_ID}`,

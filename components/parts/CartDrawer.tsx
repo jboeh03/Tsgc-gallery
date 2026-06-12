@@ -196,8 +196,12 @@ export default function CartDrawer({ shippingFee }: { shippingFee: number }) {
                   <span>{fulfillment === "ship" ? "Shipping" : "Install (on your visit)"}</span>
                   <span>{shipping > 0 ? `$${shipping}` : "Free"}</span>
                 </div>
+                <div className="flex justify-between text-sm text-ink/75">
+                  <span>Sales tax</span>
+                  <span className="text-muted">calculated at checkout</span>
+                </div>
                 <div className="flex justify-between font-semibold text-navy">
-                  <span>Total</span>
+                  <span>Subtotal</span>
                   <span>${total}</span>
                 </div>
                 {error && <p className="text-sm text-burgundy">{error}</p>}

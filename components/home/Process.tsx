@@ -79,7 +79,6 @@ export default function Process() {
         <div className="mt-14 pl-10 md:pl-16">
           <Link
             href="/quote"
-            data-cursor
             className="group inline-flex items-center gap-3 rounded-full bg-burgundy px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] transition-colors hover:bg-burgundy-400"
           >
             Start Your Quote

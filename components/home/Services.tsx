@@ -39,7 +39,6 @@ export default function Services() {
           {SERVICES.map((s) => (
             <article
               key={s.n}
-              data-cursor
               className="group relative bg-bone p-8 transition-colors duration-500 hover:bg-white md:p-10"
             >
               <span className="font-display text-5xl text-border transition-colors duration-500 group-hover:text-burgundy-400">
@@ -62,7 +61,6 @@ export default function Services() {
         <Reveal className="mt-14" delay={0.1}>
           <Link
             href="/services"
-            data-cursor
             className="group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.25em] text-navy hover:text-burgundy"
           >
             Explore all services

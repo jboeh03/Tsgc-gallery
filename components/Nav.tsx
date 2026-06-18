@@ -9,13 +9,13 @@ import { isFathersDayActive } from "@/lib/campaign-fathers-day";
 
 type NavLink = { href: string; label: string; highlight?: boolean; emoji?: string };
 
+// Lean primary nav — the logo already links home and the "Get a Quote"
+// button covers /quote, so neither is duplicated as a text link here.
 const BASE_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/gallery", label: "Gallery" },
   { href: "/parts", label: "Parts" },
-  { href: "/quote", label: "Contact" },
 ];
 
 const PREVIEW_LINK: NavLink = { href: "/preview", label: "AI Preview" };
@@ -48,11 +48,12 @@ export default function Nav({
     return () => window.removeEventListener("scroll", onScroll);
   }, [overlay]);
 
-  // Build the link list: optionally inject the AI Preview link, and — while
-  // the Father's Day promo is live — a highlighted "Father's Day" link before Contact.
+  // Build the link list: optionally inject the AI Preview link (preview hosts
+  // only, sits just after Gallery), and — while the Father's Day promo is live —
+  // a highlighted "Father's Day" link at the end, nearest the Get-a-Quote CTA.
   const LINKS: NavLink[] = [...BASE_LINKS];
-  if (showPreview) LINKS.splice(4, 0, PREVIEW_LINK);
-  if (isFathersDayActive()) LINKS.splice(LINKS.length - 1, 0, FATHERS_DAY_LINK);
+  if (showPreview) LINKS.splice(3, 0, PREVIEW_LINK);
+  if (isFathersDayActive()) LINKS.push(FATHERS_DAY_LINK);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href);

@@ -56,7 +56,6 @@ export default function GalleryStrip() {
         </div>
         <Link
           href="/gallery"
-          data-cursor
           className="hidden shrink-0 items-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-navy hover:text-burgundy md:inline-flex"
         >
           Full gallery →
@@ -67,7 +66,6 @@ export default function GalleryStrip() {
         {SHOTS.map((s, i) => (
           <figure
             key={i}
-            data-cursor
             className="group relative aspect-[4/5] w-[68vw] shrink-0 overflow-hidden rounded-2xl bg-navy-900 sm:w-[44vw] md:w-[30vw] lg:w-[24vw]"
           >
             <Image
@@ -91,7 +89,6 @@ export default function GalleryStrip() {
       <div className="mt-10 px-6 text-center md:hidden">
         <Link
           href="/gallery"
-          data-cursor
           className="text-sm font-semibold uppercase tracking-[0.25em] text-navy hover:text-burgundy"
         >
           Full gallery →

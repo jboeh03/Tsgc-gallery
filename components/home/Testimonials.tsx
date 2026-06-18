@@ -54,7 +54,6 @@ export default function Testimonials() {
             href={SITE.social.googleReview}
             target="_blank"
             rel="noopener noreferrer"
-            data-cursor
             className="group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.25em] text-navy hover:text-burgundy"
           >
             Leave us a Google review

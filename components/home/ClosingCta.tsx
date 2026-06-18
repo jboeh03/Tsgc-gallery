@@ -73,7 +73,6 @@ export default function ClosingCta() {
         <div className="closing-rise mt-10 flex flex-wrap items-center justify-center gap-6">
           <Link
             href="/quote"
-            data-cursor
             className="group inline-flex items-center gap-3 rounded-full bg-bone px-9 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-navy-900 transition-colors hover:bg-white"
           >
             Get a Free Quote
@@ -81,7 +80,6 @@ export default function ClosingCta() {
           </Link>
           <a
             href={SITE.phoneHref}
-            data-cursor
             className="text-sm font-medium uppercase tracking-[0.2em] text-bone/85 hover:text-burgundy-400"
           >
             {SITE.phone}

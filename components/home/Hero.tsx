@@ -102,7 +102,6 @@ export default function Hero() {
           <div className="hero-actions mt-10 flex flex-wrap items-center gap-6">
             <Link
               href="/quote"
-              data-cursor
               className="group inline-flex items-center gap-3 rounded-full bg-bone text-navy-900 px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] transition-colors hover:bg-white"
             >
               Request a Quote
@@ -110,7 +109,6 @@ export default function Hero() {
             </Link>
             <a
               href={SITE.phoneHref}
-              data-cursor
               className="text-sm font-medium uppercase tracking-[0.2em] text-bone/80 hover:text-burgundy-400"
             >
               {SITE.phone}

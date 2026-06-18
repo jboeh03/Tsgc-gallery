@@ -2,7 +2,6 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import PromoBanner from "@/components/PromoBanner";
 import SmoothScroll from "@/components/motion/SmoothScroll";
-import Cursor from "@/components/motion/Cursor";
 import GoogleAdsTag from "@/components/GoogleAdsTag";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import { isPreviewVisible } from "@/lib/preview-flag";
@@ -17,7 +16,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   return (
     <SmoothScroll>
       <GoogleAdsTag />
-      <Cursor />
       <PromoBanner active={bannerActive} />
       <Nav showPreview={isPreviewVisible()} bannerActive={bannerActive} />
       <main className="flex-1">{children}</main>

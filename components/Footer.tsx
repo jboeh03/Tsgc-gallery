@@ -129,11 +129,19 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-bone/10">
-        <div className="mx-auto max-w-6xl px-5 py-5 text-xs text-bone/60 flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
+        <div className="mx-auto max-w-6xl px-5 py-5 text-xs text-bone/60 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <p>
             &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
-          <p>★ Veteran-Founded &amp; Operated</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link href="/privacy" className="hover:text-burgundy-400">
+              Privacy Policy
+            </Link>
+            <Link href="/sms-terms" className="hover:text-burgundy-400">
+              SMS Terms
+            </Link>
+            <span>★ Veteran-Founded &amp; Operated</span>
+          </div>
         </div>
       </div>
     </footer>

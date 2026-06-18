@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
+import SmsConsent from "@/components/SmsConsent";
 import { compressImage } from "@/lib/image-compress";
 import { trackQuoteConversion } from "@/lib/ads";
 import type { Assessment } from "@/lib/preview/types";
@@ -42,6 +43,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
   const [neighbor, setNeighbor] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const [photo, setPhoto] = useState<{ base64: string; mime: string; preview: string } | null>(null);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -64,6 +66,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
     if (!photo) { setError("Add a photo of your Weber so we can quote it."); return; }
     if (!serviceAddress.trim()) { setError("Service address is required."); return; }
     if (!email.trim() || !phone.trim() || !preferredDate) { setError("Phone, email, and a preferred date are required."); return; }
+    if (!smsConsent) { setError("Please check the box agreeing to receive texts so we can send your quote and confirm your appointment."); return; }
     setBusy(true); setError(null);
     try {
       const res = await fetch("/api/weber/quote", {
@@ -92,6 +95,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
         body: JSON.stringify({
           firstName, lastName, phone, email, serviceAddress,
           preferredDate, preferredTime, model, burners, neighbor,
+          smsConsent: true,
           assessment: quote.assessment,
           imageBase64: photo?.base64, imageMimeType: photo?.mime,
         }),
@@ -220,6 +224,8 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
         <input type="checkbox" checked={neighbor} onChange={(e) => setNeighbor(e.target.checked)} className="mt-0.5" />
         <span>I&apos;m booking with a neighbor or friend within 5 miles — <strong className="text-burgundy">30% off</strong> instead of 15%.</span>
       </label>
+
+      <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
 
       {error && <p className="text-sm text-burgundy">{error}</p>}
 

@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site";
 import { tierByCode } from "@/lib/campaign";
 import AddressAutocomplete from "@/components/weber/AddressAutocomplete";
+import SmsConsent from "@/components/SmsConsent";
 import { compressImage } from "@/lib/image-compress";
 import { trackQuoteConversion } from "@/lib/ads";
 
@@ -55,6 +56,7 @@ export default function QuoteForm() {
   const [size, setSize] = useState("");
   const [exactModel, setExactModel] = useState("");
   const [photo, setPhoto] = useState<{ base64: string; mime: string; preview: string } | null>(null);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const needsRepairDesc = serviceType === "Inspection & Repair" || serviceType === "Both";
 
@@ -76,6 +78,7 @@ export default function QuoteForm() {
     const form = e.currentTarget;
     if (!address.trim()) { setErr("Service address is required."); return; }
     if (!serviceType) { setErr("Pick a service."); return; }
+    if (!smsConsent) { setErr("Please check the box agreeing to receive texts so we can reach you about your service."); return; }
     setStatus("submitting"); setErr(null);
 
     const base: Record<string, unknown> = Object.fromEntries(new FormData(form));
@@ -90,6 +93,7 @@ export default function QuoteForm() {
       zip: address.match(/\b(\d{5})\b/)?.[1] || base.zip || "",
       grillModel,
       notes,
+      smsConsent: true,
       source: "website-quote-form",
       timestamp: new Date().toISOString(),
     };
@@ -112,7 +116,7 @@ export default function QuoteForm() {
       setStatus("success");
       trackQuoteConversion();
       form.reset();
-      setAddress(""); setServiceType(""); setRepairDesc(""); setBrand(""); setSize(""); setExactModel(""); setPhoto(null);
+      setAddress(""); setServiceType(""); setRepairDesc(""); setBrand(""); setSize(""); setExactModel(""); setPhoto(null); setSmsConsent(false);
     } catch {
       setStatus("error");
     }
@@ -265,6 +269,8 @@ export default function QuoteForm() {
       <Field label="Anything else we should know?" sub="Optional" htmlFor="notes">
         <textarea id="notes" name="notes" rows={3} placeholder="Grill condition, gate code, access notes, or anything else..." className={inputCls} />
       </Field>
+
+      <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
 
       {err && <p className="text-sm text-burgundy">{err}</p>}
 

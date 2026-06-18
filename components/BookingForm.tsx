@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { SITE } from "@/lib/site";
 import { AREAS } from "@/lib/areas";
+import SmsConsent from "@/components/SmsConsent";
 
 const TIME_WINDOWS = ["Morning (8a–12p)", "Afternoon (12p–5p)", "Evening (5p–8p)", "Flexible"];
 
@@ -14,9 +15,14 @@ const inputCls =
 export default function BookingForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!smsConsent) {
+      setError("Please check the box agreeing to receive texts so we can confirm your appointment.");
+      return;
+    }
     setStatus("submitting");
     setError(null);
     const fd = new FormData(e.currentTarget);
@@ -31,6 +37,7 @@ export default function BookingForm() {
       preferredTime: fd.get("preferredTime"),
       grillModel: fd.get("grillModel"),
       notes: fd.get("notes"),
+      smsConsent: true,
     };
     try {
       const res = await fetch("/api/book", {
@@ -101,6 +108,8 @@ export default function BookingForm() {
       </div>
       <textarea name="notes" rows={3} placeholder="Anything else? (gate code, grill condition, etc.)" className={inputCls} />
 
+      <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
+
       <button
         type="submit"
         disabled={status === "submitting"}
@@ -108,9 +117,6 @@ export default function BookingForm() {
       >
         {status === "submitting" ? "Sending…" : "Request this time →"}
       </button>
-      <p className="text-center text-xs text-muted">
-        By submitting you agree to receive texts about your service. Msg &amp; data rates may apply. Reply STOP to opt out.
-      </p>
     </form>
   );
 }

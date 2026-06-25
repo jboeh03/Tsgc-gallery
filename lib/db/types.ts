@@ -290,6 +290,22 @@ export type GalleryJobRow = {
   sort: number;
 };
 
+/** One turn of a public concierge chat, as the widget shows it (text only). */
+export type ConciergeTurn = { role: "user" | "assistant"; content: string };
+
+export type ConciergeChatRow = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  session_id: string;
+  transcript: ConciergeTurn[];
+  /** Count of customer (user) messages — 0 = opened the widget but never typed. */
+  message_count: number;
+  converted: boolean;
+  contact_id: string | null;
+  ip: string | null;
+};
+
 export type CooRole = "user" | "assistant";
 export type CooMessageRow = {
   id: string;
@@ -354,6 +370,7 @@ export type Database = {
       pending_bookings: Tbl<PendingBookingRow>;
       parts_orders: Tbl<PartsOrderRow>;
       gallery_jobs: Tbl<GalleryJobRow>;
+      concierge_chats: Tbl<ConciergeChatRow>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

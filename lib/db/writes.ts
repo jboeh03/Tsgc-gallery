@@ -6,10 +6,11 @@
  * read top-to-bottom. Idempotency for inbound SMS is anchored on messages.twilio_sid.
  */
 
-import { getSupabase } from "./supabase";
+import { getSupabase, isSupabaseConfigured } from "./supabase";
 import type {
   ContactRow, ConversationRow, MessageRow, DraftRow, AppointmentRow, JobRow,
   MessageDirection, MessageChannel, EventKind, PipelineStatus,
+  ConciergeChatRow, ConciergeTurn,
 } from "./types";
 
 /** Upsert a contact by phone (the SMS dedup key). Inbound text implies consent. */
@@ -211,6 +212,44 @@ export async function updateContact(contactId: string, patch: Partial<ContactRow
   const sb = getSupabase();
   const { error } = await sb.from("contacts").update(patch).eq("id", contactId);
   if (error) throw new Error(error.message);
+}
+
+/**
+ * Persist a public concierge chat, keyed by the client-generated session_id.
+ * The widget re-sends the full running transcript each turn, so this upserts
+ * the whole conversation — always complete, no per-turn stitching.
+ *
+ * `insertOnly` (the widget's open-ping) creates the row once but never clobbers
+ * a richer transcript a real message may have already written. Best-effort: a
+ * no-op when Supabase is unconfigured, and it swallows its own errors so chat
+ * logging never blocks the reply reaching the customer.
+ */
+export async function saveConciergeChat(input: {
+  sessionId: string;
+  transcript: ConciergeTurn[];
+  ip?: string | null;
+  converted?: boolean;
+  contactId?: string | null;
+  insertOnly?: boolean;
+}): Promise<void> {
+  if (!isSupabaseConfigured()) return;
+  try {
+    const row: Partial<ConciergeChatRow> = {
+      session_id: input.sessionId,
+      transcript: input.transcript,
+      message_count: input.transcript.filter((m) => m.role === "user").length,
+      ip: input.ip ?? null,
+      updated_at: new Date().toISOString(),
+    };
+    // Only set these when truthy so a later plain turn never un-converts a row.
+    if (input.converted) row.converted = true;
+    if (input.contactId) row.contact_id = input.contactId;
+    await getSupabase()
+      .from("concierge_chats")
+      .upsert(row, { onConflict: "session_id", ignoreDuplicates: input.insertOnly ?? false });
+  } catch {
+    /* best-effort chat logging */
+  }
 }
 
 /** Fire-and-forget-ish audit log; never throws into the caller's happy path. */

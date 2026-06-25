@@ -130,7 +130,8 @@ export async function runConciergeTool(
         notes,
       });
       if (!res) return JSON.stringify({ ok: false, error: "Couldn't save right now — tell them to call/text us." });
-      return JSON.stringify({ ok: true });
+      // contactId lets the route mark this chat converted + link it to the CRM lead.
+      return JSON.stringify({ ok: true, contactId: res.contactId });
     }
 
     if (name === "find_part") {

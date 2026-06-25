@@ -49,6 +49,30 @@ export default function ConciergeWidget() {
   const [busy, setBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sessionIdRef = useRef<string | null>(null);
+  const loggedOpenRef = useRef(false);
+
+  /** Lazily mint one session id per chat (client-only, in event handlers). */
+  function sessionId(): string {
+    if (!sessionIdRef.current) sessionIdRef.current = crypto.randomUUID();
+    return sessionIdRef.current;
+  }
+
+  /** Toggle the panel; the first time it opens, record the open (even if they never type). */
+  function toggle() {
+    setOpen((o) => {
+      const next = !o;
+      if (next && !loggedOpenRef.current) {
+        loggedOpenRef.current = true;
+        fetch("/api/concierge/log", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ sessionId: sessionId(), messages }),
+        }).catch(() => {});
+      }
+      return next;
+    });
+  }
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -69,7 +93,7 @@ export default function ConciergeWidget() {
       const res = await fetch("/api/concierge", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, sessionId: sessionId() }),
       });
       const d = (await res.json()) as { reply?: string; error?: string };
       setMessages((m) => [
@@ -91,7 +115,7 @@ export default function ConciergeWidget() {
       {/* Launcher */}
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         aria-label={open ? "Close chat" : "Chat with us"}
         aria-expanded={open}
         className="fixed bottom-5 right-5 z-[55] flex h-14 w-14 items-center justify-center rounded-full bg-burgundy text-bone shadow-xl ring-1 ring-black/10 transition hover:bg-burgundy-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"

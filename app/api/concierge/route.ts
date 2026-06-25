@@ -10,6 +10,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildConciergePrompt } from "@/lib/concierge/prompt";
 import { CONCIERGE_TOOLS, runConciergeTool } from "@/lib/concierge/tools";
+import { saveConciergeChat } from "@/lib/db/writes";
 import { clientIp, publicFormAllowed } from "@/lib/ratelimit";
 import { SITE } from "@/lib/site";
 
@@ -26,7 +27,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const body = (await req.json().catch(() => ({}))) as { messages?: ClientMsg[] };
+  const body = (await req.json().catch(() => ({}))) as {
+    messages?: ClientMsg[];
+    sessionId?: string;
+  };
+  const sessionId = typeof body.sessionId === "string" && body.sessionId ? body.sessionId : null;
   const incoming = Array.isArray(body.messages) ? body.messages : [];
   const msgs = incoming
     .filter(
@@ -56,6 +61,7 @@ export async function POST(req: Request) {
   }));
 
   let reply = "";
+  let capturedContactId: string | null = null;
   try {
     for (let i = 0; i < 4; i++) {
       const r = await client.messages.create({
@@ -77,6 +83,12 @@ export async function POST(req: Request) {
               block.name,
               block.input as Record<string, unknown>,
             );
+            if (block.name === "capture_lead") {
+              try {
+                const parsed = JSON.parse(out) as { ok?: boolean; contactId?: string };
+                if (parsed.ok && parsed.contactId) capturedContactId = parsed.contactId;
+              } catch { /* non-JSON tool output — ignore */ }
+            }
             results.push({ type: "tool_result", tool_use_id: block.id, content: out });
           }
         }
@@ -99,5 +111,19 @@ export async function POST(req: Request) {
   }
 
   if (!reply) reply = "Sorry, I didn't catch that — mind rephrasing?";
+
+  // Persist the chat (best-effort) so /admin/concierge can see it. The widget
+  // re-sends the full running transcript, so msgs + this reply IS the whole
+  // conversation as the customer saw it.
+  if (sessionId) {
+    await saveConciergeChat({
+      sessionId,
+      transcript: [...msgs, { role: "assistant", content: reply }],
+      ip: clientIp(req),
+      converted: Boolean(capturedContactId),
+      contactId: capturedContactId,
+    });
+  }
+
   return Response.json({ reply });
 }

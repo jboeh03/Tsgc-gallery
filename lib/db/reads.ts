@@ -15,7 +15,7 @@ import type { LeadTier } from "@/lib/leads/types";
 import type {
   Lead, Job, JobRow, ContactRow, ConversationRow, MessageRow,
   ConversationSummary, ConversationThread, MessageDirection, MessageChannel,
-  CooTaskRow, CooMessageRow, GalleryJobRow,
+  CooTaskRow, CooMessageRow, GalleryJobRow, ConciergeChatRow,
 } from "./types";
 
 type JobWithContact = JobRow & { contact: ContactRow | null };
@@ -452,4 +452,47 @@ export async function readConversation(id: string): Promise<ConversationThread |
     messages: (messages ?? []) as MessageRow[],
     activeDraft: (draft as ConversationThread["activeDraft"]) ?? null,
   };
+}
+
+// ---- concierge chats -------------------------------------------------------
+export type ConciergeChatView = ConciergeChatRow & {
+  contactName: string | null;
+  contactPhone: string | null;
+};
+
+/**
+ * Public concierge chats, newest first, with the linked contact's name/phone
+ * resolved for converted sessions (so the admin row can deep-link to the CRM).
+ * Uncached — the /admin/concierge page is force-dynamic so it always reads live.
+ */
+export async function readConciergeChats(limit = 200): Promise<ConciergeChatView[]> {
+  if (!isSupabaseConfigured()) return [];
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("concierge_chats")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  const chats = data as ConciergeChatRow[];
+
+  const ids = Array.from(
+    new Set(chats.map((c) => c.contact_id).filter((v): v is string => Boolean(v)))
+  );
+  const byId = new Map<string, { name: string | null; phone: string | null }>();
+  if (ids.length) {
+    const { data: contacts } = await sb
+      .from("contacts")
+      .select("id, name, phone_e164")
+      .in("id", ids);
+    for (const c of (contacts ?? []) as Pick<ContactRow, "id" | "name" | "phone_e164">[]) {
+      byId.set(c.id, { name: c.name, phone: c.phone_e164 });
+    }
+  }
+
+  return chats.map((c) => ({
+    ...c,
+    contactName: c.contact_id ? byId.get(c.contact_id)?.name ?? null : null,
+    contactPhone: c.contact_id ? byId.get(c.contact_id)?.phone ?? null : null,
+  }));
 }

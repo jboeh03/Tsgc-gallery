@@ -263,7 +263,7 @@ export default function QuoteForm() {
       )}
 
       <Field label="Promo Code" sub="Optional" htmlFor="promoCode">
-        <input id="promoCode" name="promoCode" type="text" defaultValue={tier ? tier.code : ""} placeholder="e.g. MEMORIAL10" className={`${inputCls} uppercase`} style={{ textTransform: "uppercase" }} />
+        <input id="promoCode" name="promoCode" type="text" defaultValue={tier ? tier.code : promoFromUrl} placeholder="e.g. MEMORIAL10" className={`${inputCls} uppercase`} style={{ textTransform: "uppercase" }} />
       </Field>
 
       <Field label="Anything else we should know?" sub="Optional" htmlFor="notes">

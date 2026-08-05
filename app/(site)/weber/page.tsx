@@ -63,7 +63,7 @@ export default async function WeberPage() {
             Your Weber, cooking like new again.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-bone/80">
-            Send us a photo of your Weber and we&apos;ll send back a real-time quote within the hour, discount already in it.
+            Send us a photo of your Weber and we&apos;ll send back a real quote as soon as we can, discount already in it.
             <strong className="text-bone"> 15% off solo, 30% if you split a visit with a neighbor or friend within 5 miles.</strong> You
             pick the day and time and let us know what we&apos;re working with — we&apos;ll send a payment link to secure your
             booking and get you on the schedule.
@@ -90,7 +90,7 @@ export default async function WeberPage() {
               <h2 className="font-display text-lg text-navy">How it works</h2>
               <ol className="list-decimal list-inside space-y-1.5">
                 <li>Send a photo, pick your day &amp; time, and tell us what we&apos;re working with.</li>
-                <li>Get a real-time quote within the hour — discount already applied, no upsell.</li>
+                <li>Get a real quote as soon as we can — discount already applied, no upsell.</li>
                 <li>We send a payment link to secure your booking and get you on the schedule.</li>
               </ol>
               <p className="text-xs text-ink/55">

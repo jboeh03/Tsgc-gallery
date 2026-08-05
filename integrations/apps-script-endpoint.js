@@ -241,7 +241,7 @@ Received:  ${timestamp}`;
         'We got your request — Tri-State Grill Cleaning',
 `Hi ${firstName || 'there'},
 
-Thanks for reaching out to Tri-State Grill Cleaning! We received your request and will follow up within 24 hours with a quote and available times.${grillLine}
+Thanks for reaching out to Tri-State Grill Cleaning! We received your request and will follow up as soon as we can with a quote and available times.${grillLine}
 
 Prefer to talk now? Call or text us:
 (657) 831-4276

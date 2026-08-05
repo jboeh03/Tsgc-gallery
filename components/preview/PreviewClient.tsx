@@ -297,8 +297,8 @@ export default function PreviewClient() {
           className="mt-2 w-full rounded-md border border-border bg-white px-3.5 py-2.5 text-sm"
         />
         <p className="mt-1.5 text-xs text-muted">
-          We&apos;ll email the preview link and follow up with a real quote
-          within 24 hours.
+          We&apos;ll email the preview link and follow up with a real quote as
+          soon as we can.
         </p>
       </div>
 

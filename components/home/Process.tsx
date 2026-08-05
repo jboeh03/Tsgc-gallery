@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const STEPS = [
-  { n: "01", title: "Request a Quote", body: "Send the short form or call. We follow up within 24 hours with honest pricing." },
+  { n: "01", title: "Request a Quote", body: "Send the short form or call. We follow up as soon as we can with honest pricing." },
   { n: "02", title: "Schedule Your Clean", body: "Pick a time that works. We come to your home — no hauling, no dropoff." },
   { n: "03", title: "We Do the Work", body: "Full break-down, degrease, clean, inspect. Two to six hours, start to finish." },
   { n: "04", title: "Fire It Up", body: "Your grill is ready to cook — cleaner, safer, better-tasting from day one." },

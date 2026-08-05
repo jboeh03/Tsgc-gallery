@@ -70,7 +70,7 @@ export function tierByCode(
 // The standard 25%-off deal lets a customer book, schedule, and pay a flat
 // $299 now. $299 is the full (discounted) price for most grills; for a larger
 // / premium grill it's a minimum deposit applied as a credit toward the full
-// price, which we confirm within 24–48h. Scheduling rules: two slots a day,
+// price, which we confirm as soon as we can. Scheduling rules: two slots a day,
 // Monday–Thursday only, nothing within 72h of booking. All times Eastern.
 
 /** Flat charge to book + schedule + confirm a standard-deal cleaning. */

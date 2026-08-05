@@ -34,3 +34,10 @@ export const SITE = {
   quoteEndpoint:
     "https://script.google.com/macros/s/AKfycbzAgVBZv6bc2ncRZ9oyFfzPvODm4Kdua9xZYCOi8fWaUG-JAotfX_LuK5fDm80BPn52/exec",
 } as const;
+
+// TEMP: reviews are hidden site-wide while we work through a rough stretch of
+// feedback. Flipping this to true restores the homepage reviews section and
+// re-enables the review-request agent. Also re-add the /api/agents/reviews cron
+// entry to vercel.json, and set REVIEWS_PAUSED = false in the two Apps Script
+// files under /integrations (then redeploy them) when turning this back on.
+export const SHOW_REVIEWS: boolean = false;

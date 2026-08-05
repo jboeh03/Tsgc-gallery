@@ -9,7 +9,7 @@ import { authorizeCron, runAgent } from "@/lib/agents/runner";
 import { ensureNudgeDraft } from "@/lib/agents/drafts";
 import { getSupabase } from "@/lib/db/supabase";
 import { updateJob } from "@/lib/db/writes";
-import { SITE } from "@/lib/site";
+import { SHOW_REVIEWS, SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -19,6 +19,9 @@ const first = (name: string | null | undefined) => (name || "").trim().split(/\s
 
 export async function GET(req: Request) {
   if (!authorizeCron(req)) return new Response("unauthorized", { status: 401 });
+  // Review requests are paused (see SHOW_REVIEWS). The cron entry is also
+  // removed from vercel.json — this guards manual/stale invocations.
+  if (!SHOW_REVIEWS) return Response.json({ ok: true, skipped: "reviews paused" });
 
   return runAgent("reviews", async () => {
     const sb = getSupabase();

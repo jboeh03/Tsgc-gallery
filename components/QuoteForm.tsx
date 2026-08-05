@@ -126,7 +126,7 @@ export default function QuoteForm() {
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       {status === "success" && (
         <div className="rounded-md border border-green-300 bg-green-50 text-green-900 px-4 py-3 text-sm">
-          ✓ <strong>Quote request sent!</strong> We&apos;ll follow up within 24 hours. Prefer faster? Call or text us at{" "}
+          ✓ <strong>Quote request sent!</strong> We&apos;ll follow up as soon as we can. Prefer faster? Call or text us at{" "}
           <a href={SITE.phoneHref} className="font-semibold underline">{SITE.phone}</a>.
         </div>
       )}
@@ -282,7 +282,7 @@ export default function QuoteForm() {
         {status === "submitting" ? "Sending..." : status === "success" ? "Quote Sent! ✓" : "Get a Free Quote →"}
       </button>
       <p className="text-center text-xs text-muted">
-        We respond within 24 hours. Prefer to call?{" "}
+        We&apos;ll get back to you as soon as we can. Prefer to call?{" "}
         <a href={SITE.phoneHref} className="text-navy font-medium">{SITE.phone}</a>
       </p>
     </form>

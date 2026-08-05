@@ -21,7 +21,7 @@ const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+165
 
 const DEPOSIT_NOTE =
   `Paid $${FD_BOOKING_DEPOSIT} to book (Father's Day 25% off). $${FD_BOOKING_DEPOSIT} is full price for most grills; ` +
-  `for a larger/premium grill it's a deposit credited toward the full price — confirm balance within 24–48h.`;
+  `for a larger/premium grill it's a deposit credited toward the full price — confirm balance as soon as we can.`;
 
 export async function fulfillFathersDayBooking(pendingId: string, sessionId: string): Promise<void> {
   if (!isSupabaseConfigured()) return;
@@ -115,7 +115,7 @@ export async function fulfillFathersDayBooking(pendingId: string, sessionId: str
     try {
       await sendSms({
         to: claimed.phone_e164,
-        body: `You're booked with ${SITE.name} for ${when} and your $${claimed.amount} is in — thank you! For larger/premium grills the $${claimed.amount} is a credit toward the full price; we'll confirm any balance within 24–48h. We'll text to confirm the window.`,
+        body: `You're booked with ${SITE.name} for ${when} and your $${claimed.amount} is in — thank you! For larger/premium grills the $${claimed.amount} is a credit toward the full price; we'll confirm any balance as soon as we can. We'll text to confirm the window.`,
       });
     } catch {
       /* best-effort */

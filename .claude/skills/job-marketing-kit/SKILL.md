@@ -63,8 +63,8 @@ Run this checklist for every strong job and recommend the ones that fit:
 - **This-week map** — if this job's neighborhood is on the current `data/schedule.json`
   week, add its `jobId` so the map pin flips to a clickable before/after.
 - **Google Business Profile** — a GBP photo post (square works); strongest local-SEO lever.
-- **Review request** — pair the after photo with a "mind leaving us a review?" text to the
-  customer.
+- **Review request** — *paused.* Don't recommend review asks right now (see
+  `SHOW_REVIEWS` in `lib/site.ts`).
 - **Email / newsletter** — a fresh before/after for any active campaign.
 - **Ads / flyer** — the message-mode card doubles as ad creative.
 - **OG share image** — if a page needs a richer share card, a landscape composite works.
@@ -103,7 +103,8 @@ change, recommended placements, and the drafted posts — then ask what to publi
 ## Voice guide (quick reference)
 - First person, as Jeff. Veteran-founded; mention it when it fits, don't lean on it.
 - Concrete over salesy: name the grill, name what you cleaned, show the result.
-- Soft CTA: "Free quote in 24 hrs → tristategrillcleaning.com" or "Call/text me: (657) 831-4276".
+- Soft CTA: "Free quote → tristategrillcleaning.com" or "Call/text me: (657) 831-4276".
+  Never promise a specific response or turnaround time.
 - Sign-off: `Veteran-founded · Cincinnati · NKY · Dayton`. Hashtags sparingly:
   `#VeteranFounded #CincyGrillCleaning #GrillSeason`.
 - Never: fake urgency, ALL-CAPS hype, emoji spray, stock-photo clichés, customer addresses.

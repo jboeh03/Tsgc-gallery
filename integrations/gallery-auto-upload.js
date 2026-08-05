@@ -25,6 +25,10 @@ const GALLERY_TAB      = '📸 Gallery';
 const CRM_TAB          = '📋 CRM + Jobs';
 const REVIEWS_TAB      = '⭐ Reviews';
 const REVIEW_LINK      = 'https://www.google.com/maps?cid=306553952702723641&action=write-review';
+// TEMP: review requests are paused while we work through a rough stretch of
+// feedback. Hides the "Send Review Request" menu item and blocks sends. Mirror
+// of SHOW_REVIEWS in lib/site.ts — flip both back together.
+const REVIEWS_PAUSED   = true;
 const NOTIFY_EMAIL     = 'jeff@cincygrillcleaning.com';
 const IMAGE_EXTS       = ['heic', 'heif', 'jpg', 'jpeg', 'png', 'webp'];
 
@@ -284,6 +288,8 @@ function getCrmJob_(leadId) {
 // Called by the sidebar. Also logs to ⭐ Reviews tab.
 // ─────────────────────────────────────────────────────────────
 function sendReviewRequest(photoId) {
+  if (REVIEWS_PAUSED) return '⚠️ Review requests are paused right now.';
+
   const sheet = getSheet_(GALLERY_TAB);
   if (!sheet) return '⚠️ Gallery tab not found';
 
@@ -407,6 +413,10 @@ function logReview_(job, today, photoId, beforeUrl, afterUrl) {
 // 5. SIDEBAR — ⭐ TSGC menu → Send Review Request
 // ─────────────────────────────────────────────────────────────
 function openReviewSidebar() {
+  if (REVIEWS_PAUSED) {
+    SpreadsheetApp.getUi().alert('Review requests are paused right now.');
+    return;
+  }
   const html = HtmlService.createHtmlOutput(`<!DOCTYPE html>
 <html>
 <head>
@@ -565,10 +575,11 @@ function sendReviewRequestFromSidebar(photoId) {
 // 6. MENU — appears automatically when Sheet opens
 // ─────────────────────────────────────────────────────────────
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('⭐ TSGC')
-    .addItem('Send Review Request', 'openReviewSidebar')
-    .addSeparator()
+  const menu = SpreadsheetApp.getUi().createMenu('⭐ TSGC');
+  if (!REVIEWS_PAUSED) {
+    menu.addItem('Send Review Request', 'openReviewSidebar').addSeparator();
+  }
+  menu
     .addItem('Scan for New Photos', 'testScan')
     .addItem('Fix Gallery Sheet', 'fixGallerySheet')
     .addToUi();

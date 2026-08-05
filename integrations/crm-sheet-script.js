@@ -21,6 +21,10 @@ const SHEET_ID     = '18DaRXOuAI8VjYd1qrpy-rr9SoOTi57VpfPOx05aolCo';
 const NOTIFY_EMAIL = 'jeff@cincygrillcleaning.com';
 const BACKUP_EMAIL = 'jeffvboeh@gmail.com';
 const REVIEW_LINK  = 'https://www.google.com/maps?cid=306553952702723641&action=write-review';
+// TEMP: review requests are paused while we work through a rough stretch of
+// feedback. Hides the "Send Review Request" menu item and blocks sends. Mirror
+// of SHOW_REVIEWS in lib/site.ts — flip both back together.
+const REVIEWS_PAUSED = true;
 const GALLERY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbww5R8YzI7ylKcpBCFJivxkEDtlJkrkkNddLL1dLl-ONq6WjiRgXt0ydewY-4yofziK/exec';
 
 // ── Tab names ─────────────────────────────────────────────────
@@ -66,10 +70,11 @@ function today_() { return new Date().toLocaleDateString('en-US',{timeZone:'Amer
 // 1. MENU — runs automatically when sheet opens
 // =============================================================
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('⭐ TSGC')
-    .addItem('Send Review Request',  'openReviewSidebar')
-    .addSeparator()
+  const menu = SpreadsheetApp.getUi().createMenu('⭐ TSGC');
+  if (!REVIEWS_PAUSED) {
+    menu.addItem('Send Review Request', 'openReviewSidebar').addSeparator();
+  }
+  menu
     .addItem('Import New Leads Now', 'importNewLeads')
     .addItem('Scan Gallery Photos',  'triggerGalleryScan')
     .addToUi();
@@ -178,7 +183,7 @@ function sendCustomerAutoReply_(firstName, email, service, grill) {
   const body =
 `Hi ${firstName},
 
-Thanks for reaching out to Tri-State Grill Cleaning! We received your request${grill ? ' for your ' + grill : ''} and will follow up within 24 hours with a quote and available times.
+Thanks for reaching out to Tri-State Grill Cleaning! We received your request${grill ? ' for your ' + grill : ''} and will follow up as soon as we can with a quote and available times.
 
 In the meantime, feel free to call or text us directly:
 (657) 831-4276
@@ -198,6 +203,10 @@ tristategrillcleaning.com`;
 // 3. REVIEW REQUEST SIDEBAR
 // =============================================================
 function openReviewSidebar() {
+  if (REVIEWS_PAUSED) {
+    SpreadsheetApp.getUi().alert('Review requests are paused right now.');
+    return;
+  }
   const html = HtmlService.createHtmlOutput(`<!DOCTYPE html>
 <html>
 <head>
@@ -389,6 +398,8 @@ Tri-State Grill Cleaning
 
 // Called by sidebar — does the actual send
 function sendReviewRequestFromSidebar(photoId) {
+  if (REVIEWS_PAUSED) return '⚠️ Review requests are paused right now.';
+
   const gSheet = sheet_(GALLERY_TAB);
   if (!gSheet) return '⚠️ Gallery tab not found';
 

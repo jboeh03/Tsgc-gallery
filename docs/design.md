@@ -46,7 +46,10 @@ The product *and* every AI-generated message share one voice. **The agents
 - **Don't:** ALL CAPS, emoji spray, "ACT NOW," fake scarcity, jargon, exclamation
   pile-ups, or anything that reads automated.
 - **Microcopy in the UI** follows the same rules: plain, human, brief. "Quote
-  request sent! We'll follow up within 24 hours." not "Submission successful."
+  request sent! We'll follow up as soon as we can." not "Submission successful."
+- **Never promise a specific response or turnaround time** ("within 24 hours",
+  "within the hour"). Say "as soon as we can" and point to the phone number for
+  anyone who needs it faster.
 
 ---
 

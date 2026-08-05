@@ -239,8 +239,8 @@ export default function AboutPage() {
             Let&apos;s Get Your Grill Clean
           </h2>
           <p className="mt-4 text-bone/90">
-            Fill out our short form or call us directly. We follow up within
-            24 hours.
+            Fill out our short form or call us directly. We follow up as soon as
+            we can.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link

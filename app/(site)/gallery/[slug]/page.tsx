@@ -88,7 +88,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
             Want yours next?
           </h2>
           <p className="mt-3 text-ink/80">
-            Free quote — we&apos;ll follow up within 24 hours.
+            Free quote — we&apos;ll follow up as soon as we can.
           </p>
           <Link
             href="/quote"

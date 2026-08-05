@@ -67,7 +67,7 @@ export default function ClosingCta() {
           Ready for a clean grill?
         </h2>
         <p className="closing-rise mx-auto mt-6 max-w-xl text-base text-bone/80 md:text-lg">
-          Send the short form and we&apos;ll follow up within 24 hours. No
+          Send the short form and we&apos;ll follow up as soon as we can. No
           commitment, no pressure — just an honest quote.
         </p>
         <div className="closing-rise mt-10 flex flex-wrap items-center justify-center gap-6">

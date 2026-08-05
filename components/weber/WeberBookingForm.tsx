@@ -117,7 +117,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
         <div className="text-4xl" aria-hidden>🔥</div>
         <h3 className="font-display text-2xl text-navy">Request received</h3>
         <p className="text-sm text-ink/70">
-          We&apos;ll review your Weber and text you a real-time quote with a secure payment link within the hour.
+          We&apos;ll review your Weber and text you a real quote with a secure payment link as soon as we can.
           Pay the link to lock your spot — nothing&apos;s charged yet.
         </p>
       </div>
@@ -164,7 +164,7 @@ export default function WeberBookingForm({ availableDates }: { availableDates: s
             Back
           </button>
         </div>
-        <p className="text-[11px] text-muted">We&apos;ll text your confirmed quote and a secure payment link within the hour. Nothing&apos;s charged yet.</p>
+        <p className="text-[11px] text-muted">We&apos;ll text your confirmed quote and a secure payment link as soon as we can. Nothing&apos;s charged yet.</p>
       </div>
     );
   }

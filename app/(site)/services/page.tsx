@@ -286,8 +286,8 @@ export default function ServicesPage() {
         <div className="mx-auto max-w-4xl px-5 py-14 text-center">
           <h2 className="font-display text-3xl md:text-4xl">Ready to Book?</h2>
           <p className="mt-4 text-bone/90">
-            Fill out our short form or give us a call. We&apos;ll follow up
-            within 24 hours with a quote and available times.
+            Fill out our short form or give us a call. We&apos;ll follow up as
+            soon as we can with a quote and available times.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link

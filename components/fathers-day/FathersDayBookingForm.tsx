@@ -229,7 +229,7 @@ export default function FathersDayBookingForm({
         <div className="text-4xl" aria-hidden>🔥</div>
         <h3 className="font-display text-2xl text-navy">Request received</h3>
         <p className="text-sm text-ink/70">
-          We&apos;ll review your {isBundle ? "two grills" : "grill"} and text you back within the hour to confirm
+          We&apos;ll review your {isBundle ? "two grills" : "grill"} and text you back as soon as we can to confirm
           your {isBundle ? "bundle pricing and " : ""}schedule. Prefer faster? Call or text{" "}
           <a href={SITE.phoneHref} className="font-semibold text-navy underline">{SITE.phone}</a>.
         </p>
@@ -375,7 +375,7 @@ export default function FathersDayBookingForm({
               <p className="rounded-md bg-bone/60 px-3 py-2 text-xs text-ink/70">
                 <strong className="text-navy">${deposit} due now</strong> to book &amp; confirm. For most grills that&apos;s your full price.
                 For a larger / premium grill, ${deposit} is a minimum that&apos;s applied as a <strong>credit toward the full price</strong> —
-                we confirm any balance within 24–48 hours. Need it sooner than the first open day? Just{" "}
+                we confirm any balance as soon as we can. Need it sooner than the first open day? Just{" "}
                 <a href={SITE.smsHref} className="font-semibold text-navy underline">text</a> or{" "}
                 <a href={SITE.emailHref} className="font-semibold text-navy underline">email</a> us.
               </p>

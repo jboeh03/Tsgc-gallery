@@ -20,8 +20,8 @@ export default function QuotePage() {
             Let&apos;s Get Your Grill Clean
           </h1>
           <p className="mt-5 text-bone/85 max-w-2xl mx-auto">
-            Fill out the short form below and we&apos;ll follow up within 24
-            hours. No commitment, no pressure.
+            Fill out the short form below and we&apos;ll follow up as soon as we
+            can. No commitment, no pressure.
           </p>
         </div>
       </section>

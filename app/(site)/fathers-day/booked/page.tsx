@@ -42,7 +42,7 @@ export default async function FathersDayBookedPage({
         <p className="mt-3 text-ink/75">
           Thank you! Your ${FD_BOOKING_DEPOSIT} is in and your receipt is on its way by email. We&apos;ll text to confirm
           the exact window. For a larger / premium grill, that ${FD_BOOKING_DEPOSIT} is a credit toward your full price —
-          we&apos;ll confirm any balance within 24–48 hours.
+          we&apos;ll confirm any balance as soon as we can.
         </p>
         {!confirmed && (
           <p className="mt-3 text-sm text-muted">

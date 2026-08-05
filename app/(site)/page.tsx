@@ -12,6 +12,7 @@ import Testimonials from "@/components/home/Testimonials";
 import ClosingCta from "@/components/home/ClosingCta";
 import { isFathersDayActive } from "@/lib/campaign-fathers-day";
 import { FD_VARIANT_COOKIE, isFdVariant } from "@/lib/ab";
+import { SHOW_REVIEWS } from "@/lib/site";
 
 export default function Home() {
   // Father's Day A/B treatment (assigned by middleware while the campaign is
@@ -30,7 +31,7 @@ export default function Home() {
       <Services />
       <Process />
       <GalleryStrip />
-      <Testimonials />
+      {SHOW_REVIEWS && <Testimonials />}
       <ClosingCta />
     </>
   );

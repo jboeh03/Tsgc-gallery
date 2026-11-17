@@ -53,7 +53,7 @@ async function uploadQuotePhoto(base64?: string, mime?: string): Promise<string 
   }
 }
 
-const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([p, new Promise<T>((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);

@@ -28,7 +28,7 @@ FONT_DIR = ROOT / "marketing" / "fonts"
 OUT_DIR = ROOT / "marketing" / "composites"
 
 SITE_URL = "TRISTATEGRILLCLEANING.COM"
-SITE_PHONE = "(657) 831-4276"
+SITE_PHONE = "(513) 702-2681"
 
 NAVY = (26, 48, 85)
 NAVY_DK = (16, 33, 64)

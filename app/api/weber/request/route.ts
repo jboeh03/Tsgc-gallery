@@ -21,7 +21,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 export async function POST(req: NextRequest) {
   if (!isWeberSprintActive()) return NextResponse.json({ error: "The Weber sprint has ended." }, { status: 410 });

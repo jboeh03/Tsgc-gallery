@@ -36,7 +36,7 @@ const localBusinessSchema = {
   name: SITE.name,
   description: SITE.tagline,
   url: SITE.canonicalUrl,
-  telephone: "+15137904040",
+  telephone: "+15137022681",
   email: SITE.email,
   address: {
     "@type": "PostalAddress",

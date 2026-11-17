@@ -17,7 +17,7 @@ import { fdSlotByStart, FD_BOOKING_DEPOSIT } from "@/lib/campaign-fathers-day";
 import { SITE } from "@/lib/site";
 import type { JobRow, AppointmentRow, PendingBookingRow } from "@/lib/db/types";
 
-const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 const DEPOSIT_NOTE =
   `Paid $${FD_BOOKING_DEPOSIT} to book (Father's Day 25% off). $${FD_BOOKING_DEPOSIT} is full price for most grills; ` +

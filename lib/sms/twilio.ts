@@ -6,7 +6,7 @@
  * Env vars (set on Vercel):
  *   TWILIO_ACCOUNT_SID
  *   TWILIO_AUTH_TOKEN
- *   TWILIO_PHONE_NUMBER   the Tri-State Twilio number (forwarded from 657-831-4276)
+ *   TWILIO_PHONE_NUMBER   Twilio sending number (not the public line (513) 702-2681)
  */
 
 import twilio, { type Twilio } from "twilio";

@@ -244,7 +244,7 @@ Received:  ${timestamp}`;
 Thanks for reaching out to Tri-State Grill Cleaning! We received your request and will follow up within 24 hours with a quote and available times.${grillLine}
 
 Prefer to talk now? Call or text us:
-(657) 831-4276
+(513) 702-2681
 
 — Jeff Boeh
 Tri-State Grill Cleaning
@@ -399,7 +399,7 @@ No purchase was necessary to enter and none is required to win.
 Good luck,
 — Jeff
 Tri-State Grill Cleaning
-(657) 831-4276
+(513) 702-2681
 tristategrillcleaning.com`,
         { name: 'Tri-State Grill Cleaning', replyTo: NOTIFY_EMAIL }
       );

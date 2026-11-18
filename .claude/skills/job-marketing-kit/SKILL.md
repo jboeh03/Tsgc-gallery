@@ -19,7 +19,7 @@ data is fine to do directly.
   `#F7F3EE`, ink `#3D3D3A`. Display font: **Oswald** (`marketing/fonts/Oswald.ttf`),
   body: Inter/Arial.
 - **NAP / contact** (from `lib/site.ts`): Tri-State Grill Cleaning · veteran-founded ·
-  Cincinnati, NKY, Dayton · phone `(657) 831-4276` · `tristategrillcleaning.com`.
+  Cincinnati, NKY, Dayton · phone `(513) 702-2681` · `tristategrillcleaning.com`.
 - **Privacy rule:** never publish a customer's exact address or name. Location = the
   **neighborhood** only (e.g. "Hyde Park, Cincinnati"). This holds for composites,
   captions, and the map.
@@ -103,7 +103,7 @@ change, recommended placements, and the drafted posts — then ask what to publi
 ## Voice guide (quick reference)
 - First person, as Jeff. Veteran-founded; mention it when it fits, don't lean on it.
 - Concrete over salesy: name the grill, name what you cleaned, show the result.
-- Soft CTA: "Free quote in 24 hrs → tristategrillcleaning.com" or "Call/text me: (657) 831-4276".
+- Soft CTA: "Free quote in 24 hrs → tristategrillcleaning.com" or "Call/text me: (513) 702-2681".
 - Sign-off: `Veteran-founded · Cincinnati · NKY · Dayton`. Hashtags sparingly:
   `#VeteranFounded #CincyGrillCleaning #GrillSeason`.
 - Never: fake urgency, ALL-CAPS hype, emoji spray, stock-photo clichés, customer addresses.

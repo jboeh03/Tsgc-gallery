@@ -17,7 +17,7 @@ import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 import { SITE } from "@/lib/site";
 import type { JobRow, AppointmentRow, PendingBookingRow } from "@/lib/db/types";
 
-const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 function formatAssessment(a: Record<string, unknown> | null): string {
   if (!a) return "";

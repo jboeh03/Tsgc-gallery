@@ -11,7 +11,7 @@
 import { logEvent } from "@/lib/db/writes";
 import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 
-const ALERT_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const ALERT_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 export type ErrorContext = {
   critical?: boolean;

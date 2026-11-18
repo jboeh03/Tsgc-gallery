@@ -27,7 +27,7 @@ import { SITE } from "@/lib/site";
 export const runtime = "nodejs";
 
 // Jeff's personal phone — where inbound customer texts get forwarded.
-const FORWARD_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const FORWARD_TO = process.env.ALERT_TO || process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 /**
  * Heads-up to Jeff that a customer texted the business line: a forwarded SMS to

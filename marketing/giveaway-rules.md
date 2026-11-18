@@ -19,7 +19,7 @@
 Tri-State Grill Cleaning ("Sponsor"), operated by Jeff Boeh, Cincinnati, OH 45233.
 Website: https://tristategrillcleaning.com
 Email: jeff@cincygrillcleaning.com
-Phone: (657) 831-4276
+Phone: (513) 702-2681
 
 ---
 

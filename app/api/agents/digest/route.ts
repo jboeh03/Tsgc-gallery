@@ -12,7 +12,7 @@ import { sendSms, isTwilioConfigured } from "@/lib/sms/twilio";
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
-const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 export async function GET(req: Request) {
   if (!authorizeCron(req)) return new Response("unauthorized", { status: 401 });

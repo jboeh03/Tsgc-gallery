@@ -16,7 +16,7 @@ import { SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
 
-const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+16578314276";
+const NOTIFY_TO = process.env.BOOKING_NOTIFY_TO || "+15137022681";
 
 export async function POST(req: Request) {
   if (!isSupabaseConfigured()) {
